@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#F6F7F6">
+<meta name="description" content="Tu tablero de salud: nueve relojes, registro diario y el agente que lo interpreta.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="iconos/icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="iconos/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Salud">
 <title>Salud — Marcelo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,460;9..144,560;9..144,640&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -42,7 +50,8 @@
   .leyenda i{width:8px;height:8px;border-radius:50%;display:inline-block}
 
   /* ---- Grilla de relojes ---- */
-  .grilla{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px}\n  .fila-titulo{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta2);margin:14px 4px 8px}
+  .grilla{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px}
+  .fila-titulo{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta2);margin:14px 4px 8px}
   .reloj{background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;
     padding:12px 6px 10px;text-align:center;box-shadow:var(--sombra)}
   .reloj svg{width:64px;height:64px}
@@ -129,6 +138,13 @@
   .resp-agente .hora{font-size:11px;color:var(--tinta2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
   .banner-carbs{background:#FBF6EA;border:1px solid #E8D9AE;color:#7C6224;border-radius:14px;
     padding:12px 15px;font-size:13.5px;line-height:1.5;margin-bottom:16px}
+  .banner-sistema{border-radius:14px;padding:11px 15px;font-size:13px;line-height:1.45;
+    margin-bottom:14px;display:flex;align-items:center;gap:12px;justify-content:space-between}
+  .banner-offline{background:#F1F2F4;border:1px solid #DFE2E5;color:#4A5560}
+  .banner-nueva{background:#EDF4EF;border:1px solid #CBE0D3;color:var(--acento)}
+  .banner-sistema button{background:none;border:1px solid currentColor;color:inherit;border-radius:999px;
+    padding:5px 13px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .pendientes{font-size:12.5px;color:var(--tinta2);margin-top:7px}
 </style>
 </head>
 <body>
@@ -163,12 +179,25 @@ const cfg = {
   borrar(){["gh_owner","gh_repo","gh_token"].forEach(k=>localStorage.removeItem(k))}
 };
 
+let SIN_CONEXION = false;   // algun dato de esta pasada salio de la cache
+let SELLO_CACHE = null;     // el mas viejo de esos datos, para decir de cuando son
+
 async function ghJson(ruta){
   const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${ruta}`,{
     headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github.raw+json"}});
+  if(r.headers.get("X-Salud-Offline")){
+    SIN_CONEXION = true;
+    const sello = +(r.headers.get("X-Salud-Cacheado")||0);
+    if(sello && (SELLO_CACHE===null || sello < SELLO_CACHE)) SELLO_CACHE = sello;
+  }
+  if(r.status===504) throw Object.assign(new Error("sin conexión"), {offline:true});
   if(r.status===404) return null;
   if(!r.ok) throw new Error(`GitHub respondió ${r.status} al pedir ${ruta}`);
   return r.json();
+}
+
+function esFalloDeRed(e){
+  return !navigator.onLine || e.offline === true || e.name === "TypeError";
 }
 
 async function ghPut(ruta, objeto, mensaje){
@@ -178,6 +207,70 @@ async function ghPut(ruta, objeto, mensaje){
     headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github+json"},
     body: JSON.stringify({message: mensaje, content: contenido})});
   if(!r.ok) throw new Error(`GitHub respondió ${r.status} al escribir`);
+}
+
+/* ---------- cola de lo que se registro sin senal ---------- */
+const BD = {
+  abrir(){
+    return new Promise((ok,mal)=>{
+      const s = indexedDB.open("salud", 1);
+      s.onupgradeneeded = ()=>{ if(!s.result.objectStoreNames.contains("pendientes"))
+        s.result.createObjectStore("pendientes",{keyPath:"id"}); };
+      s.onsuccess = ()=>ok(s.result);
+      s.onerror = ()=>mal(s.error);
+    });
+  },
+  async _tx(modo, fn){
+    const db = await BD.abrir();
+    return new Promise((ok,mal)=>{
+      const t = db.transaction("pendientes", modo);
+      const pedido = fn(t.objectStore("pendientes"));
+      t.oncomplete = ()=>ok(pedido ? pedido.result : undefined);
+      t.onerror = ()=>mal(t.error);
+      t.onabort = ()=>mal(t.error);
+    });
+  },
+  guardar(e){ return BD._tx("readwrite", st=>st.put(e)); },
+  borrar(id){ return BD._tx("readwrite", st=>st.delete(id)); },
+  todos(){ return BD._tx("readonly", st=>st.getAll()); }
+};
+
+let PENDIENTES = [];
+
+function textoPendientes(){
+  const n = PENDIENTES.length;
+  if(!n) return "";
+  return `⏳ ${n} registro${n>1?"s":""} esperando señal — se ${n>1?"envían":"envía"} solo${n>1?"s":""} al reconectar.`;
+}
+
+async function refrescarPendientes(){
+  PENDIENTES = await BD.todos().catch(()=>[]);
+  const caja = $("#reg-pendientes");
+  if(caja) caja.textContent = textoPendientes();
+}
+
+async function sincronizarPendientes(){
+  if(!navigator.onLine || !cfg.token) return 0;
+  let enviados = 0;
+  for(const e of await BD.todos().catch(()=>[])){
+    try{
+      await ghPut(e.ruta, e.cuerpo, e.mensaje);
+      await BD.borrar(e.id);
+      enviados++;
+    }catch(err){
+      if(esFalloDeRed(err)) break;                 // sigue sin senal: se reintenta la proxima
+      e.intentos = (e.intentos||0) + 1;            // error real (token, permisos): no insistir para siempre
+      if(e.intentos >= 5) await BD.borrar(e.id); else await BD.guardar(e);
+      break;
+    }
+  }
+  await refrescarPendientes();
+  if(enviados){
+    localStorage.setItem("ultimo_dispatch", Date.now());
+    ghDispatch();
+    render();
+  }
+  return enviados;
 }
 
 let FOTOS_PENDIENTES = [];
@@ -214,15 +307,27 @@ async function enviarRegistro(){
   const texto = $("#reg-texto").value.trim();
   if(!texto && !FOTOS_PENDIENTES.length) return;
   const btn = $("#reg-btn"); btn.disabled = true; btn.textContent = "Guardando…";
+  const id = new Date().toISOString().replace(/[:.]/g,"-");
+  const entrada = {id, ruta:`entradas/${id}.json`,
+                   cuerpo:{texto, fotos: FOTOS_PENDIENTES}, mensaje:`entrada app ${id}`};
+  const limpiar = ()=>{ $("#reg-texto").value = ""; FOTOS_PENDIENTES = []; $("#reg-fotos").textContent = ""; };
   try{
-    const id = new Date().toISOString().replace(/[:.]/g,"-");
-    await ghPut(`entradas/${id}.json`, {texto, fotos: FOTOS_PENDIENTES}, `entrada app ${id}`);
-    $("#reg-texto").value = ""; FOTOS_PENDIENTES = []; $("#reg-fotos").textContent = "";
+    await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
+    limpiar();
     localStorage.setItem("ultimo_dispatch", Date.now());
     ghDispatch();  // el agente despierta al instante
     btn.textContent = "El agente está trabajando…";
     esperarRespuesta(btn);
   }catch(e){
+    if(esFalloDeRed(e)){
+      try{
+        await BD.guardar(entrada);
+        limpiar();
+        await refrescarPendientes();
+        btn.textContent = "Guardado en el teléfono ✓"; btn.disabled = false;
+        return;
+      }catch(e2){ /* si tampoco se pudo guardar aqui, cae al error normal */ }
+    }
     btn.textContent = "Error: " + e.message; btn.disabled = false;
   }
 }
@@ -249,8 +354,23 @@ function tarjetaRegistrar(regHoy){
       <button id="reg-btn" onclick="enviarRegistro()">Guardar</button>
     </div>
     <div class="reg-fotos" id="reg-fotos"></div>
+    <div class="pendientes" id="reg-pendientes">${textoPendientes()}</div>
     ${resp?`<div class="resp-agente"><div class="hora">Última respuesta del agente · ${resp.hora}</div>${resp.html}</div>`:""}
   </div>`;
+}
+
+function bannerSinConexion(){
+  if(!SIN_CONEXION) return "";
+  let cuando = "guardados";
+  if(SELLO_CACHE){
+    const t = new Date(SELLO_CACHE);
+    const dosDigitos = n => String(n).padStart(2,"0");
+    cuando = `de las ${dosDigitos(t.getHours())}:${dosDigitos(t.getMinutes())}`;
+    if(t.toDateString() !== new Date().toDateString()) cuando += ` del ${t.getDate()}/${t.getMonth()+1}`;
+  }
+  return `<div class="banner-sistema banner-offline">
+    <span>Sin conexión — estos son tus datos ${cuando}.</span>
+    <button onclick="render()">Reintentar</button></div>`;
 }
 
 function bannerCarbs(regHoy, estado){
@@ -319,6 +439,8 @@ async function render(){
   const app = $("#app");
   if(!cfg.token){ renderConfig(); return; }
   app.innerHTML = `<div class="estado-msg">Leyendo tu repo…</div>`;
+  SIN_CONEXION = false; SELLO_CACHE = null;
+  PENDIENTES = await BD.todos().catch(()=>[]);
   let estado, regHoy, historial=[];
   try{
     estado = await ghJson("dashboard/estado.json");
@@ -327,6 +449,13 @@ async function render(){
     regHoy = regs[0];
     historial = regs.slice(1).filter(Boolean);
   }catch(e){
+    if(esFalloDeRed(e)){
+      app.innerHTML = `<div class="tarjeta"><p class="analisis">Sin conexión, y todavía no hay datos guardados
+        en este teléfono. Ábrela una vez con señal y desde ahí funciona aunque te quedes sin red.</p>
+        ${PENDIENTES.length?`<p class="pendientes">${textoPendientes()}</p>`:""}
+        <div class="pie"><button onclick="render()">Reintentar</button></div></div>`;
+      return;
+    }
     app.innerHTML = `<div class="tarjeta"><p class="analisis">No pude leer el repo: ${e.message}.</p>
       <div class="pie"><button onclick="cfg.borrar();render()">Cambiar configuración</button>
       <button onclick="render()">Reintentar</button></div></div>`;
@@ -345,6 +474,7 @@ async function render(){
   const ia = estado.analisis_ia||{};
 
   app.innerHTML = `
+    ${bannerSinConexion()}
     ${bannerCarbs(regHoy, estado)}
     ${tarjetaRegistrar(regHoy)}
     <div class="tarjeta grande">
@@ -535,7 +665,61 @@ function renderConfig(){
   </div>`;
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{ if(cfg.token) despertarAgenteSiToca(); render(); });
+/* ---------- app instalable: service worker, actualizaciones e instalacion ---------- */
+function bannerSistema(id, texto, etiquetaBoton, alPulsar){
+  if(document.getElementById(id)) return;
+  const d = document.createElement("div");
+  d.id = id; d.className = "banner-sistema banner-nueva";
+  d.innerHTML = `<span></span><button></button>`;
+  d.querySelector("span").textContent = texto;
+  const btn = d.querySelector("button");
+  btn.textContent = etiquetaBoton;
+  btn.onclick = ()=>alPulsar(d);
+  $("#app").before(d);
+}
+
+function registrarServiceWorker(){
+  // Los service workers solo existen en http(s); abierta como archivo suelto, la app sigue funcionando sin offline.
+  if(!("serviceWorker" in navigator) || !location.protocol.startsWith("http")) return;
+
+  let recargando = false;
+  navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+    if(recargando) return; recargando = true; location.reload();
+  });
+
+  navigator.serviceWorker.register("sw.js").then(reg=>{
+    const ofrecer = trabajador => bannerSistema("banner-nueva",
+      "Hay una versión nueva de la app.", "Actualizar",
+      d => { d.remove(); trabajador.postMessage({tipo:"actualizar"}); });
+
+    if(reg.waiting && navigator.serviceWorker.controller) ofrecer(reg.waiting);
+    reg.addEventListener("updatefound", ()=>{
+      const nuevo = reg.installing;
+      if(!nuevo) return;
+      nuevo.addEventListener("statechange", ()=>{
+        if(nuevo.state === "installed" && navigator.serviceWorker.controller) ofrecer(nuevo);
+      });
+    });
+  }).catch(()=>{ /* sin offline, pero la app funciona igual */ });
+}
+
+let PROMPT_INSTALAR = null;
+window.addEventListener("beforeinstallprompt", ev=>{
+  ev.preventDefault(); PROMPT_INSTALAR = ev;
+  bannerSistema("banner-instalar", "Instálala para abrirla como app, con su ícono.", "Instalar",
+    async d => { d.remove(); PROMPT_INSTALAR.prompt(); await PROMPT_INSTALAR.userChoice; PROMPT_INSTALAR = null; });
+});
+window.addEventListener("appinstalled", ()=>{
+  document.getElementById("banner-instalar")?.remove(); PROMPT_INSTALAR = null;
+});
+
+window.addEventListener("online", ()=>{ sincronizarPendientes().then(()=>{ if(SIN_CONEXION) render(); }); });
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  registrarServiceWorker();
+  if(cfg.token) despertarAgenteSiToca();
+  render().then(()=>sincronizarPendientes());
+});
 </script>
 </body>
 </html>

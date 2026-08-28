@@ -1,0 +1,20 @@
+{
+  "name": "Salud — Marcelo",
+  "short_name": "Salud",
+  "description": "Tu tablero de salud: nueve relojes, registro diario y el agente que lo interpreta.",
+  "lang": "es-CL",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#F6F7F6",
+  "theme_color": "#F6F7F6",
+  "categories": ["health", "lifestyle", "medical"],
+  "icons": [
+    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

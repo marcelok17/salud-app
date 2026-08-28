@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Salud">
+  <rect width="100" height="100" fill="#F6F7F6"/>
+  <g fill="none" stroke-width="14">
+    <path d="M50 12 A38 38 0 0 1 73.5 20.1" stroke="#BC5570"/>
+    <path d="M79.9 26.5 A38 38 0 0 1 87.5 50" stroke="#A8506A"/>
+    <path d="M86.2 58.2 A38 38 0 0 1 73.5 79.9" stroke="#8E4A5E"/>
+    <path d="M66.4 84.3 A38 38 0 0 1 41.8 87.1" stroke="#C07A2B"/>
+    <path d="M34 84.3 A38 38 0 0 1 15.7 66.4" stroke="#4C8E66"/>
+    <path d="M13 58.2 A38 38 0 0 1 13 41.8" stroke="#3E8E8A"/>
+    <path d="M15.7 33.6 A38 38 0 0 1 26.5 20.1" stroke="#B25640"/>
+  </g>
+</svg>
