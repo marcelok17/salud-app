@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F6F7F6">
+<title>Salud — Marcelo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,460;9..144,560;9..144,640&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fondo:#F6F7F6; --tarjeta:#FFFFFF; --linea:#E6E9E7; --linea2:#EEF0EF;
+    --tinta:#1E2523; --tinta2:#75807C; --acento:#2E6B51;
+    --macros:#C07A2B; --micros:#4C8E66; --musc:#B25640;
+    --corazon:#BC5570; --grasa:#4E7CA3; --descanso:#7C6FA6;
+    --sombra:0 1px 2px rgba(30,37,35,.04), 0 8px 24px rgba(30,37,35,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--fondo); color:var(--tinta);
+    font-family:'Instrument Sans',system-ui,sans-serif;
+    padding:22px 18px 70px; max-width:520px; margin:0 auto;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,.num,.centro-num,.dia-fecha .d{font-family:'Fraunces',Georgia,serif}
+  header{margin-bottom:18px;padding:0 2px}
+  header .fecha{color:var(--tinta2);font-size:11.5px;text-transform:uppercase;letter-spacing:.16em;font-weight:500}
+  header h1{font-size:32px;font-weight:560;line-height:1.08;margin-top:4px;letter-spacing:-.01em}
+  .tarjeta{background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;
+    padding:20px;margin-bottom:16px;box-shadow:var(--sombra)}
+  h2{font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--tinta2);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  h2::after{content:"";flex:1;height:1px;background:var(--linea2)}
+
+  /* ---- Reloj grande ---- */
+  .grande{display:flex;flex-direction:column;align-items:center;padding:26px 20px 22px}
+  .grande svg{width:225px;height:225px}
+  .grande .centro-num{font-size:58px;font-weight:560;line-height:1;letter-spacing:-.02em}
+  .grande .centro-txt{color:var(--tinta2);font-size:13px;text-align:center;margin-top:8px;max-width:230px;line-height:1.45}
+  .leyenda{display:flex;flex-wrap:wrap;gap:7px 16px;justify-content:center;margin-top:16px}
+  .leyenda span{font-size:11.5px;color:var(--tinta2);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
+  .leyenda i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+  /* ---- Grilla de relojes ---- */
+  .grilla{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px}\n  .fila-titulo{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta2);margin:14px 4px 8px}
+  .reloj{background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;
+    padding:12px 6px 10px;text-align:center;box-shadow:var(--sombra)}
+  .reloj svg{width:64px;height:64px}
+  .reloj .nombre{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    margin-top:8px;color:var(--tinta)}
+  .reloj .detalle{font-size:10px;color:var(--tinta2);margin-top:4px;min-height:16px;line-height:1.4}
+  .reloj .num{font-size:16px;font-weight:560}
+
+  .anillo-fondo{stroke:var(--linea2);fill:none}
+  .anillo-valor{fill:none;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;
+    transition:stroke-dashoffset 1.1s cubic-bezier(.22,.9,.35,1)}
+  @media (prefers-reduced-motion:reduce){.anillo-valor{transition:none}}
+
+  /* ---- Rutina / objetivos ---- */
+  .rutina{font-size:15.5px;line-height:1.6;color:var(--tinta)}
+  .rutina b{color:var(--acento);font-weight:600}
+  ul.objetivos{list-style:none}
+  ul.objetivos li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;
+    border-bottom:1px solid var(--linea2);font-size:14.5px;line-height:1.45}
+  ul.objetivos li:last-child{border-bottom:none;padding-bottom:2px}
+  ul.objetivos input{width:18px;height:18px;accent-color:var(--acento);margin-top:1px;flex:none}
+  li.hecho label{color:var(--tinta2);text-decoration:line-through}
+  .analisis{font-size:14.5px;line-height:1.6;color:var(--tinta)}
+  .alerta{margin-top:12px;background:#FBF3EC;border:1px solid #E8CDB4;color:#8A5A2B;
+    border-radius:12px;padding:11px 14px;font-size:13.5px;line-height:1.5}
+  .dos-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* ---- Barras de hoy ---- */
+  .barra{margin-bottom:14px}
+  .barra .fila{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;
+    margin-bottom:5px;color:var(--tinta2)}
+  .barra .fila b{font-family:'Fraunces',serif;font-size:16px;font-weight:560;color:var(--tinta)}
+  .pista{height:6px;background:var(--linea2);border-radius:4px;overflow:hidden}
+  .pista i{display:block;height:100%;border-radius:4px}
+
+  /* ---- Config / botones ---- */
+  .config input{width:100%;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta);
+    border-radius:11px;padding:12px 13px;font-size:15px;margin-bottom:10px}
+  .config button,.recargar{width:100%;background:var(--acento);color:#fff;border:none;border-radius:11px;
+    padding:13px;font-size:15px;font-weight:600;cursor:pointer}
+  .config .ayuda{font-size:13px;color:var(--tinta2);line-height:1.55;margin-bottom:12px}
+  .estado-msg{color:var(--tinta2);font-size:14px;text-align:center;padding:36px 0}
+  .pie{display:flex;gap:10px;margin-top:4px}
+  .pie button{flex:1;background:transparent;border:1px solid var(--linea);color:var(--tinta2);
+    border-radius:11px;padding:10px;font-size:13px;cursor:pointer}
+  a{color:var(--grasa)}
+
+  /* ---- Historial ---- */
+  .dia-fila{display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;
+    padding:12px 0;border-bottom:1px solid var(--linea2)}
+  .dia-fila:last-child{border-bottom:none}
+  .dia-fecha{text-align:center}
+  .dia-fecha .d{font-size:23px;font-weight:560;line-height:1}
+  .dia-fecha .m{font-size:10px;color:var(--tinta2);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+  .dia-datos{font-size:12.5px;color:var(--tinta2);line-height:1.55}
+  .dia-datos b{color:var(--tinta);font-weight:600}
+  .dia-marcas{display:flex;flex-direction:column;gap:5px;align-items:flex-end;font-size:11px}
+  .chip{border-radius:20px;padding:3px 9px;font-weight:600;letter-spacing:.03em}
+  .chip.gym{background:#F5EAE6;color:var(--musc)}
+  .chip.peso{background:#EAF0F5;color:var(--grasa)}
+  .chip.hipo{background:#FBF3EC;color:#8A5A2B}
+  .glu-ok{color:var(--micros)} .glu-baja{color:#B07A2E;font-weight:600} .glu-alta{color:var(--corazon);font-weight:600}
+
+  /* ---- Correlaciones ---- */
+  .corr{border-left:2px solid var(--linea);padding:11px 14px;margin-bottom:11px;
+    border-radius:0 12px 12px 0;background:#FAFBFA}
+  .corr.medica{border-left-color:var(--corazon)} .corr.accion{border-left-color:var(--macros)} .corr.info{border-left-color:var(--grasa)}
+  .corr .s{font-weight:600;font-size:14px}
+  .corr .e{font-size:12px;color:var(--tinta2);margin:4px 0}
+  .corr .h{font-size:13.5px;line-height:1.5;margin:4px 0}
+  .corr .a{font-size:13px;color:var(--acento)}
+
+  /* ---- Registrar ---- */
+  .registrar textarea{width:100%;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta);
+    border-radius:12px;padding:12px 13px;font-size:15px;min-height:64px;resize:vertical;font-family:inherit}
+  .reg-fila{display:flex;gap:8px;margin-top:10px}
+  .reg-fila label{flex:0 0 auto;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta2);
+    border-radius:11px;padding:11px 15px;font-size:14px;cursor:pointer}
+  .reg-fila button{flex:1;background:var(--acento);color:#fff;border:none;border-radius:11px;
+    padding:11px;font-size:14.5px;font-weight:600;cursor:pointer}
+  .reg-fila button:disabled{opacity:.5}
+  .reg-fotos{font-size:12.5px;color:var(--tinta2);margin-top:7px}
+  .resp-agente{margin-top:14px;border-top:1px solid var(--linea2);padding-top:12px;font-size:14px;line-height:1.55}
+  .resp-agente .hora{font-size:11px;color:var(--tinta2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+  .banner-carbs{background:#FBF6EA;border:1px solid #E8D9AE;color:#7C6224;border-radius:14px;
+    padding:12px 15px;font-size:13.5px;line-height:1.5;margin-bottom:16px}
+</style>
+</head>
+<body>
+<header>
+  <div class="fecha" id="fecha">—</div>
+  <h1 id="titulo">Tu salud, hoy</h1>
+</header>
+
+<div id="app"><div class="estado-msg">Cargando…</div></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const COLORES = {
+  presion:"var(--corazon)", fc_reposo:"#A8506A", fc_esfuerzo:"#8E4A5E",
+  macros:"var(--macros)", micros:"var(--micros)", glucosa:"#3E8E8A",
+  musculacion:"var(--musc)", grasa:"var(--grasa)", descanso:"var(--descanso)"};
+const NOMBRES = {presion:"Presión", fc_reposo:"FC reposo", fc_esfuerzo:"FC esfuerzo",
+  macros:"Macros", micros:"Micros", glucosa:"Glucosa",
+  musculacion:"Músculo", grasa:"Grasa", descanso:"Descanso"};
+const FILAS = [
+  {titulo:"Corazón", claves:["presion","fc_reposo","fc_esfuerzo"]},
+  {titulo:"Alimentación", claves:["macros","micros","glucosa"]},
+  {titulo:"Cuerpo", claves:["musculacion","grasa","descanso"]}];
+const ORDEN = FILAS.flatMap(f=>f.claves);
+
+const cfg = {
+  get owner(){return localStorage.getItem("gh_owner")||""},
+  get repo(){return localStorage.getItem("gh_repo")||""},
+  get token(){return localStorage.getItem("gh_token")||""},
+  guardar(o,r,t){localStorage.setItem("gh_owner",o);localStorage.setItem("gh_repo",r);localStorage.setItem("gh_token",t)},
+  borrar(){["gh_owner","gh_repo","gh_token"].forEach(k=>localStorage.removeItem(k))}
+};
+
+async function ghJson(ruta){
+  const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${ruta}`,{
+    headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github.raw+json"}});
+  if(r.status===404) return null;
+  if(!r.ok) throw new Error(`GitHub respondió ${r.status} al pedir ${ruta}`);
+  return r.json();
+}
+
+async function ghPut(ruta, objeto, mensaje){
+  const contenido = btoa(unescape(encodeURIComponent(JSON.stringify(objeto))));
+  const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${ruta}`,{
+    method:"PUT",
+    headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github+json"},
+    body: JSON.stringify({message: mensaje, content: contenido})});
+  if(!r.ok) throw new Error(`GitHub respondió ${r.status} al escribir`);
+}
+
+let FOTOS_PENDIENTES = [];
+function elegirFotos(ev){
+  FOTOS_PENDIENTES = [];
+  const archivos = [...ev.target.files].slice(0,5);
+  let pendientes = archivos.length;
+  if(!pendientes){ $("#reg-fotos").textContent=""; return; }
+  archivos.forEach(a=>{
+    const lector = new FileReader();
+    lector.onload = ()=>{
+      FOTOS_PENDIENTES.push({media_type: a.type||"image/jpeg", b64: lector.result.split(",")[1]});
+      if(--pendientes===0) $("#reg-fotos").textContent = `📸 ${FOTOS_PENDIENTES.length} foto(s) lista(s)`;
+    };
+    lector.readAsDataURL(a);
+  });
+}
+
+async function ghDispatch(){
+  try{
+    await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/actions/workflows/registro-correo.yml/dispatches`,{
+      method:"POST",
+      headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github+json"},
+      body: JSON.stringify({ref:"main"})});
+  }catch(e){/* silencioso: el cron de 30 min es el respaldo */}
+}
+
+function despertarAgenteSiToca(){
+  const ultimo = +(localStorage.getItem("ultimo_dispatch")||0);
+  if(Date.now()-ultimo > 5*60*1000){ localStorage.setItem("ultimo_dispatch", Date.now()); ghDispatch(); }
+}
+
+async function enviarRegistro(){
+  const texto = $("#reg-texto").value.trim();
+  if(!texto && !FOTOS_PENDIENTES.length) return;
+  const btn = $("#reg-btn"); btn.disabled = true; btn.textContent = "Guardando…";
+  try{
+    const id = new Date().toISOString().replace(/[:.]/g,"-");
+    await ghPut(`entradas/${id}.json`, {texto, fotos: FOTOS_PENDIENTES}, `entrada app ${id}`);
+    $("#reg-texto").value = ""; FOTOS_PENDIENTES = []; $("#reg-fotos").textContent = "";
+    localStorage.setItem("ultimo_dispatch", Date.now());
+    ghDispatch();  // el agente despierta al instante
+    btn.textContent = "El agente está trabajando…";
+    esperarRespuesta(btn);
+  }catch(e){
+    btn.textContent = "Error: " + e.message; btn.disabled = false;
+  }
+}
+
+async function esperarRespuesta(btn){
+  const antes = JSON.stringify((await ghJson(`registro/${new Date().toISOString().slice(0,10)}.json`).catch(()=>null))?.respuestas_agente||[]);
+  let intentos = 0;
+  const timer = setInterval(async ()=>{
+    if(++intentos > 12){ clearInterval(timer); btn.textContent = "Guardado ✓ (respuesta al recargar)"; btn.disabled=false; return; }
+    const reg = await ghJson(`registro/${new Date().toISOString().slice(0,10)}.json`).catch(()=>null);
+    if(JSON.stringify(reg?.respuestas_agente||[]) !== antes){
+      clearInterval(timer); btn.textContent = "Guardar"; btn.disabled=false; render();
+    }
+  }, 15000);
+}
+
+function tarjetaRegistrar(regHoy){
+  const resp = ((regHoy&&regHoy.respuestas_agente)||[]).slice(-1)[0];
+  return `<div class="tarjeta registrar">
+    <h2>Registrar</h2>
+    <textarea id="reg-texto" placeholder="Comí… / Dormí… / Entrené… / Glucosa… / Presión… / Peso… — o solo fotos. Guarda y el agente hace el resto."></textarea>
+    <div class="reg-fila">
+      <label>📷<input type="file" accept="image/*" multiple hidden onchange="elegirFotos(event)"></label>
+      <button id="reg-btn" onclick="enviarRegistro()">Guardar</button>
+    </div>
+    <div class="reg-fotos" id="reg-fotos"></div>
+    ${resp?`<div class="resp-agente"><div class="hora">Última respuesta del agente · ${resp.hora}</div>${resp.html}</div>`:""}
+  </div>`;
+}
+
+function bannerCarbs(regHoy, estado){
+  const h = new Date().getHours();
+  if(h<17||h>=22) return "";
+  const rutina = (estado.rutina_de_hoy||"").toUpperCase();
+  if(rutina.includes("DESCANSO")) return "";
+  const carbs = ((regHoy&&regHoy.acumulado)||{}).carbohidratos_g||0;
+  if(carbs>=40) return "";
+  return `<div class="banner-carbs">🍚 Van <b>${Math.round(carbs)} g</b> de carbohidratos y hoy es día de entrenamiento —
+    el piso con Jardiance es 75 g. La cena es el momento: legumbres, papa o arroz.</div>`;
+}
+
+/* ---------- anillos SVG ---------- */
+function anillo(score,color,radio,grosor){
+  const c = 2*Math.PI*radio, s = score==null?0:Math.max(0,Math.min(1,score));
+  const dim = (radio+grosor)*2;
+  return `<svg viewBox="0 0 ${dim} ${dim}">
+    <circle class="anillo-fondo" cx="${dim/2}" cy="${dim/2}" r="${radio}" stroke-width="${grosor}"/>
+    <circle class="anillo-valor" cx="${dim/2}" cy="${dim/2}" r="${radio}" stroke-width="${grosor}"
+      stroke="${color}" stroke-dasharray="${c}" stroke-dashoffset="${c}" data-final="${c*(1-s)}"/>
+  </svg>`;
+}
+
+/* Reloj grande: 6 sectores de 60°, cada uno se llena según su score */
+function relojGrande(relojes){
+  const R=100, G=15, dim=(R+G)*2, gap=5, sector=360/ORDEN.length;
+  let arcos="";
+  ORDEN.forEach((k,i)=>{
+    const s = relojes[k]?.score;
+    const ini = -90 + i*sector + gap/2, span = sector-gap;
+    const rad = a=>a*Math.PI/180;
+    const arco=(a0,a1,cls,color)=>{
+      const x0=dim/2+R*Math.cos(rad(a0)), y0=dim/2+R*Math.sin(rad(a0));
+      const x1=dim/2+R*Math.cos(rad(a1)), y1=dim/2+R*Math.sin(rad(a1));
+      return `<path d="M ${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none"
+        stroke="${color}" stroke-width="${G}" stroke-linecap="round" class="${cls}"/>`;
+    };
+    arcos += arco(ini, ini+span, "", "#EEF0EF");
+    if(s!=null && s>0.02) arcos += arco(ini, ini+span*Math.min(1,s), "sector", COLORES[k]);
+  });
+  return `<svg viewBox="0 0 ${dim} ${dim}">${arcos}</svg>`;
+}
+
+function animar(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll(".anillo-valor").forEach(el=>{el.style.strokeDashoffset=el.dataset.final;});
+  }));
+}
+
+/* ---------- checklist con memoria del día ---------- */
+function checklist(items, claveBase){
+  const hoy = new Date().toISOString().slice(0,10);
+  return `<ul class="objetivos">` + items.map((txt,i)=>{
+    const clave = `chk_${claveBase}_${hoy}_${i}`;
+    const marcado = localStorage.getItem(clave)==="1";
+    return `<li class="${marcado?"hecho":""}">
+      <input type="checkbox" id="${clave}" ${marcado?"checked":""}
+        onchange="localStorage.setItem('${clave}',this.checked?'1':'0');this.closest('li').classList.toggle('hecho',this.checked)">
+      <label for="${clave}">${txt}</label></li>`;
+  }).join("") + `</ul>`;
+}
+
+/* ---------- pantalla principal ---------- */
+async function render(){
+  const app = $("#app");
+  if(!cfg.token){ renderConfig(); return; }
+  app.innerHTML = `<div class="estado-msg">Leyendo tu repo…</div>`;
+  let estado, regHoy, historial=[];
+  try{
+    estado = await ghJson("dashboard/estado.json");
+    const fechas=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toISOString().slice(0,10);});
+    const regs = await Promise.all(fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)));
+    regHoy = regs[0];
+    historial = regs.slice(1).filter(Boolean);
+  }catch(e){
+    app.innerHTML = `<div class="tarjeta"><p class="analisis">No pude leer el repo: ${e.message}.</p>
+      <div class="pie"><button onclick="cfg.borrar();render()">Cambiar configuración</button>
+      <button onclick="render()">Reintentar</button></div></div>`;
+    return;
+  }
+  if(!estado){
+    app.innerHTML = `<div class="tarjeta"><p class="analisis">Aún no existe <b>dashboard/estado.json</b>.
+      Corre el workflow "Agente de Salud — correo diario" (botón <i>Run workflow</i> en GitHub) y recarga.</p>
+      <div class="pie"><button onclick="render()">Recargar</button></div></div>`;
+    return;
+  }
+
+  const rel = estado.relojes||{};
+  const gen = rel.general?.score;
+  $("#fecha").textContent = `${estado.dia||""} · actualizado ${String(estado.generado||"").slice(11,16)}`;
+  const ia = estado.analisis_ia||{};
+
+  app.innerHTML = `
+    ${bannerCarbs(regHoy, estado)}
+    ${tarjetaRegistrar(regHoy)}
+    <div class="tarjeta grande">
+      <div style="position:relative">
+        ${relojGrande(rel)}
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div class="centro-num num">${gen!=null?Math.round(gen*100)+"%":"—"}</div>
+        </div>
+      </div>
+      <div class="centro-txt">Salud general — cada sector es uno de tus nueve relojes</div>
+      <div class="leyenda">${ORDEN.map(k=>`<span><i style="background:${COLORES[k]}"></i>${NOMBRES[k]}</span>`).join("")}</div>
+    </div>
+
+    ${FILAS.map(fila=>`
+    <div class="fila-titulo">${fila.titulo}</div>
+    <div class="grilla">
+      ${fila.claves.map(k=>{
+        const r=rel[k]||{}; const pct=r.score!=null?Math.round(r.score*100)+"%":"—";
+        return `<div class="reloj">
+          <div style="position:relative;display:inline-block">
+            ${anillo(r.score,COLORES[k],28,6.5)}
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+              <span class="num" style="color:${COLORES[k]}">${pct}</span></div>
+          </div>
+          <div class="nombre">${NOMBRES[k]}</div>
+          <div class="detalle">${r.detalle||""}</div>
+        </div>`;
+      }).join("")}
+    </div>`).join("")}
+
+    <div class="tarjeta" style="margin-top:14px">
+      <h2>Rutina de hoy</h2>
+      <p class="rutina">${(estado.rutina_de_hoy||"—").replace(/^(Semana \d+:)/,"<b>$1</b>")}</p>
+    </div>
+
+    <div class="tarjeta">
+      <h2>Objetivos de hoy · IA</h2>
+      ${checklist(ia.objetivos_hoy||[], "obj")}
+      <p class="analisis" style="margin-top:10px">${ia.analisis||""}</p>
+      ${ia.comentario_cientifico?`<p style="margin-top:10px;font-size:13.5px;line-height:1.5;color:var(--tinta2);border-top:1px solid var(--linea);padding-top:10px">🔬 ${ia.comentario_cientifico}</p>`:""}
+      ${ia.alerta?`<div class="alerta">⚠︎ ${ia.alerta}</div>`:""}
+    </div>
+
+    ${tarjetaAlimentacion(estado.alimentacion)}
+
+    ${tarjetaCardio(estado.cardio)}
+
+    ${seccionCorrelaciones(estado.correlaciones)}
+
+    ${barrasHoy(regHoy)}
+
+    ${seccionHistorial(historial)}
+
+    <div class="dos-col">
+      <div class="tarjeta" style="margin-bottom:0"><h2>Medicamentos</h2>
+        ${checklist(estado.medicamentos||[], "med")}</div>
+      <div class="tarjeta" style="margin-bottom:0"><h2>Suplementos</h2>
+        ${checklist(estado.suplementos||[], "sup")}</div>
+    </div>
+
+    <div class="pie">
+      <button onclick="render()">Actualizar</button>
+      <button onclick="cfg.borrar();render()">Configuración</button>
+    </div>`;
+  animar();
+}
+
+function barrasHoy(reg){
+  if(!reg||!reg.acumulado) return "";
+  const a=reg.acumulado;
+  const barra=(n,v,meta,color,unidad,invertir)=>{
+    const p=Math.min(1, invertir? (v<=meta?v/meta:1) : v/meta);
+    const exceso = invertir && v>meta;
+    return `<div class="barra"><div class="fila"><span>${n}</span><b style="color:${exceso?"var(--musc)":color}">${Math.round(v)} / ${meta} ${unidad}</b></div>
+      <div class="pista"><i style="width:${Math.round(p*100)}%;background:${exceso?"var(--musc)":color}"></i></div></div>`;
+  };
+  return `<div class="tarjeta"><h2>Hoy en vivo</h2>
+    ${barra("Proteína", a.proteina_g||0, 170, "var(--macros)", "g")}
+    ${barra("Carbohidratos", a.carbohidratos_g||0, 100, "var(--grasa)", "g")}
+    ${barra("Calorías", a.kcal||0, 2000, "var(--micros)", "kcal")}
+    ${barra("Sodio", a.sodio_mg||0, 2300, "var(--corazon)", "mg", true)}
+    ${barra("Fibra", a.fibra_g||0, 25, "var(--descanso)", "g")}
+    ${barra("Potasio", a.potasio_mg||0, 3500, "var(--micros)", "mg")}
+    ${barra("Magnesio", a.magnesio_mg||0, 420, "#3E8E8A", "mg")}
+    ${barra("Vitamina D", a.vitamina_d_ug||0, 15, "var(--macros)", "µg")}
+    ${glucosaHoy(reg)}
+  </div>`;
+}
+
+function glucosaHoy(reg){
+  const gl = (reg&&reg.glucosa)||[];
+  if(!gl.length) return "";
+  const clase = v => v<70?"glu-baja":(v>180?"glu-alta":"glu-ok");
+  const ult = gl[gl.length-1];
+  const min = Math.min(...gl.map(g=>g.mg_dl));
+  return `<div class="barra"><div class="fila"><span>Glucosa (${gl.length} tomas)</span>
+    <b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${ult.hora}</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">${gl.map(g=>`<span class="${clase(g.mg_dl)}">${g.mg_dl}</span> <small>${g.hora}${g.contexto?" "+g.contexto:""}</small>`).join(" · ")}</div>
+    ${min<70?`<div class="alerta" style="margin-top:8px">⚠︎ Hubo un valor bajo 70 hoy — coméntalo al médico, sobre todo si fue nocturno.</div>`:""}
+  </div>`;
+}
+
+function seccionCorrelaciones(corr){
+  if(!corr||!corr.length) return "";
+  const ICONO={medica:"🩺",accion:"⚡",info:"💡"};
+  return `<div class="tarjeta"><h2>Conexiones que veo</h2>` + corr.map(c=>`
+    <div class="corr ${c.urgencia}">
+      <div class="s">${ICONO[c.urgencia]||""} ${c.senal}</div>
+      <div class="e">${c.evidencia}</div>
+      <div class="h">${c.hipotesis}</div>
+      <div class="a">→ ${c.accion}</div>
+    </div>`).join("") +
+    `<div style="font-size:11.5px;color:var(--tinta2)">Hipótesis con evidencia, no diagnósticos. Las 🩺 van al médico.</div></div>`;
+}
+
+function tarjetaAlimentacion(al){
+  if(!al||(!al.macros&&!al.micros&&!al.glucosa)) return "";
+  const pct = v => v==null?"—":Math.round(v*100)+"%";
+  let filas = "";
+  if(al.macros) filas += `<div class="barra"><div class="fila"><span>Macronutrientes</span>
+    <b>${al.macros.prot_ayer??"—"} g prot · ${al.macros.kcal_ayer??"—"} kcal</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">Ayer, contra metas 170-190 g y 1.500-2.100 kcal · tendencia 90 d: ${pct(al.macros.tendencia)}</div></div>`;
+  if(al.micros) filas += `<div class="barra"><div class="fila"><span>Micronutrientes</span>
+    <b>sodio ${al.micros.sodio_ayer??"—"} mg · fibra ${al.micros.fibra_ayer??"—"} g</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">Ayer, contra <2.300 mg y >=25 g · tendencia 90 d: ${pct(al.micros.tendencia)}</div></div>`;
+  if(al.glucosa) filas += `<div class="barra"><div class="fila"><span>Glucosa</span>
+    <b>${al.glucosa.prom_7d} mg/dl · ${al.glucosa.en_rango_pct}% en rango</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">${al.glucosa.n_tomas} tomas en 7 días · rango 70-180
+    ${al.glucosa.bajo_70?` · <span class="glu-baja">${al.glucosa.bajo_70} bajo 70</span>`:""}${al.glucosa.sobre_180?` · <span class="glu-alta">${al.glucosa.sobre_180} sobre 180</span>`:""}</div></div>`;
+  return `<div class="tarjeta"><h2>Alimentación en detalle — 3 indicadores</h2>${filas}</div>`;
+}
+
+function tarjetaCardio(cardio){
+  if(!cardio||(!cardio.fc_reposo&&!cardio.fc_trote&&!cardio.presion)) return "";
+  const flecha = d => d==null?"":(d<0?` <span style="color:var(--micros)">↓${Math.abs(d)}</span>`
+                                      :d>0?` <span style="color:var(--corazon)">↑${d}</span>`:" →");
+  let filas = "";
+  if(cardio.fc_reposo) filas += `<div class="barra"><div class="fila"><span>FC de reposo</span>
+    <b>${cardio.fc_reposo.hoy} lpm${flecha(cardio.fc_reposo.delta)}</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">vs tu promedio de 30 días (${cardio.fc_reposo.promedio_30d||"—"}). Si baja con las semanas, tu cardio en reposo mejora.</div></div>`;
+  if(cardio.fc_trote) filas += `<div class="barra"><div class="fila"><span>FC en el trote</span>
+    <b>${cardio.fc_trote.ultima} lpm${flecha(cardio.fc_trote.delta)}</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">vs tus 3 trotes anteriores (${cardio.fc_trote.promedio_previas}). Menos pulsaciones al mismo esfuerzo = motor mejorando.</div></div>`;
+  if(cardio.presion) filas += `<div class="barra"><div class="fila"><span>Presión arterial</span>
+    <b>${cardio.presion.hoy||"—"}</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">Promedio 7 días: ${Math.round(cardio.presion.prom_7d_sis)}/${Math.round(cardio.presion.prom_7d_dia)} (${cardio.presion.n_tomas_7d} tomas). La semana es la señal; la toma del día es ruido.</div></div>`;
+  return `<div class="tarjeta"><h2>Corazón en detalle — mejora medible</h2>${filas}</div>`;
+}
+
+function seccionHistorial(hist){
+  if(!hist.length) return "";
+  const MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  const filas = hist.map(r=>{
+    const f = new Date(r.fecha+"T12:00:00");
+    const a = r.acumulado||{};
+    const entreno = (r.entrenamiento||[]).length>0;
+    const gl = r.glucosa||[];
+    const glMin = gl.length?Math.min(...gl.map(g=>g.mg_dl)):null;
+    const glTxt = gl.length?` · glucosa ${Math.min(...gl.map(g=>g.mg_dl))}–${Math.max(...gl.map(g=>g.mg_dl))}`:"";
+    return `<div class="dia-fila">
+      <div class="dia-fecha"><div class="d">${f.getDate()}</div><div class="m">${MESES[f.getMonth()]}</div></div>
+      <div class="dia-datos">
+        <b>${Math.round(a.proteina_g||0)} g prot</b> · ${Math.round(a.kcal||0)} kcal · sodio ${Math.round(a.sodio_mg||0)} mg${glTxt}<br>
+        ${r.sueno?("😴 "+String(r.sueno).split("(")[0].trim()+" · "):""}${(r.comidas||[]).length} comidas registradas
+      </div>
+      <div class="dia-marcas">
+        ${entreno?'<span class="chip gym">GYM ✓</span>':""}
+        ${r.peso_kg?`<span class="chip peso">${r.peso_kg} kg</span>`:""}
+        ${glMin!=null&&glMin<70?'<span class="chip hipo">GLU baja</span>':""}
+      </div>
+    </div>`;
+  }).join("");
+  return `<div class="tarjeta"><h2>Historial — cómo estuve cada día</h2>${filas}</div>`;
+}
+
+/* ---------- primera vez ---------- */
+function renderConfig(){
+  $("#app").innerHTML = `<div class="tarjeta config">
+    <h2>Conectar con tu repo</h2>
+    <p class="ayuda">La app lee tu repo privado <b>agente-salud</b> directo desde este teléfono.
+      Necesitas un token de solo lectura: GitHub → Settings → Developer settings →
+      <b>Fine-grained tokens</b> → Generate → repositorio <b>agente-salud</b> →
+      Permissions → Contents: <b>Read and write</b> y Actions: <b>Read and write</b> (la app registra y despierta al agente al instante). El token queda guardado solo en este navegador.</p>
+    <input id="c-owner" placeholder="Usuario de GitHub (ej: marceloazagra)" value="${cfg.owner}">
+    <input id="c-repo" placeholder="Nombre del repo (ej: agente-salud)" value="${cfg.repo||"agente-salud"}">
+    <input id="c-token" type="password" placeholder="Token fine-grained (github_pat_…)">
+    <button onclick="cfg.guardar($('#c-owner').value.trim(),$('#c-repo').value.trim(),$('#c-token').value.trim());render()">Conectar</button>
+  </div>`;
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{ if(cfg.token) despertarAgenteSiToca(); render(); });
+</script>
+</body>
+</html>
