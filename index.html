@@ -294,13 +294,23 @@ function elegirFotos(ev){
   });
 }
 
+/* Despierta el workflow al instante. Devuelve por que fallo, si fallo: el cron
+   programado de GitHub llega con horas de retraso, asi que si esto no funciona
+   el registro se queda esperando y hay que enterarse. */
 async function ghDispatch(){
   try{
-    await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/actions/workflows/registro-correo.yml/dispatches`,{
+    const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/actions/workflows/registro-correo.yml/dispatches`,{
       method:"POST",
       headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github+json"},
       body: JSON.stringify({ref:"main"})});
-  }catch(e){/* silencioso: el cron de 30 min es el respaldo */}
+    if(r.ok) return {ok:true};
+    if(r.status===403) return {ok:false, motivo:"al token le falta el permiso «Actions: Read and write»"};
+    if(r.status===404) return {ok:false, motivo:"no encuentro el workflow en el repo (¿nombre o rama distintos?)"};
+    if(r.status===401) return {ok:false, motivo:"el token no es válido o expiró"};
+    return {ok:false, motivo:`GitHub respondió ${r.status}`};
+  }catch(e){
+    return {ok:false, motivo:"sin conexión"};
+  }
 }
 
 function despertarAgenteSiToca(){
@@ -321,9 +331,16 @@ async function enviarRegistro(){
     await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
     limpiar();
     localStorage.setItem("ultimo_dispatch", Date.now());
-    ghDispatch();  // el agente despierta al instante
     btn.textContent = "El agente está trabajando…";
-    esperarRespuesta(btn);
+    const despertar = await ghDispatch();
+    if(despertar.ok){
+      esperarRespuesta(btn);
+    }else{
+      btn.textContent = "Guardar"; btn.disabled = false;
+      avisoRegistro(`Guardado ✓ — pero no pude despertar al agente: ${despertar.motivo}. `
+        + "Tu registro está a salvo; se procesará cuando GitHub corra el workflow programado, "
+        + "que puede tardar horas.");
+    }
   }catch(e){
     if(esFalloDeRed(e)){
       try{
@@ -565,7 +582,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v19.2.0</div>`;
+    <div class="version">v19.3.0</div>`;
   animar();
 }
 
@@ -704,7 +721,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v19.2.0</div>
+    <div class="version">v19.3.0</div>
   </div>`;
 }
 
