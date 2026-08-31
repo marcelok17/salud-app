@@ -443,9 +443,14 @@ async function render(){
   PENDIENTES = await BD.todos().catch(()=>[]);
   let estado, regHoy, historial=[];
   try{
-    estado = await ghJson("dashboard/estado.json");
+    // Una sola tanda: el tablero y los 8 dias van juntos. Antes eran dos viajes
+    // encadenados (tablero primero, historial despues), y en el celular se notaba.
     const fechas=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toISOString().slice(0,10);});
-    const regs = await Promise.all(fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)));
+    const [est, ...regs] = await Promise.all([
+      ghJson("dashboard/estado.json"),
+      ...fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)),
+    ]);
+    estado = est;
     regHoy = regs[0];
     historial = regs.slice(1).filter(Boolean);
   }catch(e){
@@ -457,7 +462,7 @@ async function render(){
       return;
     }
     app.innerHTML = `<div class="tarjeta"><p class="analisis">No pude leer el repo: ${e.message}.</p>
-      <div class="pie"><button onclick="cfg.borrar();render()">Cambiar configuración</button>
+      <div class="pie"><button onclick="renderConfig()">Cambiar configuración</button>
       <button onclick="render()">Reintentar</button></div></div>`;
     return;
   }
@@ -537,7 +542,7 @@ async function render(){
 
     <div class="pie">
       <button onclick="render()">Actualizar</button>
-      <button onclick="cfg.borrar();render()">Configuración</button>
+      <button onclick="renderConfig()">Configuración</button>
     </div>`;
   animar();
 }
@@ -650,18 +655,33 @@ function seccionHistorial(hist){
   return `<div class="tarjeta"><h2>Historial — cómo estuve cada día</h2>${filas}</div>`;
 }
 
-/* ---------- primera vez ---------- */
+/* ---------- conectar / reconfigurar ---------- */
+function guardarConfig(){
+  const token = $("#c-token").value.trim() || cfg.token;   // en blanco = conservar el que ya estaba
+  if(!token){ $("#c-aviso").textContent = "Falta el token."; return; }
+  cfg.guardar($("#c-owner").value.trim(), $("#c-repo").value.trim(), token);
+  render();
+}
+
 function renderConfig(){
+  const yaConectado = !!cfg.token;
   $("#app").innerHTML = `<div class="tarjeta config">
-    <h2>Conectar con tu repo</h2>
+    <h2>${yaConectado ? "Configuración" : "Conectar con tu repo"}</h2>
     <p class="ayuda">La app lee tu repo privado <b>agente-salud</b> directo desde este teléfono.
-      Necesitas un token de solo lectura: GitHub → Settings → Developer settings →
+      Necesitas un token: GitHub → Settings → Developer settings →
       <b>Fine-grained tokens</b> → Generate → repositorio <b>agente-salud</b> →
-      Permissions → Contents: <b>Read and write</b> y Actions: <b>Read and write</b> (la app registra y despierta al agente al instante). El token queda guardado solo en este navegador.</p>
-    <input id="c-owner" placeholder="Usuario de GitHub (ej: marceloazagra)" value="${cfg.owner}">
-    <input id="c-repo" placeholder="Nombre del repo (ej: agente-salud)" value="${cfg.repo||"agente-salud"}">
-    <input id="c-token" type="password" placeholder="Token fine-grained (github_pat_…)">
-    <button onclick="cfg.guardar($('#c-owner').value.trim(),$('#c-repo').value.trim(),$('#c-token').value.trim());render()">Conectar</button>
+      Permissions → Contents: <b>Read and write</b> y Actions: <b>Read and write</b>
+      (la app registra y despierta al agente al instante). El token queda guardado solo en este navegador.</p>
+    <input id="c-owner" placeholder="Usuario de GitHub" value="${cfg.owner}">
+    <input id="c-repo" placeholder="Nombre del repo" value="${cfg.repo||"agente-salud"}">
+    <input id="c-token" type="password" autocomplete="off"
+      placeholder="${yaConectado ? "Token guardado — déjalo en blanco para conservarlo" : "Token fine-grained (github_pat_…)"}">
+    <div class="ayuda" id="c-aviso" style="color:var(--musc);min-height:14px"></div>
+    <button onclick="guardarConfig()">${yaConectado ? "Guardar" : "Conectar"}</button>
+    ${yaConectado ? `<div class="pie">
+      <button onclick="render()">Volver</button>
+      <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
+    </div>` : ""}
   </div>`;
 }
 
