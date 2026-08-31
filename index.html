@@ -278,6 +278,14 @@ async function sincronizarPendientes(){
   return enviados;
 }
 
+/* Fecha local en formato AAAA-MM-DD. Con toISOString() se usaria UTC, y desde las
+   20:00 de Chile eso ya es manana: la app buscaria un registro inexistente. */
+function fechaLocal(d){
+  const f = d || new Date();
+  const dosDig = n => String(n).padStart(2, "0");
+  return `${f.getFullYear()}-${dosDig(f.getMonth()+1)}-${dosDig(f.getDate())}`;
+}
+
 let FOTOS_PENDIENTES = [];
 function elegirFotos(ev){
   FOTOS_PENDIENTES = [];
@@ -357,21 +365,29 @@ async function enviarRegistro(){
 }
 
 async function esperarRespuesta(btn){
-  const antes = JSON.stringify((await ghJson(`registro/${new Date().toISOString().slice(0,10)}.json`).catch(()=>null))?.respuestas_agente||[]);
-  let intentos = 0;
-  const timer = setInterval(async ()=>{
-    if(++intentos > 12){                       // 3 minutos sin respuesta
-      clearInterval(timer);
+  // Sondeo rapido al principio (el agente suele tardar 15-25 s) y tranquilo despues,
+  // para no gastar cuota de API esperando algo que ya se demoro.
+  const rutaHoy = () => `registro/${fechaLocal()}.json`;
+  const antes = JSON.stringify((await ghJson(rutaHoy()).catch(()=>null))?.respuestas_agente || []);
+  const inicio = Date.now();
+
+  const revisar = async () => {
+    const transcurrido = Date.now() - inicio;
+    if(transcurrido > 180000){                       // 3 minutos: nos rendimos
       btn.textContent = "Guardar"; btn.disabled = false;
       avisoRegistro("Guardado ✓ — tu registro está a salvo en el repo. El agente todavía "
         + "no lo procesa; su respuesta aparecerá acá cuando lo haga.");
       return;
     }
-    const reg = await ghJson(`registro/${new Date().toISOString().slice(0,10)}.json`).catch(()=>null);
-    if(JSON.stringify(reg?.respuestas_agente||[]) !== antes){
-      clearInterval(timer); btn.textContent = "Guardar"; btn.disabled=false; render();  // la respuesta ya llego
+    const reg = await ghJson(rutaHoy()).catch(()=>null);
+    if(JSON.stringify(reg?.respuestas_agente || []) !== antes){
+      btn.textContent = "Guardar"; btn.disabled = false;
+      render();                                      // la respuesta ya llego
+      return;
     }
-  }, 15000);
+    setTimeout(revisar, transcurrido < 60000 ? 2000 : 10000);
+  };
+  setTimeout(revisar, 2000);
 }
 
 function avisoRegistro(texto){
@@ -460,16 +476,57 @@ function animar(){
 }
 
 /* ---------- checklist con memoria del día ---------- */
+const LISTAS = {};   // lo que muestra cada checklist, para saber que se marco
+
 function checklist(items, claveBase){
-  const hoy = new Date().toISOString().slice(0,10);
+  LISTAS[claveBase] = items;
+  const hoy = fechaLocal();
   return `<ul class="objetivos">` + items.map((txt,i)=>{
     const clave = `chk_${claveBase}_${hoy}_${i}`;
     const marcado = localStorage.getItem(clave)==="1";
     return `<li class="${marcado?"hecho":""}">
       <input type="checkbox" id="${clave}" ${marcado?"checked":""}
-        onchange="localStorage.setItem('${clave}',this.checked?'1':'0');this.closest('li').classList.toggle('hecho',this.checked)">
+        onchange="marcarItem('${claveBase}',${i},this.checked)">
       <label for="${clave}">${txt}</label></li>`;
   }).join("") + `</ul>`;
+}
+
+/* Marcar un medicamento o suplemento no es solo un recordatorio: lo REGISTRA,
+   para que sus micronutrientes entren en el acumulado del dia. Antes la marca
+   se quedaba en el navegador y la barra de magnesio seguia en cero. */
+async function marcarItem(claveBase, i, marcado){
+  const clave = `chk_${claveBase}_${fechaLocal()}_${i}`;
+  localStorage.setItem(clave, marcado ? "1" : "0");
+  const casilla = document.getElementById(clave);
+  if(casilla && casilla.closest("li")) casilla.closest("li").classList.toggle("hecho", marcado);
+
+  if(claveBase === "obj" || !marcado) return;        // los objetivos del dia no se registran
+  const yaEnviado = `enviado_${clave}`;
+  if(localStorage.getItem(yaEnviado)) return;        // desmarcar y volver a marcar no cuenta doble
+  const nombre = (LISTAS[claveBase] || [])[i];
+  if(!nombre) return;
+
+  localStorage.setItem(yaEnviado, "1");
+  const id = new Date().toISOString().replace(/[:.]/g,"-");
+  const entrada = {id, ruta:`entradas/${id}.json`,
+                   cuerpo:{texto:`Tomé ${nombre}`, fotos:[]}, mensaje:`entrada app ${id}`};
+  try{
+    await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
+    const despertar = await ghDispatch();
+    avisoRegistro(despertar.ok
+      ? `Registrado: ${nombre}. El agente lo está sumando al día…`
+      : `Registrado: ${nombre}, pero no pude despertar al agente: ${despertar.motivo}.`);
+    if(despertar.ok) esperarRespuesta($("#reg-btn"));
+  }catch(e){
+    if(esFalloDeRed(e)){
+      await BD.guardar(entrada).catch(()=>{});
+      await refrescarPendientes();
+      avisoRegistro(`${nombre} guardado en el teléfono — se envía al reconectar.`);
+    }else{
+      localStorage.removeItem(yaEnviado);            // fallo real: que se pueda reintentar
+      avisoRegistro(`No pude registrar ${nombre}: ${e.message}`);
+    }
+  }
 }
 
 /* ---------- pantalla principal ---------- */
@@ -483,7 +540,7 @@ async function render(){
   try{
     // Una sola tanda: el tablero y los 8 dias van juntos. Antes eran dos viajes
     // encadenados (tablero primero, historial despues), y en el celular se notaba.
-    const fechas=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toISOString().slice(0,10);});
+    const fechas=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return fechaLocal(d);});
     const [est, ...regs] = await Promise.all([
       ghJson("dashboard/estado.json"),
       ...fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)),
@@ -582,7 +639,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v19.3.0</div>`;
+    <div class="version">v19.5.0</div>`;
   animar();
 }
 
@@ -721,7 +778,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v19.3.0</div>
+    <div class="version">v19.5.0</div>
   </div>`;
 }
 
