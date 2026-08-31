@@ -312,6 +312,7 @@ async function enviarRegistro(){
   const texto = $("#reg-texto").value.trim();
   if(!texto && !FOTOS_PENDIENTES.length) return;
   const btn = $("#reg-btn"); btn.disabled = true; btn.textContent = "Guardando…";
+  avisoRegistro("");
   const id = new Date().toISOString().replace(/[:.]/g,"-");
   const entrada = {id, ruta:`entradas/${id}.json`,
                    cuerpo:{texto, fotos: FOTOS_PENDIENTES}, mensaje:`entrada app ${id}`};
@@ -329,7 +330,8 @@ async function enviarRegistro(){
         await BD.guardar(entrada);
         limpiar();
         await refrescarPendientes();
-        btn.textContent = "Guardado en el teléfono ✓"; btn.disabled = false;
+        btn.textContent = "Guardar"; btn.disabled = false;
+        avisoRegistro("Guardado en el teléfono ✓ — se envía solo cuando vuelva la señal.");
         return;
       }catch(e2){ /* si tampoco se pudo guardar aqui, cae al error normal */ }
     }
@@ -341,12 +343,23 @@ async function esperarRespuesta(btn){
   const antes = JSON.stringify((await ghJson(`registro/${new Date().toISOString().slice(0,10)}.json`).catch(()=>null))?.respuestas_agente||[]);
   let intentos = 0;
   const timer = setInterval(async ()=>{
-    if(++intentos > 12){ clearInterval(timer); btn.textContent = "Guardado ✓ (respuesta al recargar)"; btn.disabled=false; return; }
+    if(++intentos > 12){                       // 3 minutos sin respuesta
+      clearInterval(timer);
+      btn.textContent = "Guardar"; btn.disabled = false;
+      avisoRegistro("Guardado ✓ — tu registro está a salvo en el repo. El agente todavía "
+        + "no lo procesa; su respuesta aparecerá acá cuando lo haga.");
+      return;
+    }
     const reg = await ghJson(`registro/${new Date().toISOString().slice(0,10)}.json`).catch(()=>null);
     if(JSON.stringify(reg?.respuestas_agente||[]) !== antes){
-      clearInterval(timer); btn.textContent = "Guardar"; btn.disabled=false; render();
+      clearInterval(timer); btn.textContent = "Guardar"; btn.disabled=false; render();  // la respuesta ya llego
     }
   }, 15000);
+}
+
+function avisoRegistro(texto){
+  const caja = $("#reg-aviso");
+  if(caja) caja.textContent = texto;
 }
 
 function tarjetaRegistrar(regHoy){
@@ -362,6 +375,7 @@ Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2"></textarea>
     </div>
     <div class="reg-fotos" id="reg-fotos"></div>
     <div class="pendientes" id="reg-pendientes">${textoPendientes()}</div>
+    <div class="pendientes" id="reg-aviso"></div>
     ${resp?`<div class="resp-agente"><div class="hora">Última respuesta del agente · ${resp.hora}</div>${resp.html}</div>`:""}
   </div>`;
 }
