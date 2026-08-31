@@ -7,7 +7,7 @@
    Regla dura: las escrituras (PUT de registros, POST de dispatch) NUNCA pasan por caché.
    Regla dura: nada que se guarde lleva el token — se cachea por URL, con cabeceras propias. */
 
-const VERSION = "v19.1.0";
+const VERSION = "v19.2.0";
 const CACHE_CONCHA  = `salud-concha-${VERSION}`;
 const CACHE_FUENTES = "salud-fuentes-v1";
 const CACHE_DATOS   = "salud-datos-v1";

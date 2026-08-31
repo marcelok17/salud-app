@@ -126,7 +126,10 @@
 
   /* ---- Registrar ---- */
   .registrar textarea{width:100%;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta);
-    border-radius:12px;padding:12px 13px;font-size:15px;min-height:64px;resize:vertical;font-family:inherit}
+    border-radius:12px;padding:13px 14px;font-size:15px;line-height:1.5;min-height:112px;
+    resize:vertical;font-family:inherit}
+  .registrar textarea::placeholder{color:var(--tinta2);opacity:.75}
+  .reg-ayuda{font-size:12.5px;color:var(--tinta2);margin-top:8px;line-height:1.45}
   .reg-fila{display:flex;gap:8px;margin-top:10px}
   .reg-fila label{flex:0 0 auto;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta2);
     border-radius:11px;padding:11px 15px;font-size:14px;cursor:pointer}
@@ -350,7 +353,9 @@ function tarjetaRegistrar(regHoy){
   const resp = ((regHoy&&regHoy.respuestas_agente)||[]).slice(-1)[0];
   return `<div class="tarjeta registrar">
     <h2>Registrar</h2>
-    <textarea id="reg-texto" placeholder="Comí… / Dormí… / Entrené… / Glucosa… / Presión… / Peso… — o solo fotos. Guarda y el agente hace el resto."></textarea>
+    <textarea id="reg-texto" placeholder="Ej: 4 huevos revueltos y una tostada
+Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2"></textarea>
+    <div class="reg-ayuda">Escribe con tus palabras — el agente interpreta. La foto es opcional.</div>
     <div class="reg-fila">
       <label>📷<input type="file" accept="image/*" multiple hidden onchange="elegirFotos(event)"></label>
       <button id="reg-btn" onclick="enviarRegistro()">Guardar</button>
@@ -546,7 +551,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v19.1.0</div>`;
+    <div class="version">v19.2.0</div>`;
   animar();
 }
 
@@ -685,7 +690,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v19.1.0</div>
+    <div class="version">v19.2.0</div>
   </div>`;
 }
 
