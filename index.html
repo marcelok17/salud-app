@@ -145,6 +145,7 @@
     margin-bottom:14px;display:flex;align-items:center;gap:12px;justify-content:space-between}
   .banner-offline{background:#F1F2F4;border:1px solid #DFE2E5;color:#4A5560}
   .banner-nueva{background:#EDF4EF;border:1px solid #CBE0D3;color:var(--acento)}
+  .banner-espera{background:#FBF6EA;border:1px solid #E8D9AE;color:#7C6224;display:block}
   .banner-sistema button{background:none;border:1px solid currentColor;color:inherit;border-radius:999px;
     padding:5px 13px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .pendientes{font-size:12.5px;color:var(--tinta2);margin-top:7px}
@@ -287,24 +288,96 @@ function fechaLocal(d){
 }
 
 let FOTOS_PENDIENTES = [];
+
+/* Fecha real en que se sacó la foto, leída del EXIF (etiqueta DateTimeOriginal).
+   Sin esto, subir hoy la foto del almuerzo de ayer la registraba como de hoy. */
+function fechaExifDeJpeg(buffer){
+  try{
+    const v = new DataView(buffer);
+    if(v.getUint16(0) !== 0xFFD8) return null;              // no es JPEG
+    let off = 2;
+    while(off + 4 < v.byteLength){
+      const marca = v.getUint16(off);
+      if((marca & 0xFF00) !== 0xFF00) return null;
+      const largo = v.getUint16(off + 2);
+      if(marca === 0xFFE1){                                  // APP1: aquí vive el EXIF
+        const ini = off + 4;
+        if(v.getUint32(ini) !== 0x45786966) return null;      // "Exif"
+        const tiff = ini + 6;
+        const le = v.getUint16(tiff) === 0x4949;              // orden de bytes
+        const u16 = p => v.getUint16(p, le), u32 = p => v.getUint32(p, le);
+        let ifd = tiff + u32(tiff + 4);
+        for(let vuelta = 0; vuelta < 2; vuelta++){            // IFD0 y luego el sub-IFD Exif
+          const n = u16(ifd);
+          let subExif = null;
+          for(let i = 0; i < n; i++){
+            const e = ifd + 2 + i * 12, tag = u16(e);
+            if(tag === 0x8769) subExif = tiff + u32(e + 8);
+            if(tag === 0x9003 || tag === 0x0132){             // DateTimeOriginal / DateTime
+              const p = tiff + u32(e + 8);
+              let txt = "";
+              for(let k = 0; k < 19; k++) txt += String.fromCharCode(v.getUint8(p + k));
+              const m = txt.match(/^(\d{4}):(\d{2}):(\d{2}) (\d{2}:\d{2}:\d{2})$/);
+              return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}` : null;
+            }
+          }
+          if(!subExif) return null;
+          ifd = subExif;
+        }
+        return null;
+      }
+      off += 2 + largo;
+    }
+  }catch(e){ /* EXIF ilegible: se usa la fecha del archivo */ }
+  return null;
+}
+
+function base64DeBuffer(buffer){
+  const bytes = new Uint8Array(buffer);
+  let binario = "";
+  for(let i = 0; i < bytes.length; i += 0x8000){             // por trozos: fromCharCode tiene tope
+    binario += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(binario);
+}
+
+/* La zona del teléfono. Si Marcelo viaja, sus registros se fechan con la hora
+   del lugar donde está — no con la de Chile. */
+function zonaDelTelefono(){
+  try{ return Intl.DateTimeFormat().resolvedOptions().timeZone || null; }
+  catch(e){ return null; }
+}
+
+function fechaHoraLocal(d){
+  const dosDig = n => String(n).padStart(2, "0");
+  return `${fechaLocal(d)}T${dosDig(d.getHours())}:${dosDig(d.getMinutes())}:${dosDig(d.getSeconds())}`;
+}
+
 function elegirFotos(ev){
   FOTOS_PENDIENTES = [];
-  const archivos = [...ev.target.files].slice(0,5);
+  const archivos = [...ev.target.files].slice(0, 5);
   let pendientes = archivos.length;
-  if(!pendientes){ $("#reg-fotos").textContent=""; return; }
-  archivos.forEach(a=>{
+  if(!pendientes){ $("#reg-fotos").textContent = ""; return; }
+  archivos.forEach(a => {
     const lector = new FileReader();
-    lector.onload = ()=>{
-      FOTOS_PENDIENTES.push({media_type: a.type||"image/jpeg", b64: lector.result.split(",")[1]});
-      if(--pendientes===0) $("#reg-fotos").textContent = `📸 ${FOTOS_PENDIENTES.length} foto(s) lista(s)`;
+    lector.onload = () => {
+      const buffer = lector.result;
+      // EXIF primero; si la foto no lo trae, la fecha del archivo suele ser la de captura.
+      const tomada = fechaExifDeJpeg(buffer) || fechaHoraLocal(new Date(a.lastModified || Date.now()));
+      FOTOS_PENDIENTES.push({media_type: a.type || "image/jpeg", b64: base64DeBuffer(buffer), tomada});
+      if(--pendientes === 0){
+        const dias = [...new Set(FOTOS_PENDIENTES.map(f => f.tomada.slice(0, 10)))];
+        const hoy = fechaLocal();
+        const aviso = (dias.length === 1 && dias[0] !== hoy)
+          ? ` · del ${dias[0].slice(8)}/${dias[0].slice(5,7)}, se registra en ese día`
+          : "";
+        $("#reg-fotos").textContent = `📸 ${FOTOS_PENDIENTES.length} foto(s) lista(s)${aviso}`;
+      }
     };
-    lector.readAsDataURL(a);
+    lector.readAsArrayBuffer(a);
   });
 }
 
-/* Despierta el workflow al instante. Devuelve por que fallo, si fallo: el cron
-   programado de GitHub llega con horas de retraso, asi que si esto no funciona
-   el registro se queda esperando y hay que enterarse. */
 async function ghDispatch(){
   try{
     const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/actions/workflows/registro-correo.yml/dispatches`,{
@@ -333,7 +406,9 @@ async function enviarRegistro(){
   avisoRegistro("");
   const id = new Date().toISOString().replace(/[:.]/g,"-");
   const entrada = {id, ruta:`entradas/${id}.json`,
-                   cuerpo:{texto, fotos: FOTOS_PENDIENTES}, mensaje:`entrada app ${id}`};
+                   cuerpo:{texto, fotos: FOTOS_PENDIENTES, zona: zonaDelTelefono(),
+                           hora_local: fechaHoraLocal(new Date())},
+                   mensaje:`entrada app ${id}`};
   const limpiar = ()=>{ $("#reg-texto").value = ""; FOTOS_PENDIENTES = []; $("#reg-fotos").textContent = ""; };
   try{
     await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
@@ -410,6 +485,17 @@ Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2"></textarea>
     <div class="pendientes" id="reg-pendientes">${textoPendientes()}</div>
     <div class="pendientes" id="reg-aviso"></div>
     ${resp?`<div class="resp-agente"><div class="hora">Última respuesta del agente · ${resp.hora}</div>${resp.html}</div>`:""}
+  </div>`;
+}
+
+function bannerPendientes(estado){
+  const p = (estado && estado.entradas_pendientes) || [];
+  if(!p.length) return "";
+  const motivos = [...new Set(p.map(x => x.motivo))];
+  const n = p.length;
+  return `<div class="banner-sistema banner-espera">
+    <span><b>${n} registro${n>1?"s":""} esperando a la IA.</b> ${motivos[0]}
+    ${n>1?` (y ${n-1} más en la misma cola)`:""} Nada se pierde: se procesan solos al reintentar.</span>
   </div>`;
 }
 
@@ -509,7 +595,9 @@ async function marcarItem(claveBase, i, marcado){
   localStorage.setItem(yaEnviado, "1");
   const id = new Date().toISOString().replace(/[:.]/g,"-");
   const entrada = {id, ruta:`entradas/${id}.json`,
-                   cuerpo:{texto:`Tomé ${nombre}`, fotos:[]}, mensaje:`entrada app ${id}`};
+                   cuerpo:{texto:`Tomé ${nombre}`, fotos:[], zona: zonaDelTelefono(),
+                           hora_local: fechaHoraLocal(new Date())},
+                   mensaje:`entrada app ${id}`};
   try{
     await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
     const despertar = await ghDispatch();
@@ -575,6 +663,7 @@ async function render(){
 
   app.innerHTML = `
     ${bannerSinConexion()}
+    ${bannerPendientes(estado)}
     ${bannerCarbs(regHoy, estado)}
     ${tarjetaRegistrar(regHoy)}
     <div class="tarjeta grande">
@@ -639,7 +728,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v19.5.0</div>`;
+    <div class="version">v19.8.0</div>`;
   animar();
 }
 
@@ -778,7 +867,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v19.5.0</div>
+    <div class="version">v19.8.0</div>
   </div>`;
 }
 
