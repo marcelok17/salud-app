@@ -190,6 +190,10 @@ let SELLO_CACHE = null;     // el mas viejo de esos datos, para decir de cuando 
 
 async function ghJson(ruta){
   const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${ruta}`,{
+    // GitHub marca sus respuestas max-age=60: sin esto el navegador devolvía la copia
+    // guardada durante un minuto, y la respuesta del agente aparecía hasta 60 s tarde.
+    // no-cache revalida con ETag: si nada cambió, GitHub responde 304 sin gastar cuota.
+    cache: "no-cache",
     headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github.raw+json"}});
   if(r.headers.get("X-Salud-Offline")){
     SIN_CONEXION = true;
@@ -394,9 +398,41 @@ async function ghDispatch(){
   }
 }
 
-function despertarAgenteSiToca(){
+/* Al abrir la app solo se despierta al agente si hay trabajo: registros esperando en el
+   repo, o un tablero de hace más de una hora (para traer Withings). Antes lo despertaba
+   siempre, y como GitHub corre una ejecución a la vez, el registro que hacías justo
+   después de abrir quedaba en la fila detrás de esa corrida vacía. */
+async function despertarSiHaceFalta(){
   const ultimo = +(localStorage.getItem("ultimo_dispatch")||0);
-  if(Date.now()-ultimo > 5*60*1000){ localStorage.setItem("ultimo_dispatch", Date.now()); ghDispatch(); }
+  if(Date.now() - ultimo < 5*60*1000) return;
+  const [lista, estado] = await Promise.all([
+    ghJson("entradas").catch(() => null),
+    ghJson("dashboard/estado.json").catch(() => null),
+  ]);
+  const hayEsperando = Array.isArray(lista) && lista.some(x => x.type === "file" && x.name.endsWith(".json"));
+  const generado = Date.parse((estado && estado.generado) || "");
+  const tableroViejo = !generado || Date.now() - generado > 60*60*1000;
+  if(!hayEsperando && !tableroViejo) return;
+  localStorage.setItem("ultimo_dispatch", Date.now());
+  ghDispatch();
+}
+
+/* Varias casillas seguidas = un solo aviso al agente. Cinco avisos en un segundo no
+   aceleran nada (GitHub corre una ejecución a la vez) y compiten entre sí. */
+let TEMPORIZADOR_DESPERTAR = null;
+const NOMBRES_POR_CONFIRMAR = [];
+function despertarAgrupado(nombre){
+  NOMBRES_POR_CONFIRMAR.push(nombre);
+  clearTimeout(TEMPORIZADOR_DESPERTAR);
+  TEMPORIZADOR_DESPERTAR = setTimeout(async () => {
+    const nombres = NOMBRES_POR_CONFIRMAR.splice(0).join(", ");
+    localStorage.setItem("ultimo_dispatch", Date.now());
+    const despertar = await ghDispatch();
+    avisoRegistro(despertar.ok
+      ? `Registrado: ${nombres}. Se suma al día en un momento…`
+      : `Registrado: ${nombres}, pero no pude despertar al agente: ${despertar.motivo}.`);
+    if(despertar.ok) esperarRespuesta($("#reg-btn"));
+  }, 2500);
 }
 
 async function enviarRegistro(){
@@ -493,9 +529,14 @@ function bannerPendientes(estado){
   if(!p.length) return "";
   const motivos = [...new Set(p.map(x => x.motivo))];
   const n = p.length;
+  // Un registro en pausa NO se reintenta solo (se pausó para no seguir cobrando):
+  // decir "se procesan solos" ahí sería mentir.
+  const enPausa = p.some(x => /en pausa/i.test(x.motivo || ""));
+  const titulo = enPausa ? `en pausa` : `esperando a la IA`;
+  const cierre = enPausa ? "" : " Nada se pierde: se procesan solos al reintentar.";
   return `<div class="banner-sistema banner-espera">
-    <span><b>${n} registro${n>1?"s":""} esperando a la IA.</b> ${motivos[0]}
-    ${n>1?` (y ${n-1} más en la misma cola)`:""} Nada se pierde: se procesan solos al reintentar.</span>
+    <span><b>${n} registro${n>1?"s":""} ${titulo}.</b> ${motivos[0]}
+    ${n>1?` (y ${n-1} más en la misma cola)`:""}${cierre}</span>
   </div>`;
 }
 
@@ -595,16 +636,14 @@ async function marcarItem(claveBase, i, marcado){
   localStorage.setItem(yaEnviado, "1");
   const id = new Date().toISOString().replace(/[:.]/g,"-");
   const entrada = {id, ruta:`entradas/${id}.json`,
-                   cuerpo:{texto:`Tomé ${nombre}`, fotos:[], zona: zonaDelTelefono(),
+                   cuerpo:{texto:`Tomé ${nombre}`, fotos:[], origen:"casilla", item: nombre,
+                           lista: claveBase, zona: zonaDelTelefono(),
                            hora_local: fechaHoraLocal(new Date())},
                    mensaje:`entrada app ${id}`};
   try{
     await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
-    const despertar = await ghDispatch();
-    avisoRegistro(despertar.ok
-      ? `Registrado: ${nombre}. El agente lo está sumando al día…`
-      : `Registrado: ${nombre}, pero no pude despertar al agente: ${despertar.motivo}.`);
-    if(despertar.ok) esperarRespuesta($("#reg-btn"));
+    avisoRegistro(`Registrado: ${nombre}…`);
+    despertarAgrupado(nombre);
   }catch(e){
     if(esFalloDeRed(e)){
       await BD.guardar(entrada).catch(()=>{});
@@ -728,7 +767,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v19.8.0</div>`;
+    <div class="version">v19.10.0</div>`;
   animar();
 }
 
@@ -867,7 +906,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v19.8.0</div>
+    <div class="version">v19.10.0</div>
   </div>`;
 }
 
@@ -923,7 +962,7 @@ window.addEventListener("online", ()=>{ sincronizarPendientes().then(()=>{ if(SI
 
 document.addEventListener("DOMContentLoaded", ()=>{
   registrarServiceWorker();
-  if(cfg.token) despertarAgenteSiToca();
+  if(cfg.token) despertarSiHaceFalta();
   render().then(()=>sincronizarPendientes());
 });
 </script>
