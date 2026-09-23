@@ -1,0 +1,3330 @@
+{
+ "fuente": "USDA FoodData Central, SR Legacy (abril 2018). Valores por 100 g.",
+ "generado": "2026-09-22",
+ "campos": [
+  "kcal",
+  "proteina_g",
+  "carbohidratos_g",
+  "grasa_g",
+  "fibra_g",
+  "sodio_mg",
+  "potasio_mg",
+  "magnesio_mg",
+  "vitamina_d_ug"
+ ],
+ "alimentos": [
+  {
+   "id": "pollo_pechuga",
+   "nombre": "Pechuga de pollo (cocida, sin piel)",
+   "buscar": [
+    "pollo",
+    "pechuga",
+    "pechuga de pollo",
+    "pollo a la plancha",
+    "pollo asado"
+   ],
+   "porciones": [
+    [
+     "1 pechuga mediana",
+     150
+    ],
+    [
+     "1 filete chico",
+     100
+    ],
+    [
+     "1 taza picada",
+     140
+    ]
+   ],
+   "por_100g": {
+    "kcal": 165.0,
+    "proteina_g": 31.02,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 3.57,
+    "fibra_g": 0.0,
+    "sodio_mg": 74.0,
+    "potasio_mg": 256.0,
+    "magnesio_mg": 29.0,
+    "vitamina_d_ug": 0.1
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171477,
+    "usda": "Chicken, broilers or fryers, breast, meat only, cooked, roasted"
+   }
+  },
+  {
+   "id": "pollo_trutro",
+   "nombre": "Trutro de pollo (cocido, sin piel)",
+   "buscar": [
+    "trutro",
+    "pierna de pollo",
+    "muslo"
+   ],
+   "porciones": [
+    [
+     "1 trutro corto",
+     80
+    ],
+    [
+     "1 trutro entero",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 179.0,
+    "proteina_g": 24.76,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 8.15,
+    "fibra_g": 0.0,
+    "sodio_mg": 106.0,
+    "potasio_mg": 269.0,
+    "magnesio_mg": 24.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172388,
+    "usda": "Chicken, broilers or fryers, thigh, meat only, cooked, roasted"
+   }
+  },
+  {
+   "id": "vacuno_magro",
+   "nombre": "Carne de vacuno magra (bistec, posta, lomo)",
+   "buscar": [
+    "carne",
+    "bistec",
+    "posta",
+    "lomo liso",
+    "filete",
+    "vacuno"
+   ],
+   "porciones": [
+    [
+     "1 bistec",
+     150
+    ],
+    [
+     "1 porción chica",
+     100
+    ]
+   ],
+   "por_100g": {
+    "kcal": 187.0,
+    "proteina_g": 29.51,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 6.72,
+    "fibra_g": 0.0,
+    "sodio_mg": 61.0,
+    "potasio_mg": 369.0,
+    "magnesio_mg": 25.0,
+    "vitamina_d_ug": 0.1
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173118,
+    "usda": "Beef, top sirloin, steak, separable lean only, trimmed to 1/8\" fat, choice, cooked, broiled"
+   }
+  },
+  {
+   "id": "vacuno_molido",
+   "nombre": "Carne molida de vacuno (cocida)",
+   "buscar": [
+    "carne molida",
+    "carne picada",
+    "pino",
+    "molida"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     120
+    ],
+    [
+     "1/2 taza",
+     60
+    ]
+   ],
+   "por_100g": {
+    "kcal": 256.0,
+    "proteina_g": 27.73,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 15.3,
+    "fibra_g": 0.0,
+    "sodio_mg": 89.0,
+    "potasio_mg": 407.0,
+    "magnesio_mg": 25.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 174034,
+    "usda": "Beef, ground, 85% lean meat / 15% fat, crumbles, cooked, pan-browned"
+   }
+  },
+  {
+   "id": "hamburguesa",
+   "nombre": "Hamburguesa de vacuno, solo carne (cocida)",
+   "buscar": [
+    "hamburguesa",
+    "burger"
+   ],
+   "porciones": [
+    [
+     "1 hamburguesa de 125 g (peso crudo)",
+     94
+    ],
+    [
+     "1 hamburguesa de 100 g (peso crudo)",
+     75
+    ]
+   ],
+   "por_100g": {
+    "kcal": 250.0,
+    "proteina_g": 25.93,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 15.41,
+    "fibra_g": 0.0,
+    "sodio_mg": 72.0,
+    "potasio_mg": 318.0,
+    "magnesio_mg": 21.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": "El peso de la etiqueta es crudo; cocida pierde ~25 %.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 174032,
+    "usda": "Beef, ground, 85% lean meat / 15% fat, patty, cooked, broiled"
+   }
+  },
+  {
+   "id": "cerdo_lomo",
+   "nombre": "Lomo de cerdo (cocido)",
+   "buscar": [
+    "cerdo",
+    "lomo de cerdo",
+    "chuleta"
+   ],
+   "porciones": [
+    [
+     "1 bistec",
+     120
+    ]
+   ],
+   "por_100g": {
+    "kcal": 143.0,
+    "proteina_g": 26.17,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 3.51,
+    "fibra_g": 0.0,
+    "sodio_mg": 57.0,
+    "potasio_mg": 421.0,
+    "magnesio_mg": 29.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168250,
+    "usda": "Pork, fresh, loin, tenderloin, separable lean only, cooked, roasted"
+   }
+  },
+  {
+   "id": "salmon",
+   "nombre": "Salmón (cocido)",
+   "buscar": [
+    "salmon",
+    "salmón"
+   ],
+   "porciones": [
+    [
+     "1 filete",
+     150
+    ],
+    [
+     "1 porción chica",
+     100
+    ]
+   ],
+   "por_100g": {
+    "kcal": 206.0,
+    "proteina_g": 22.1,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 12.35,
+    "fibra_g": 0.0,
+    "sodio_mg": 61.0,
+    "potasio_mg": 384.0,
+    "magnesio_mg": 30.0,
+    "vitamina_d_ug": 13.1
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 175168,
+    "usda": "Fish, salmon, Atlantic, farmed, cooked, dry heat"
+   }
+  },
+  {
+   "id": "pescado_blanco",
+   "nombre": "Pescado blanco: merluza, reineta, congrio (cocido)",
+   "buscar": [
+    "merluza",
+    "reineta",
+    "congrio",
+    "pescado"
+   ],
+   "porciones": [
+    [
+     "1 filete",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 105.0,
+    "proteina_g": 22.83,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 0.86,
+    "fibra_g": 0.0,
+    "sodio_mg": 78.0,
+    "potasio_mg": 244.0,
+    "magnesio_mg": 42.0,
+    "vitamina_d_ug": 1.2
+   },
+   "sin_dato": [],
+   "nota": "Aproximado: bacalao del USDA como equivalente de pescado blanco chileno.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171956,
+    "usda": "Fish, cod, Atlantic, cooked, dry heat"
+   }
+  },
+  {
+   "id": "atun_agua",
+   "nombre": "Atún en agua (lata, escurrido)",
+   "buscar": [
+    "atun",
+    "atún"
+   ],
+   "porciones": [
+    [
+     "1 lata",
+     120
+    ],
+    [
+     "1/2 lata",
+     60
+    ]
+   ],
+   "por_100g": {
+    "kcal": 86.0,
+    "proteina_g": 19.44,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 0.96,
+    "fibra_g": 0.0,
+    "sodio_mg": 247.0,
+    "potasio_mg": 179.0,
+    "magnesio_mg": 23.0,
+    "vitamina_d_ug": 1.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173709,
+    "usda": "Fish, tuna, light, canned in water, drained solids (Includes foods for USDA's Food Distribution Program)"
+   }
+  },
+  {
+   "id": "huevo",
+   "nombre": "Huevo entero (cocido o revuelto)",
+   "buscar": [
+    "huevo",
+    "huevos",
+    "huevo duro",
+    "huevos revueltos"
+   ],
+   "porciones": [
+    [
+     "1 huevo",
+     50
+    ]
+   ],
+   "por_100g": {
+    "kcal": 155.0,
+    "proteina_g": 12.58,
+    "carbohidratos_g": 1.12,
+    "grasa_g": 10.61,
+    "fibra_g": 0.0,
+    "sodio_mg": 124.0,
+    "potasio_mg": 126.0,
+    "magnesio_mg": 10.0,
+    "vitamina_d_ug": 2.2
+   },
+   "sin_dato": [],
+   "nota": "Si tus huevos tienen etiqueta, manda la etiqueta.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173424,
+    "usda": "Egg, whole, cooked, hard-boiled"
+   }
+  },
+  {
+   "id": "clara_huevo",
+   "nombre": "Clara de huevo",
+   "buscar": [
+    "clara",
+    "claras"
+   ],
+   "porciones": [
+    [
+     "1 clara",
+     33
+    ]
+   ],
+   "por_100g": {
+    "kcal": 52.0,
+    "proteina_g": 10.9,
+    "carbohidratos_g": 0.73,
+    "grasa_g": 0.17,
+    "fibra_g": 0.0,
+    "sodio_mg": 166.0,
+    "potasio_mg": 163.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172183,
+    "usda": "Egg, white, raw, fresh"
+   }
+  },
+  {
+   "id": "jamon",
+   "nombre": "Jamón de cerdo",
+   "buscar": [
+    "jamon",
+    "jamón"
+   ],
+   "porciones": [
+    [
+     "1 lámina",
+     20
+    ]
+   ],
+   "por_100g": {
+    "kcal": 164.0,
+    "proteina_g": 16.6,
+    "carbohidratos_g": 3.63,
+    "grasa_g": 8.8,
+    "fibra_g": 1.3,
+    "sodio_mg": 814.0,
+    "potasio_mg": 287.0,
+    "magnesio_mg": 22.0,
+    "vitamina_d_ug": 0.7
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173864,
+    "usda": "Ham, sliced, regular (approximately 11% fat)"
+   }
+  },
+  {
+   "id": "jamon_pavo",
+   "nombre": "Jamón de pavo",
+   "buscar": [
+    "jamon de pavo",
+    "pavo"
+   ],
+   "porciones": [
+    [
+     "1 lámina",
+     20
+    ]
+   ],
+   "por_100g": {
+    "kcal": 106.0,
+    "proteina_g": 14.81,
+    "carbohidratos_g": 2.2,
+    "grasa_g": 3.77,
+    "fibra_g": 0.0,
+    "sodio_mg": 898.0,
+    "potasio_mg": 371.0,
+    "magnesio_mg": 19.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172941,
+    "usda": "Turkey breast, sliced, prepackaged"
+   }
+  },
+  {
+   "id": "vienesa",
+   "nombre": "Vienesa",
+   "buscar": [
+    "vienesa",
+    "salchicha",
+    "hot dog"
+   ],
+   "porciones": [
+    [
+     "1 vienesa",
+     45
+    ]
+   ],
+   "por_100g": {
+    "kcal": 315.0,
+    "proteina_g": 11.69,
+    "carbohidratos_g": 2.97,
+    "grasa_g": 28.1,
+    "fibra_g": 0.0,
+    "sodio_mg": 865.0,
+    "potasio_mg": 364.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.9
+   },
+   "sin_dato": [],
+   "nota": "Aproximado: vienesa de vacuno del USDA.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173862,
+    "usda": "Frankfurter, beef, unheated"
+   }
+  },
+  {
+   "id": "queso_gauda",
+   "nombre": "Queso gauda / mantecoso",
+   "buscar": [
+    "queso",
+    "gauda",
+    "mantecoso",
+    "queso laminado"
+   ],
+   "porciones": [
+    [
+     "1 lámina",
+     18
+    ]
+   ],
+   "por_100g": {
+    "kcal": 356.0,
+    "proteina_g": 24.94,
+    "carbohidratos_g": 2.22,
+    "grasa_g": 27.44,
+    "fibra_g": 0.0,
+    "sodio_mg": 819.0,
+    "potasio_mg": 121.0,
+    "magnesio_mg": 29.0,
+    "vitamina_d_ug": 0.5
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171241,
+    "usda": "Cheese, gouda"
+   }
+  },
+  {
+   "id": "quesillo",
+   "nombre": "Quesillo / queso fresco",
+   "buscar": [
+    "quesillo",
+    "queso fresco"
+   ],
+   "porciones": [
+    [
+     "1 rebanada",
+     30
+    ]
+   ],
+   "por_100g": {
+    "kcal": 299.0,
+    "proteina_g": 18.09,
+    "carbohidratos_g": 2.98,
+    "grasa_g": 23.82,
+    "fibra_g": 0.0,
+    "sodio_mg": 751.0,
+    "potasio_mg": 129.0,
+    "magnesio_mg": 24.0,
+    "vitamina_d_ug": 2.7
+   },
+   "sin_dato": [],
+   "nota": "Aproximado: queso fresco del USDA.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172223,
+    "usda": "Cheese, fresh, queso fresco"
+   }
+  },
+  {
+   "id": "leche_descremada",
+   "nombre": "Leche descremada",
+   "buscar": [
+    "leche descremada"
+   ],
+   "porciones": [
+    [
+     "1 vaso (200 ml)",
+     206
+    ],
+    [
+     "1 taza",
+     245
+    ],
+    [
+     "un chorrito",
+     30
+    ]
+   ],
+   "por_100g": {
+    "kcal": 34.0,
+    "proteina_g": 3.37,
+    "carbohidratos_g": 4.96,
+    "grasa_g": 0.08,
+    "fibra_g": 0.0,
+    "sodio_mg": 42.0,
+    "potasio_mg": 156.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 1.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": [
+    "un chorrito",
+    30
+   ],
+   "fuente": {
+    "fdc_id": 171269,
+    "usda": "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)"
+   }
+  },
+  {
+   "id": "leche_semi",
+   "nombre": "Leche semidescremada",
+   "buscar": [
+    "leche semidescremada",
+    "leche semi"
+   ],
+   "porciones": [
+    [
+     "1 vaso (200 ml)",
+     206
+    ],
+    [
+     "un chorrito",
+     30
+    ]
+   ],
+   "por_100g": {
+    "kcal": 50.0,
+    "proteina_g": 3.3,
+    "carbohidratos_g": 4.8,
+    "grasa_g": 1.98,
+    "fibra_g": 0.0,
+    "sodio_mg": 47.0,
+    "potasio_mg": 140.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 1.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": [
+    "un chorrito",
+    30
+   ],
+   "fuente": {
+    "fdc_id": 171267,
+    "usda": "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D"
+   }
+  },
+  {
+   "id": "leche_entera",
+   "nombre": "Leche entera",
+   "buscar": [
+    "leche",
+    "leche entera"
+   ],
+   "porciones": [
+    [
+     "1 vaso (200 ml)",
+     206
+    ],
+    [
+     "un chorrito",
+     30
+    ]
+   ],
+   "por_100g": {
+    "kcal": 61.0,
+    "proteina_g": 3.15,
+    "carbohidratos_g": 4.8,
+    "grasa_g": 3.25,
+    "fibra_g": 0.0,
+    "sodio_mg": 43.0,
+    "potasio_mg": 132.0,
+    "magnesio_mg": 10.0,
+    "vitamina_d_ug": 1.3
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": [
+    "un chorrito",
+    30
+   ],
+   "fuente": {
+    "fdc_id": 171265,
+    "usda": "Milk, whole, 3.25% milkfat, with added vitamin D"
+   }
+  },
+  {
+   "id": "yogurt_natural",
+   "nombre": "Yogurt natural",
+   "buscar": [
+    "yogurt",
+    "yogur"
+   ],
+   "porciones": [
+    [
+     "1 pote",
+     125
+    ]
+   ],
+   "por_100g": {
+    "kcal": 61.0,
+    "proteina_g": 3.47,
+    "carbohidratos_g": 4.66,
+    "grasa_g": 3.25,
+    "fibra_g": 0.0,
+    "sodio_mg": 46.0,
+    "potasio_mg": 155.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.1
+   },
+   "sin_dato": [],
+   "nota": "Los yogures con marca (Soprole, Colun) salen de tus etiquetas.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171284,
+    "usda": "Yogurt, plain, whole milk"
+   }
+  },
+  {
+   "id": "yogurt_griego",
+   "nombre": "Yogurt griego natural sin grasa",
+   "buscar": [
+    "griego",
+    "yogurt griego"
+   ],
+   "porciones": [
+    [
+     "1 pote",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 59.0,
+    "proteina_g": 10.19,
+    "carbohidratos_g": 3.6,
+    "grasa_g": 0.39,
+    "fibra_g": 0.0,
+    "sodio_mg": 36.0,
+    "potasio_mg": 141.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170894,
+    "usda": "Yogurt, Greek, plain, nonfat (Includes foods for USDA's Food Distribution Program)"
+   }
+  },
+  {
+   "id": "porotos",
+   "nombre": "Porotos (cocidos)",
+   "buscar": [
+    "porotos",
+    "frijoles",
+    "porotos con riendas"
+   ],
+   "porciones": [
+    [
+     "1 plato",
+     180
+    ],
+    [
+     "1/2 taza",
+     90
+    ]
+   ],
+   "por_100g": {
+    "kcal": 139.0,
+    "proteina_g": 9.73,
+    "carbohidratos_g": 25.09,
+    "grasa_g": 0.35,
+    "fibra_g": 6.3,
+    "sodio_mg": 6.0,
+    "potasio_mg": 561.0,
+    "magnesio_mg": 63.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 175203,
+    "usda": "Beans, white, mature seeds, cooked, boiled, without salt"
+   }
+  },
+  {
+   "id": "lentejas",
+   "nombre": "Lentejas (cocidas)",
+   "buscar": [
+    "lentejas"
+   ],
+   "porciones": [
+    [
+     "1 plato",
+     200
+    ],
+    [
+     "1/2 taza",
+     100
+    ]
+   ],
+   "por_100g": {
+    "kcal": 116.0,
+    "proteina_g": 9.02,
+    "carbohidratos_g": 20.13,
+    "grasa_g": 0.38,
+    "fibra_g": 7.9,
+    "sodio_mg": 2.0,
+    "potasio_mg": 369.0,
+    "magnesio_mg": 36.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172421,
+    "usda": "Lentils, mature seeds, cooked, boiled, without salt"
+   }
+  },
+  {
+   "id": "garbanzos",
+   "nombre": "Garbanzos (cocidos)",
+   "buscar": [
+    "garbanzos"
+   ],
+   "porciones": [
+    [
+     "1 plato",
+     164
+    ],
+    [
+     "1/2 taza",
+     82
+    ]
+   ],
+   "por_100g": {
+    "kcal": 164.0,
+    "proteina_g": 8.86,
+    "carbohidratos_g": 27.42,
+    "grasa_g": 2.59,
+    "fibra_g": 7.6,
+    "sodio_mg": 7.0,
+    "potasio_mg": 291.0,
+    "magnesio_mg": 48.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173757,
+    "usda": "Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, without salt"
+   }
+  },
+  {
+   "id": "arroz_blanco",
+   "nombre": "Arroz blanco (cocido)",
+   "buscar": [
+    "arroz",
+    "arroz blanco"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     158
+    ],
+    [
+     "1/2 taza",
+     79
+    ],
+    [
+     "1 porción de plato",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 130.0,
+    "proteina_g": 2.69,
+    "carbohidratos_g": 28.17,
+    "grasa_g": 0.28,
+    "fibra_g": 0.4,
+    "sodio_mg": 1.0,
+    "potasio_mg": 35.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168878,
+    "usda": "Rice, white, long-grain, regular, enriched, cooked"
+   }
+  },
+  {
+   "id": "arroz_integral",
+   "nombre": "Arroz integral (cocido)",
+   "buscar": [
+    "arroz integral"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     195
+    ]
+   ],
+   "por_100g": {
+    "kcal": 123.0,
+    "proteina_g": 2.74,
+    "carbohidratos_g": 25.58,
+    "grasa_g": 0.97,
+    "fibra_g": 1.6,
+    "sodio_mg": 4.0,
+    "potasio_mg": 86.0,
+    "magnesio_mg": 39.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169704,
+    "usda": "Rice, brown, long-grain, cooked (Includes foods for USDA's Food Distribution Program)"
+   }
+  },
+  {
+   "id": "fideos",
+   "nombre": "Fideos / pasta (cocidos)",
+   "buscar": [
+    "fideos",
+    "pasta",
+    "tallarines",
+    "spaghetti",
+    "penne"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     140
+    ],
+    [
+     "1 plato",
+     250
+    ]
+   ],
+   "por_100g": {
+    "kcal": 158.0,
+    "proteina_g": 5.8,
+    "carbohidratos_g": 30.86,
+    "grasa_g": 0.93,
+    "fibra_g": 1.8,
+    "sodio_mg": 1.0,
+    "potasio_mg": 44.0,
+    "magnesio_mg": 18.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169737,
+    "usda": "Pasta, cooked, enriched, without added salt"
+   }
+  },
+  {
+   "id": "papa",
+   "nombre": "Papa cocida",
+   "buscar": [
+    "papa",
+    "papas",
+    "papa cocida"
+   ],
+   "porciones": [
+    [
+     "1 papa mediana",
+     150
+    ],
+    [
+     "1 papa chica",
+     90
+    ]
+   ],
+   "por_100g": {
+    "kcal": 86.0,
+    "proteina_g": 1.71,
+    "carbohidratos_g": 20.01,
+    "grasa_g": 0.1,
+    "fibra_g": 1.8,
+    "sodio_mg": 5.0,
+    "potasio_mg": 328.0,
+    "magnesio_mg": 20.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170440,
+    "usda": "Potatoes, boiled, cooked without skin, flesh, without salt"
+   }
+  },
+  {
+   "id": "pure",
+   "nombre": "Puré de papas",
+   "buscar": [
+    "pure",
+    "puré"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     210
+    ]
+   ],
+   "por_100g": {
+    "kcal": 113.0,
+    "proteina_g": 1.86,
+    "carbohidratos_g": 16.81,
+    "grasa_g": 4.22,
+    "fibra_g": 1.5,
+    "sodio_mg": 317.0,
+    "potasio_mg": 284.0,
+    "magnesio_mg": 18.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168555,
+    "usda": "Potatoes, mashed, home-prepared, whole milk and butter added"
+   }
+  },
+  {
+   "id": "papas_fritas",
+   "nombre": "Papas fritas",
+   "buscar": [
+    "papas fritas",
+    "papas fritas caseras"
+   ],
+   "porciones": [
+    [
+     "1 porción",
+     120
+    ]
+   ],
+   "por_100g": {
+    "kcal": 312.0,
+    "proteina_g": 3.43,
+    "carbohidratos_g": 41.44,
+    "grasa_g": 14.73,
+    "fibra_g": 3.8,
+    "sodio_mg": 210.0,
+    "potasio_mg": 579.0,
+    "magnesio_mg": 35.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170698,
+    "usda": "Fast foods, potato, french fried in vegetable oil"
+   }
+  },
+  {
+   "id": "papas_mcdonalds",
+   "nombre": "Papas fritas McDonald's",
+   "buscar": [
+    "mcdonalds",
+    "papas mcdonald",
+    "mc donalds"
+   ],
+   "porciones": [
+    [
+     "chica",
+     71
+    ],
+    [
+     "mediana",
+     111
+    ],
+    [
+     "grande",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 323.0,
+    "proteina_g": 3.41,
+    "carbohidratos_g": 42.58,
+    "grasa_g": 15.47,
+    "fibra_g": 3.9,
+    "sodio_mg": 189.0,
+    "potasio_mg": 596.0,
+    "magnesio_mg": 37.0,
+    "vitamina_d_ug": 0
+   },
+   "sin_dato": [
+    "vitamina_d_ug"
+   ],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170721,
+    "usda": "McDONALD'S, french fries"
+   }
+  },
+  {
+   "id": "camote",
+   "nombre": "Camote (cocido)",
+   "buscar": [
+    "camote",
+    "batata"
+   ],
+   "porciones": [
+    [
+     "1 camote",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 90.0,
+    "proteina_g": 2.01,
+    "carbohidratos_g": 20.71,
+    "grasa_g": 0.15,
+    "fibra_g": 3.3,
+    "sodio_mg": 36.0,
+    "potasio_mg": 475.0,
+    "magnesio_mg": 27.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168483,
+    "usda": "Sweet potato, cooked, baked in skin, flesh, without salt"
+   }
+  },
+  {
+   "id": "choclo",
+   "nombre": "Choclo (cocido)",
+   "buscar": [
+    "choclo",
+    "maiz",
+    "maíz"
+   ],
+   "porciones": [
+    [
+     "1 choclo",
+     90
+    ],
+    [
+     "1 taza de granos",
+     165
+    ]
+   ],
+   "por_100g": {
+    "kcal": 96.0,
+    "proteina_g": 3.41,
+    "carbohidratos_g": 20.98,
+    "grasa_g": 1.5,
+    "fibra_g": 2.4,
+    "sodio_mg": 1.0,
+    "potasio_mg": 218.0,
+    "magnesio_mg": 26.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169999,
+    "usda": "Corn, sweet, yellow, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "avena",
+   "nombre": "Avena (seca)",
+   "buscar": [
+    "avena"
+   ],
+   "porciones": [
+    [
+     "1/2 taza",
+     40
+    ],
+    [
+     "1 cucharada",
+     7
+    ]
+   ],
+   "por_100g": {
+    "kcal": 379.0,
+    "proteina_g": 13.15,
+    "carbohidratos_g": 67.7,
+    "grasa_g": 6.52,
+    "fibra_g": 10.1,
+    "sodio_mg": 6.0,
+    "potasio_mg": 362.0,
+    "magnesio_mg": 138.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173904,
+    "usda": "Cereals, oats, regular and quick, not fortified, dry"
+   }
+  },
+  {
+   "id": "granola",
+   "nombre": "Granola",
+   "buscar": [
+    "granola"
+   ],
+   "porciones": [
+    [
+     "1/2 taza",
+     60
+    ]
+   ],
+   "por_100g": {
+    "kcal": 489.0,
+    "proteina_g": 13.67,
+    "carbohidratos_g": 53.88,
+    "grasa_g": 24.31,
+    "fibra_g": 8.9,
+    "sodio_mg": 26.0,
+    "potasio_mg": 539.0,
+    "magnesio_mg": 168.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171646,
+    "usda": "Cereals ready-to-eat, granola, homemade"
+   }
+  },
+  {
+   "id": "marraqueta",
+   "nombre": "Marraqueta / pan batido",
+   "buscar": [
+    "marraqueta",
+    "pan batido",
+    "pan frances",
+    "pan"
+   ],
+   "porciones": [
+    [
+     "1 marraqueta",
+     100
+    ],
+    [
+     "1/2 marraqueta",
+     50
+    ]
+   ],
+   "por_100g": {
+    "kcal": 272.0,
+    "proteina_g": 10.75,
+    "carbohidratos_g": 51.88,
+    "grasa_g": 2.42,
+    "fibra_g": 2.2,
+    "sodio_mg": 602.0,
+    "potasio_mg": 117.0,
+    "magnesio_mg": 32.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": "Aproximado: pan francés del USDA; una marraqueta pesa ~100 g.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172675,
+    "usda": "Bread, french or vienna (includes sourdough)"
+   }
+  },
+  {
+   "id": "hallulla",
+   "nombre": "Hallulla",
+   "buscar": [
+    "hallulla"
+   ],
+   "porciones": [
+    [
+     "1 hallulla",
+     90
+    ]
+   ],
+   "por_100g": {
+    "kcal": 266.0,
+    "proteina_g": 8.85,
+    "carbohidratos_g": 49.42,
+    "grasa_g": 3.33,
+    "fibra_g": 2.7,
+    "sodio_mg": 490.0,
+    "potasio_mg": 126.0,
+    "magnesio_mg": 23.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": "Aproximado: pan blanco del USDA; la hallulla real tiene algo más de grasa.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 174924,
+    "usda": "Bread, white, commercially prepared (includes soft bread crumbs)"
+   }
+  },
+  {
+   "id": "pan_integral",
+   "nombre": "Pan integral de molde",
+   "buscar": [
+    "pan integral"
+   ],
+   "porciones": [
+    [
+     "1 rebanada",
+     32
+    ]
+   ],
+   "por_100g": {
+    "kcal": 252.0,
+    "proteina_g": 12.45,
+    "carbohidratos_g": 42.71,
+    "grasa_g": 3.5,
+    "fibra_g": 6.0,
+    "sodio_mg": 455.0,
+    "potasio_mg": 254.0,
+    "magnesio_mg": 75.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172688,
+    "usda": "Bread, whole-wheat, commercially prepared"
+   }
+  },
+  {
+   "id": "pan_molde",
+   "nombre": "Pan de molde blanco",
+   "buscar": [
+    "pan de molde",
+    "pan blanco"
+   ],
+   "porciones": [
+    [
+     "1 rebanada",
+     27
+    ]
+   ],
+   "por_100g": {
+    "kcal": 266.0,
+    "proteina_g": 8.85,
+    "carbohidratos_g": 49.42,
+    "grasa_g": 3.33,
+    "fibra_g": 2.7,
+    "sodio_mg": 490.0,
+    "potasio_mg": 126.0,
+    "magnesio_mg": 23.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 174924,
+    "usda": "Bread, white, commercially prepared (includes soft bread crumbs)"
+   }
+  },
+  {
+   "id": "pan_masa_madre",
+   "nombre": "Pan de masa madre",
+   "buscar": [
+    "masa madre",
+    "pan de masa madre",
+    "tostada",
+    "tostada de masa madre",
+    "sourdough"
+   ],
+   "porciones": [
+    [
+     "1 rebanada",
+     40
+    ],
+    [
+     "1 tostada",
+     40
+    ]
+   ],
+   "por_100g": {
+    "kcal": 272.0,
+    "proteina_g": 10.75,
+    "carbohidratos_g": 51.88,
+    "grasa_g": 2.42,
+    "fibra_g": 2.2,
+    "sodio_mg": 602.0,
+    "potasio_mg": 117.0,
+    "magnesio_mg": 32.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172675,
+    "usda": "Bread, french or vienna (includes sourdough)"
+   }
+  },
+  {
+   "id": "tomate",
+   "nombre": "Tomate",
+   "buscar": [
+    "tomate",
+    "tomates"
+   ],
+   "porciones": [
+    [
+     "1 tomate mediano",
+     120
+    ],
+    [
+     "1 taza",
+     180
+    ],
+    [
+     "unas rodajas",
+     60
+    ]
+   ],
+   "por_100g": {
+    "kcal": 18.0,
+    "proteina_g": 0.88,
+    "carbohidratos_g": 3.89,
+    "grasa_g": 0.2,
+    "fibra_g": 1.2,
+    "sodio_mg": 5.0,
+    "potasio_mg": 237.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170457,
+    "usda": "Tomatoes, red, ripe, raw, year round average"
+   }
+  },
+  {
+   "id": "lechuga",
+   "nombre": "Lechuga",
+   "buscar": [
+    "lechuga",
+    "ensalada verde"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     55
+    ],
+    [
+     "1 plato de ensalada",
+     100
+    ]
+   ],
+   "por_100g": {
+    "kcal": 14.0,
+    "proteina_g": 0.9,
+    "carbohidratos_g": 2.97,
+    "grasa_g": 0.14,
+    "fibra_g": 1.2,
+    "sodio_mg": 10.0,
+    "potasio_mg": 141.0,
+    "magnesio_mg": 7.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169248,
+    "usda": "Lettuce, iceberg (includes crisphead types), raw"
+   }
+  },
+  {
+   "id": "zanahoria",
+   "nombre": "Zanahoria",
+   "buscar": [
+    "zanahoria"
+   ],
+   "porciones": [
+    [
+     "1 zanahoria",
+     60
+    ],
+    [
+     "1 taza rallada",
+     110
+    ]
+   ],
+   "por_100g": {
+    "kcal": 41.0,
+    "proteina_g": 0.93,
+    "carbohidratos_g": 9.58,
+    "grasa_g": 0.24,
+    "fibra_g": 2.8,
+    "sodio_mg": 69.0,
+    "potasio_mg": 320.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170393,
+    "usda": "Carrots, raw"
+   }
+  },
+  {
+   "id": "pepino",
+   "nombre": "Pepino",
+   "buscar": [
+    "pepino"
+   ],
+   "porciones": [
+    [
+     "1/2 pepino",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 15.0,
+    "proteina_g": 0.65,
+    "carbohidratos_g": 3.63,
+    "grasa_g": 0.11,
+    "fibra_g": 0.5,
+    "sodio_mg": 2.0,
+    "potasio_mg": 147.0,
+    "magnesio_mg": 13.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168409,
+    "usda": "Cucumber, with peel, raw"
+   }
+  },
+  {
+   "id": "brocoli",
+   "nombre": "Brócoli (cocido)",
+   "buscar": [
+    "brocoli",
+    "brócoli"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     156
+    ]
+   ],
+   "por_100g": {
+    "kcal": 35.0,
+    "proteina_g": 2.38,
+    "carbohidratos_g": 7.18,
+    "grasa_g": 0.41,
+    "fibra_g": 3.3,
+    "sodio_mg": 41.0,
+    "potasio_mg": 293.0,
+    "magnesio_mg": 21.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169967,
+    "usda": "Broccoli, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "coliflor",
+   "nombre": "Coliflor (cocida)",
+   "buscar": [
+    "coliflor"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     124
+    ]
+   ],
+   "por_100g": {
+    "kcal": 23.0,
+    "proteina_g": 1.84,
+    "carbohidratos_g": 4.11,
+    "grasa_g": 0.45,
+    "fibra_g": 2.3,
+    "sodio_mg": 15.0,
+    "potasio_mg": 142.0,
+    "magnesio_mg": 9.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170397,
+    "usda": "Cauliflower, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "espinaca",
+   "nombre": "Espinaca (cocida)",
+   "buscar": [
+    "espinaca",
+    "espinacas"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     180
+    ]
+   ],
+   "por_100g": {
+    "kcal": 23.0,
+    "proteina_g": 2.97,
+    "carbohidratos_g": 3.75,
+    "grasa_g": 0.26,
+    "fibra_g": 2.4,
+    "sodio_mg": 70.0,
+    "potasio_mg": 466.0,
+    "magnesio_mg": 87.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168463,
+    "usda": "Spinach, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "zapallo_italiano",
+   "nombre": "Zapallo italiano (cocido)",
+   "buscar": [
+    "zapallo italiano",
+    "zucchini"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     180
+    ]
+   ],
+   "por_100g": {
+    "kcal": 15.0,
+    "proteina_g": 1.14,
+    "carbohidratos_g": 2.69,
+    "grasa_g": 0.36,
+    "fibra_g": 1.0,
+    "sodio_mg": 3.0,
+    "potasio_mg": 264.0,
+    "magnesio_mg": 19.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169292,
+    "usda": "Squash, summer, zucchini, includes skin, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "zapallo",
+   "nombre": "Zapallo camote (cocido)",
+   "buscar": [
+    "zapallo"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     205
+    ]
+   ],
+   "por_100g": {
+    "kcal": 40.0,
+    "proteina_g": 0.9,
+    "carbohidratos_g": 10.49,
+    "grasa_g": 0.09,
+    "fibra_g": 3.2,
+    "sodio_mg": 4.0,
+    "potasio_mg": 284.0,
+    "magnesio_mg": 29.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169296,
+    "usda": "Squash, winter, butternut, cooked, baked, without salt"
+   }
+  },
+  {
+   "id": "repollo",
+   "nombre": "Repollo",
+   "buscar": [
+    "repollo"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     89
+    ]
+   ],
+   "por_100g": {
+    "kcal": 25.0,
+    "proteina_g": 1.28,
+    "carbohidratos_g": 5.8,
+    "grasa_g": 0.1,
+    "fibra_g": 2.5,
+    "sodio_mg": 18.0,
+    "potasio_mg": 170.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169975,
+    "usda": "Cabbage, raw"
+   }
+  },
+  {
+   "id": "repollo_morado",
+   "nombre": "Repollo morado",
+   "buscar": [
+    "repollo morado"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     89
+    ]
+   ],
+   "por_100g": {
+    "kcal": 31.0,
+    "proteina_g": 1.43,
+    "carbohidratos_g": 7.37,
+    "grasa_g": 0.16,
+    "fibra_g": 2.1,
+    "sodio_mg": 27.0,
+    "potasio_mg": 243.0,
+    "magnesio_mg": 16.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169977,
+    "usda": "Cabbage, red, raw"
+   }
+  },
+  {
+   "id": "cebolla",
+   "nombre": "Cebolla",
+   "buscar": [
+    "cebolla"
+   ],
+   "porciones": [
+    [
+     "1/2 cebolla",
+     55
+    ]
+   ],
+   "por_100g": {
+    "kcal": 40.0,
+    "proteina_g": 1.1,
+    "carbohidratos_g": 9.34,
+    "grasa_g": 0.1,
+    "fibra_g": 1.7,
+    "sodio_mg": 4.0,
+    "potasio_mg": 146.0,
+    "magnesio_mg": 10.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170000,
+    "usda": "Onions, raw"
+   }
+  },
+  {
+   "id": "pimenton",
+   "nombre": "Pimentón",
+   "buscar": [
+    "pimenton",
+    "pimentón",
+    "morron"
+   ],
+   "porciones": [
+    [
+     "1 pimentón",
+     120
+    ]
+   ],
+   "por_100g": {
+    "kcal": 26.0,
+    "proteina_g": 0.99,
+    "carbohidratos_g": 6.03,
+    "grasa_g": 0.3,
+    "fibra_g": 2.1,
+    "sodio_mg": 4.0,
+    "potasio_mg": 211.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170108,
+    "usda": "Peppers, sweet, red, raw"
+   }
+  },
+  {
+   "id": "palta",
+   "nombre": "Palta",
+   "buscar": [
+    "palta",
+    "aguacate"
+   ],
+   "porciones": [
+    [
+     "1/2 palta",
+     70
+    ],
+    [
+     "1 palta",
+     140
+    ],
+    [
+     "1 cucharada",
+     15
+    ]
+   ],
+   "por_100g": {
+    "kcal": 167.0,
+    "proteina_g": 1.96,
+    "carbohidratos_g": 8.64,
+    "grasa_g": 15.41,
+    "fibra_g": 6.8,
+    "sodio_mg": 8.0,
+    "potasio_mg": 507.0,
+    "magnesio_mg": 29.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": [
+    "para untar",
+    35
+   ],
+   "fuente": {
+    "fdc_id": 171706,
+    "usda": "Avocados, raw, California"
+   }
+  },
+  {
+   "id": "porotos_verdes",
+   "nombre": "Porotos verdes (cocidos)",
+   "buscar": [
+    "porotos verdes",
+    "vainitas"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     125
+    ]
+   ],
+   "por_100g": {
+    "kcal": 35.0,
+    "proteina_g": 1.89,
+    "carbohidratos_g": 7.88,
+    "grasa_g": 0.28,
+    "fibra_g": 3.2,
+    "sodio_mg": 1.0,
+    "potasio_mg": 146.0,
+    "magnesio_mg": 18.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169141,
+    "usda": "Beans, snap, green, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "champinones",
+   "nombre": "Champiñones",
+   "buscar": [
+    "champiñones",
+    "champinones",
+    "hongos"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     70
+    ]
+   ],
+   "por_100g": {
+    "kcal": 22.0,
+    "proteina_g": 3.09,
+    "carbohidratos_g": 3.26,
+    "grasa_g": 0.34,
+    "fibra_g": 1.0,
+    "sodio_mg": 5.0,
+    "potasio_mg": 318.0,
+    "magnesio_mg": 9.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169251,
+    "usda": "Mushrooms, white, raw"
+   }
+  },
+  {
+   "id": "betarraga",
+   "nombre": "Betarraga (cocida)",
+   "buscar": [
+    "betarraga",
+    "remolacha"
+   ],
+   "porciones": [
+    [
+     "1 betarraga",
+     100
+    ]
+   ],
+   "por_100g": {
+    "kcal": 44.0,
+    "proteina_g": 1.68,
+    "carbohidratos_g": 9.96,
+    "grasa_g": 0.18,
+    "fibra_g": 2.0,
+    "sodio_mg": 77.0,
+    "potasio_mg": 305.0,
+    "magnesio_mg": 23.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169146,
+    "usda": "Beets, cooked, boiled, drained"
+   }
+  },
+  {
+   "id": "apio",
+   "nombre": "Apio",
+   "buscar": [
+    "apio"
+   ],
+   "porciones": [
+    [
+     "1 tallo",
+     40
+    ]
+   ],
+   "por_100g": {
+    "kcal": 14.0,
+    "proteina_g": 0.69,
+    "carbohidratos_g": 2.97,
+    "grasa_g": 0.17,
+    "fibra_g": 1.6,
+    "sodio_mg": 80.0,
+    "potasio_mg": 260.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169988,
+    "usda": "Celery, raw"
+   }
+  },
+  {
+   "id": "arvejas",
+   "nombre": "Arvejas (cocidas)",
+   "buscar": [
+    "arvejas",
+    "chicharos"
+   ],
+   "porciones": [
+    [
+     "1/2 taza",
+     80
+    ]
+   ],
+   "por_100g": {
+    "kcal": 78.0,
+    "proteina_g": 5.15,
+    "carbohidratos_g": 14.26,
+    "grasa_g": 0.27,
+    "fibra_g": 4.5,
+    "sodio_mg": 72.0,
+    "potasio_mg": 110.0,
+    "magnesio_mg": 22.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170017,
+    "usda": "Peas, green, frozen, cooked, boiled, drained, without salt"
+   }
+  },
+  {
+   "id": "platano",
+   "nombre": "Plátano",
+   "buscar": [
+    "platano",
+    "plátano",
+    "banana"
+   ],
+   "porciones": [
+    [
+     "1 plátano mediano",
+     118
+    ],
+    [
+     "1/2 plátano",
+     59
+    ],
+    [
+     "1/3 plátano",
+     40
+    ]
+   ],
+   "por_100g": {
+    "kcal": 89.0,
+    "proteina_g": 1.09,
+    "carbohidratos_g": 22.84,
+    "grasa_g": 0.33,
+    "fibra_g": 2.6,
+    "sodio_mg": 1.0,
+    "potasio_mg": 358.0,
+    "magnesio_mg": 27.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173944,
+    "usda": "Bananas, raw"
+   }
+  },
+  {
+   "id": "manzana",
+   "nombre": "Manzana",
+   "buscar": [
+    "manzana"
+   ],
+   "porciones": [
+    [
+     "1 manzana mediana",
+     182
+    ]
+   ],
+   "por_100g": {
+    "kcal": 52.0,
+    "proteina_g": 0.26,
+    "carbohidratos_g": 13.81,
+    "grasa_g": 0.17,
+    "fibra_g": 2.4,
+    "sodio_mg": 1.0,
+    "potasio_mg": 107.0,
+    "magnesio_mg": 5.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171688,
+    "usda": "Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)"
+   }
+  },
+  {
+   "id": "naranja",
+   "nombre": "Naranja",
+   "buscar": [
+    "naranja"
+   ],
+   "porciones": [
+    [
+     "1 naranja",
+     131
+    ]
+   ],
+   "por_100g": {
+    "kcal": 47.0,
+    "proteina_g": 0.94,
+    "carbohidratos_g": 11.75,
+    "grasa_g": 0.12,
+    "fibra_g": 2.4,
+    "sodio_mg": 0.0,
+    "potasio_mg": 181.0,
+    "magnesio_mg": 10.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169097,
+    "usda": "Oranges, raw, all commercial varieties"
+   }
+  },
+  {
+   "id": "mandarina",
+   "nombre": "Mandarina",
+   "buscar": [
+    "mandarina",
+    "clementina"
+   ],
+   "porciones": [
+    [
+     "1 mandarina",
+     88
+    ]
+   ],
+   "por_100g": {
+    "kcal": 53.0,
+    "proteina_g": 0.81,
+    "carbohidratos_g": 13.34,
+    "grasa_g": 0.31,
+    "fibra_g": 1.8,
+    "sodio_mg": 2.0,
+    "potasio_mg": 166.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169105,
+    "usda": "Tangerines, (mandarin oranges), raw"
+   }
+  },
+  {
+   "id": "frutillas",
+   "nombre": "Frutillas",
+   "buscar": [
+    "frutillas",
+    "frutilla",
+    "fresas"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     152
+    ],
+    [
+     "5 frutillas",
+     60
+    ],
+    [
+     "1 frutilla",
+     12
+    ]
+   ],
+   "por_100g": {
+    "kcal": 32.0,
+    "proteina_g": 0.67,
+    "carbohidratos_g": 7.68,
+    "grasa_g": 0.3,
+    "fibra_g": 2.0,
+    "sodio_mg": 1.0,
+    "potasio_mg": 153.0,
+    "magnesio_mg": 13.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 167762,
+    "usda": "Strawberries, raw"
+   }
+  },
+  {
+   "id": "arandanos",
+   "nombre": "Arándanos",
+   "buscar": [
+    "arandanos",
+    "arándanos"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     148
+    ],
+    [
+     "1 puñado",
+     50
+    ]
+   ],
+   "por_100g": {
+    "kcal": 57.0,
+    "proteina_g": 0.74,
+    "carbohidratos_g": 14.49,
+    "grasa_g": 0.33,
+    "fibra_g": 2.4,
+    "sodio_mg": 1.0,
+    "potasio_mg": 77.0,
+    "magnesio_mg": 6.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171711,
+    "usda": "Blueberries, raw"
+   }
+  },
+  {
+   "id": "frambuesas",
+   "nombre": "Frambuesas",
+   "buscar": [
+    "frambuesas"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     123
+    ]
+   ],
+   "por_100g": {
+    "kcal": 52.0,
+    "proteina_g": 1.2,
+    "carbohidratos_g": 11.94,
+    "grasa_g": 0.65,
+    "fibra_g": 6.5,
+    "sodio_mg": 1.0,
+    "potasio_mg": 151.0,
+    "magnesio_mg": 22.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 167755,
+    "usda": "Raspberries, raw"
+   }
+  },
+  {
+   "id": "uva",
+   "nombre": "Uvas",
+   "buscar": [
+    "uva",
+    "uvas"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     151
+    ],
+    [
+     "10 uvas",
+     50
+    ]
+   ],
+   "por_100g": {
+    "kcal": 69.0,
+    "proteina_g": 0.72,
+    "carbohidratos_g": 18.1,
+    "grasa_g": 0.16,
+    "fibra_g": 0.9,
+    "sodio_mg": 2.0,
+    "potasio_mg": 191.0,
+    "magnesio_mg": 7.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 174683,
+    "usda": "Grapes, red or green (European type, such as Thompson seedless), raw"
+   }
+  },
+  {
+   "id": "pera",
+   "nombre": "Pera",
+   "buscar": [
+    "pera"
+   ],
+   "porciones": [
+    [
+     "1 pera",
+     178
+    ]
+   ],
+   "por_100g": {
+    "kcal": 57.0,
+    "proteina_g": 0.36,
+    "carbohidratos_g": 15.23,
+    "grasa_g": 0.14,
+    "fibra_g": 3.1,
+    "sodio_mg": 1.0,
+    "potasio_mg": 116.0,
+    "magnesio_mg": 7.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169118,
+    "usda": "Pears, raw"
+   }
+  },
+  {
+   "id": "kiwi",
+   "nombre": "Kiwi",
+   "buscar": [
+    "kiwi"
+   ],
+   "porciones": [
+    [
+     "1 kiwi",
+     69
+    ]
+   ],
+   "por_100g": {
+    "kcal": 61.0,
+    "proteina_g": 1.14,
+    "carbohidratos_g": 14.66,
+    "grasa_g": 0.52,
+    "fibra_g": 3.0,
+    "sodio_mg": 3.0,
+    "potasio_mg": 312.0,
+    "magnesio_mg": 17.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168153,
+    "usda": "Kiwifruit, green, raw"
+   }
+  },
+  {
+   "id": "durazno",
+   "nombre": "Durazno",
+   "buscar": [
+    "durazno",
+    "melocoton"
+   ],
+   "porciones": [
+    [
+     "1 durazno",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 39.0,
+    "proteina_g": 0.91,
+    "carbohidratos_g": 9.54,
+    "grasa_g": 0.25,
+    "fibra_g": 1.5,
+    "sodio_mg": 0.0,
+    "potasio_mg": 190.0,
+    "magnesio_mg": 9.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169928,
+    "usda": "Peaches, yellow, raw"
+   }
+  },
+  {
+   "id": "sandia",
+   "nombre": "Sandía",
+   "buscar": [
+    "sandia",
+    "sandía"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     152
+    ],
+    [
+     "1 tajada",
+     280
+    ]
+   ],
+   "por_100g": {
+    "kcal": 30.0,
+    "proteina_g": 0.61,
+    "carbohidratos_g": 7.55,
+    "grasa_g": 0.15,
+    "fibra_g": 0.4,
+    "sodio_mg": 1.0,
+    "potasio_mg": 112.0,
+    "magnesio_mg": 10.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 167765,
+    "usda": "Watermelon, raw"
+   }
+  },
+  {
+   "id": "melon",
+   "nombre": "Melón",
+   "buscar": [
+    "melon",
+    "melón"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     160
+    ]
+   ],
+   "por_100g": {
+    "kcal": 34.0,
+    "proteina_g": 0.84,
+    "carbohidratos_g": 8.16,
+    "grasa_g": 0.19,
+    "fibra_g": 0.9,
+    "sodio_mg": 16.0,
+    "potasio_mg": 267.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169092,
+    "usda": "Melons, cantaloupe, raw"
+   }
+  },
+  {
+   "id": "pina",
+   "nombre": "Piña",
+   "buscar": [
+    "piña",
+    "pina"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     165
+    ]
+   ],
+   "por_100g": {
+    "kcal": 50.0,
+    "proteina_g": 0.54,
+    "carbohidratos_g": 13.12,
+    "grasa_g": 0.12,
+    "fibra_g": 1.4,
+    "sodio_mg": 1.0,
+    "potasio_mg": 109.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169124,
+    "usda": "Pineapple, raw, all varieties"
+   }
+  },
+  {
+   "id": "cerezas",
+   "nombre": "Cerezas",
+   "buscar": [
+    "cerezas",
+    "guindas"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     138
+    ]
+   ],
+   "por_100g": {
+    "kcal": 63.0,
+    "proteina_g": 1.06,
+    "carbohidratos_g": 16.01,
+    "grasa_g": 0.2,
+    "fibra_g": 2.1,
+    "sodio_mg": 0.0,
+    "potasio_mg": 222.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171719,
+    "usda": "Cherries, sweet, raw"
+   }
+  },
+  {
+   "id": "ciruela",
+   "nombre": "Ciruela",
+   "buscar": [
+    "ciruela"
+   ],
+   "porciones": [
+    [
+     "1 ciruela",
+     66
+    ]
+   ],
+   "por_100g": {
+    "kcal": 46.0,
+    "proteina_g": 0.7,
+    "carbohidratos_g": 11.42,
+    "grasa_g": 0.28,
+    "fibra_g": 1.4,
+    "sodio_mg": 0.0,
+    "potasio_mg": 157.0,
+    "magnesio_mg": 7.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169949,
+    "usda": "Plums, raw"
+   }
+  },
+  {
+   "id": "limon",
+   "nombre": "Jugo de limón",
+   "buscar": [
+    "limon",
+    "limón"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     15
+    ]
+   ],
+   "por_100g": {
+    "kcal": 22.0,
+    "proteina_g": 0.35,
+    "carbohidratos_g": 6.9,
+    "grasa_g": 0.24,
+    "fibra_g": 0.3,
+    "sodio_mg": 1.0,
+    "potasio_mg": 103.0,
+    "magnesio_mg": 6.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 167747,
+    "usda": "Lemon juice, raw"
+   }
+  },
+  {
+   "id": "almendras",
+   "nombre": "Almendras",
+   "buscar": [
+    "almendras",
+    "almendra"
+   ],
+   "porciones": [
+    [
+     "1 puñado",
+     28
+    ],
+    [
+     "10 almendras",
+     12
+    ],
+    [
+     "1 almendra",
+     1.2
+    ]
+   ],
+   "por_100g": {
+    "kcal": 579.0,
+    "proteina_g": 21.15,
+    "carbohidratos_g": 21.55,
+    "grasa_g": 49.93,
+    "fibra_g": 12.5,
+    "sodio_mg": 1.0,
+    "potasio_mg": 733.0,
+    "magnesio_mg": 270.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170567,
+    "usda": "Nuts, almonds"
+   }
+  },
+  {
+   "id": "nueces",
+   "nombre": "Nueces",
+   "buscar": [
+    "nueces",
+    "nuez"
+   ],
+   "porciones": [
+    [
+     "4 mitades",
+     8
+    ],
+    [
+     "1 puñado",
+     28
+    ],
+    [
+     "1 mitad",
+     2
+    ],
+    [
+     "1 nuez",
+     4
+    ]
+   ],
+   "por_100g": {
+    "kcal": 654.0,
+    "proteina_g": 15.23,
+    "carbohidratos_g": 13.71,
+    "grasa_g": 65.21,
+    "fibra_g": 6.7,
+    "sodio_mg": 2.0,
+    "potasio_mg": 441.0,
+    "magnesio_mg": 158.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170187,
+    "usda": "Nuts, walnuts, english"
+   }
+  },
+  {
+   "id": "mani",
+   "nombre": "Maní tostado sin sal",
+   "buscar": [
+    "mani",
+    "maní",
+    "cacahuate"
+   ],
+   "porciones": [
+    [
+     "1 puñado",
+     28
+    ],
+    [
+     "25 g",
+     25
+    ]
+   ],
+   "por_100g": {
+    "kcal": 587.0,
+    "proteina_g": 24.35,
+    "carbohidratos_g": 21.26,
+    "grasa_g": 49.66,
+    "fibra_g": 8.4,
+    "sodio_mg": 6.0,
+    "potasio_mg": 634.0,
+    "magnesio_mg": 178.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173806,
+    "usda": "Peanuts, all types, dry-roasted, without salt"
+   }
+  },
+  {
+   "id": "mantequilla_mani",
+   "nombre": "Mantequilla de maní",
+   "buscar": [
+    "mantequilla de mani",
+    "mantequilla de maní"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     16
+    ]
+   ],
+   "por_100g": {
+    "kcal": 598.0,
+    "proteina_g": 22.21,
+    "carbohidratos_g": 22.31,
+    "grasa_g": 51.36,
+    "fibra_g": 5.0,
+    "sodio_mg": 17.0,
+    "potasio_mg": 558.0,
+    "magnesio_mg": 168.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 172470,
+    "usda": "Peanut butter, smooth style, without salt"
+   }
+  },
+  {
+   "id": "aceite_oliva",
+   "nombre": "Aceite de oliva",
+   "buscar": [
+    "aceite",
+    "aceite de oliva"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     13.5
+    ],
+    [
+     "1 cucharadita",
+     4.5
+    ]
+   ],
+   "por_100g": {
+    "kcal": 884.0,
+    "proteina_g": 0.0,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 100.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 2.0,
+    "potasio_mg": 1.0,
+    "magnesio_mg": 0.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": [
+    "1 cucharadita",
+    4.5
+   ],
+   "fuente": {
+    "fdc_id": 171413,
+    "usda": "Oil, olive, salad or cooking"
+   }
+  },
+  {
+   "id": "mantequilla",
+   "nombre": "Mantequilla",
+   "buscar": [
+    "mantequilla"
+   ],
+   "porciones": [
+    [
+     "1 cucharadita",
+     5
+    ]
+   ],
+   "por_100g": {
+    "kcal": 717.0,
+    "proteina_g": 0.85,
+    "carbohidratos_g": 0.06,
+    "grasa_g": 81.11,
+    "fibra_g": 0.0,
+    "sodio_mg": 643.0,
+    "potasio_mg": 24.0,
+    "magnesio_mg": 2.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173410,
+    "usda": "Butter, salted"
+   }
+  },
+  {
+   "id": "mayonesa",
+   "nombre": "Mayonesa",
+   "buscar": [
+    "mayonesa",
+    "mayo"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     14
+    ],
+    [
+     "1 cucharadita",
+     5
+    ]
+   ],
+   "por_100g": {
+    "kcal": 680.0,
+    "proteina_g": 0.96,
+    "carbohidratos_g": 0.57,
+    "grasa_g": 74.85,
+    "fibra_g": 0.0,
+    "sodio_mg": 635.0,
+    "potasio_mg": 20.0,
+    "magnesio_mg": 1.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": [
+    "1 cucharadita",
+    5
+   ],
+   "fuente": {
+    "fdc_id": 171009,
+    "usda": "Salad dressing, mayonnaise, regular"
+   }
+  },
+  {
+   "id": "chocolate_amargo",
+   "nombre": "Chocolate amargo 70-85 %",
+   "buscar": [
+    "chocolate",
+    "chocolate amargo"
+   ],
+   "porciones": [
+    [
+     "1 cuadrado",
+     10
+    ]
+   ],
+   "por_100g": {
+    "kcal": 598.0,
+    "proteina_g": 7.79,
+    "carbohidratos_g": 45.9,
+    "grasa_g": 42.63,
+    "fibra_g": 10.9,
+    "sodio_mg": 20.0,
+    "potasio_mg": 715.0,
+    "magnesio_mg": 228.0,
+    "vitamina_d_ug": 0
+   },
+   "sin_dato": [
+    "vitamina_d_ug"
+   ],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170273,
+    "usda": "Chocolate, dark, 70-85% cacao solids"
+   }
+  },
+  {
+   "id": "chia",
+   "nombre": "Semillas de chía",
+   "buscar": [
+    "chia",
+    "chía"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     12
+    ]
+   ],
+   "por_100g": {
+    "kcal": 486.0,
+    "proteina_g": 16.54,
+    "carbohidratos_g": 42.12,
+    "grasa_g": 30.74,
+    "fibra_g": 34.4,
+    "sodio_mg": 16.0,
+    "potasio_mg": 407.0,
+    "magnesio_mg": 335.0,
+    "vitamina_d_ug": 0
+   },
+   "sin_dato": [
+    "vitamina_d_ug"
+   ],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 170554,
+    "usda": "Seeds, chia seeds, dried"
+   }
+  },
+  {
+   "id": "miel",
+   "nombre": "Miel",
+   "buscar": [
+    "miel"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     21
+    ],
+    [
+     "1 cucharadita",
+     7
+    ]
+   ],
+   "por_100g": {
+    "kcal": 304.0,
+    "proteina_g": 0.3,
+    "carbohidratos_g": 82.4,
+    "grasa_g": 0.0,
+    "fibra_g": 0.2,
+    "sodio_mg": 4.0,
+    "potasio_mg": 52.0,
+    "magnesio_mg": 2.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169640,
+    "usda": "Honey"
+   }
+  },
+  {
+   "id": "azucar",
+   "nombre": "Azúcar",
+   "buscar": [
+    "azucar",
+    "azúcar"
+   ],
+   "porciones": [
+    [
+     "1 cucharadita",
+     4
+    ]
+   ],
+   "por_100g": {
+    "kcal": 387.0,
+    "proteina_g": 0.0,
+    "carbohidratos_g": 99.98,
+    "grasa_g": 0.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 1.0,
+    "potasio_mg": 2.0,
+    "magnesio_mg": 0.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169655,
+    "usda": "Sugars, granulated"
+   }
+  },
+  {
+   "id": "manjar",
+   "nombre": "Manjar",
+   "buscar": [
+    "manjar",
+    "dulce de leche"
+   ],
+   "porciones": [
+    [
+     "1 cucharada",
+     19
+    ]
+   ],
+   "por_100g": {
+    "kcal": 315.0,
+    "proteina_g": 6.84,
+    "carbohidratos_g": 55.35,
+    "grasa_g": 7.35,
+    "fibra_g": 0.0,
+    "sodio_mg": 129.0,
+    "potasio_mg": 350.0,
+    "magnesio_mg": 22.0,
+    "vitamina_d_ug": 0.2
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173461,
+    "usda": "Dulce de Leche"
+   }
+  },
+  {
+   "id": "agua",
+   "nombre": "Agua",
+   "buscar": [
+    "agua"
+   ],
+   "porciones": [
+    [
+     "1 vaso",
+     250
+    ],
+    [
+     "1 botella (500 ml)",
+     500
+    ]
+   ],
+   "por_100g": {
+    "kcal": 0.0,
+    "proteina_g": 0.0,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 0.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 4.0,
+    "potasio_mg": 0.0,
+    "magnesio_mg": 1.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173647,
+    "usda": "Beverages, water, tap, drinking"
+   }
+  },
+  {
+   "id": "cafe",
+   "nombre": "Café (negro, sin azúcar)",
+   "buscar": [
+    "cafe",
+    "café",
+    "americano",
+    "cafe americano"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     240
+    ]
+   ],
+   "por_100g": {
+    "kcal": 1.0,
+    "proteina_g": 0.12,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 0.02,
+    "fibra_g": 0.0,
+    "sodio_mg": 2.0,
+    "potasio_mg": 49.0,
+    "magnesio_mg": 3.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 171890,
+    "usda": "Beverages, coffee, brewed, prepared with tap water"
+   }
+  },
+  {
+   "id": "te",
+   "nombre": "Té (sin azúcar)",
+   "buscar": [
+    "te",
+    "té"
+   ],
+   "porciones": [
+    [
+     "1 taza",
+     240
+    ]
+   ],
+   "por_100g": {
+    "kcal": 1.0,
+    "proteina_g": 0.0,
+    "carbohidratos_g": 0.3,
+    "grasa_g": 0.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 3.0,
+    "potasio_mg": 37.0,
+    "magnesio_mg": 3.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173227,
+    "usda": "Beverages, tea, black, brewed, prepared with tap water"
+   }
+  },
+  {
+   "id": "bebida_light",
+   "nombre": "Bebida cola light / zero",
+   "buscar": [
+    "coca cola light",
+    "coca zero",
+    "bebida light",
+    "coca light"
+   ],
+   "porciones": [
+    [
+     "1 lata",
+     355
+    ],
+    [
+     "1 vaso",
+     250
+    ]
+   ],
+   "por_100g": {
+    "kcal": 2.0,
+    "proteina_g": 0.11,
+    "carbohidratos_g": 0.29,
+    "grasa_g": 0.03,
+    "fibra_g": 0.0,
+    "sodio_mg": 8.0,
+    "potasio_mg": 8.0,
+    "magnesio_mg": 1.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 175099,
+    "usda": "Beverages, carbonated, low calorie, cola or pepper-type, with aspartame, contains caffeine"
+   }
+  },
+  {
+   "id": "bebida_cola",
+   "nombre": "Bebida cola normal",
+   "buscar": [
+    "coca cola",
+    "bebida"
+   ],
+   "porciones": [
+    [
+     "1 lata",
+     370
+    ],
+    [
+     "1 vaso",
+     250
+    ]
+   ],
+   "por_100g": {
+    "kcal": 42.0,
+    "proteina_g": 0.0,
+    "carbohidratos_g": 10.36,
+    "grasa_g": 0.25,
+    "fibra_g": 0.0,
+    "sodio_mg": 3.0,
+    "potasio_mg": 5.0,
+    "magnesio_mg": 0.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 174852,
+    "usda": "Beverages, carbonated, cola, regular"
+   }
+  },
+  {
+   "id": "jugo_naranja",
+   "nombre": "Jugo de naranja natural",
+   "buscar": [
+    "jugo de naranja"
+   ],
+   "porciones": [
+    [
+     "1 vaso",
+     200
+    ]
+   ],
+   "por_100g": {
+    "kcal": 45.0,
+    "proteina_g": 0.7,
+    "carbohidratos_g": 10.4,
+    "grasa_g": 0.2,
+    "fibra_g": 0.2,
+    "sodio_mg": 1.0,
+    "potasio_mg": 200.0,
+    "magnesio_mg": 11.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 169098,
+    "usda": "Orange juice, raw (Includes foods for USDA's Food Distribution Program)"
+   }
+  },
+  {
+   "id": "cerveza",
+   "nombre": "Cerveza",
+   "buscar": [
+    "cerveza",
+    "chela"
+   ],
+   "porciones": [
+    [
+     "1 lata",
+     355
+    ],
+    [
+     "1 schop",
+     500
+    ]
+   ],
+   "por_100g": {
+    "kcal": 43.0,
+    "proteina_g": 0.46,
+    "carbohidratos_g": 3.55,
+    "grasa_g": 0.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 4.0,
+    "potasio_mg": 27.0,
+    "magnesio_mg": 6.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 168746,
+    "usda": "Alcoholic beverage, beer, regular, all"
+   }
+  },
+  {
+   "id": "vino",
+   "nombre": "Vino tinto",
+   "buscar": [
+    "vino",
+    "vino tinto"
+   ],
+   "porciones": [
+    [
+     "1 copa",
+     150
+    ]
+   ],
+   "por_100g": {
+    "kcal": 85.0,
+    "proteina_g": 0.07,
+    "carbohidratos_g": 2.61,
+    "grasa_g": 0.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 4.0,
+    "potasio_mg": 127.0,
+    "magnesio_mg": 12.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": null,
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173190,
+    "usda": "Alcoholic beverage, wine, table, red"
+   }
+  }
+ ]
+}

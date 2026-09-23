@@ -130,6 +130,9 @@
     resize:vertical;font-family:inherit}
   .registrar textarea::placeholder{color:var(--tinta2);opacity:.75}
   .reg-ayuda{font-size:12.5px;color:var(--tinta2);margin-top:8px;line-height:1.45}
+  .reg-entendi{font-size:13px;line-height:1.45;margin-top:8px;color:var(--tinta)}
+  .reg-entendi:empty{display:none}
+  .reg-entendi .asumido{color:var(--tinta2);font-size:12px}
   .reg-fila{display:flex;gap:8px;margin-top:10px}
   .reg-fila label{flex:0 0 auto;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta2);
     border-radius:11px;padding:11px 15px;font-size:14px;cursor:pointer}
@@ -161,6 +164,7 @@
 
 <div id="app"><div class="estado-msg">Cargando…</div></div>
 
+<script src="lector.js"></script>
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
@@ -376,6 +380,7 @@ function elegirFotos(ev){
           ? ` · del ${dias[0].slice(8)}/${dias[0].slice(5,7)}, se registra en ese día`
           : "";
         $("#reg-fotos").textContent = `📸 ${FOTOS_PENDIENTES.length} foto(s) lista(s)${aviso}`;
+        previsualizar();
       }
     };
     lector.readAsArrayBuffer(a);
@@ -435,17 +440,123 @@ function despertarAgrupado(nombre){
   }, 2500);
 }
 
+/* ---------- el lector: lo conocido se registra al instante, sin IA ---------- */
+let LECTOR = null;   // tus productos + la tabla estándar, listos para buscar
+
+async function prepararLector(){
+  if(typeof Lector === "undefined") return;
+  try{
+    const [tabla, mios] = await Promise.all([
+      fetch("alimentos.json").then(r => r.ok ? r.json() : {alimentos: []}),
+      ghJson("mis_comidas.json").catch(() => null),
+    ]);
+    LECTOR = Lector.preparar([["tuyo", (mios && mios.alimentos) || []], ["tabla", tabla.alimentos || []]]);
+    previsualizar();
+  }catch(e){ LECTOR = null; }   // sin lector, todo va a la IA como antes
+}
+
+function leerRegistro(texto){
+  return (LECTOR && texto.trim()) ? Lector.leer(texto, LECTOR) : null;
+}
+
+const escaparHtml = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let TEMPORIZADOR_VISTA = null;
+function previsualizar(){
+  clearTimeout(TEMPORIZADOR_VISTA);
+  TEMPORIZADOR_VISTA = setTimeout(() => {
+    const caja = $("#reg-entendi"), campo = $("#reg-texto");
+    if(!caja || !campo) return;
+    if(FOTOS_PENDIENTES.length){ caja.textContent = "📷 Con foto: la analiza la IA."; return; }
+    const r = leerRegistro(campo.value);
+    if(!r){ caja.textContent = ""; return; }
+    if(r.ruta !== "local"){ caja.textContent = `🤖 Lo analiza la IA (${r.motivo}).`; return; }
+    const t = Lector.sumar(r.items);
+    const asumido = r.items.some(i => i.asumido);
+    caja.innerHTML = `⚡ Sin IA: ${r.items.map(i => escaparHtml(Lector.describir(i))).join(" · ")}
+      — <b>${Math.round(t.kcal)} kcal · ${Math.round(t.proteina_g)} g proteína</b>`
+      + (asumido ? `<br><span class="asumido">"Porción estándar": si fue otra cantidad, escríbela (ej. "150 g", "2 tazas").</span>` : "");
+  }, 180);
+}
+
+/* Lo registrado sin IA se ve al instante en las barras, antes de que el agente lo guarde en
+   GitHub. Cuando el registro del día ya lo incluye (entradas_aplicadas), se deja de sumar aquí. */
+const CLAVE_LOCALES = "locales_sin_confirmar";
+function leerLocales(){ try{ return JSON.parse(localStorage.getItem(CLAVE_LOCALES) || "[]"); }catch(e){ return []; } }
+function recordarLocal(id, items){
+  const lista = leerLocales();
+  lista.push({id, fecha: fechaLocal(), items});
+  localStorage.setItem(CLAVE_LOCALES, JSON.stringify(lista.slice(-30)));
+}
+function mezclarLocales(reg){
+  const hoy = fechaLocal();
+  const aplicadas = new Set((reg && reg.entradas_aplicadas) || []);
+  const vigentes = leerLocales().filter(x => x.fecha === hoy && !aplicadas.has(x.id));
+  localStorage.setItem(CLAVE_LOCALES, JSON.stringify(vigentes));
+  if(!vigentes.length) return reg;
+  const r = JSON.parse(JSON.stringify(reg || {fecha: hoy, comidas: [], acumulado: {}}));
+  r.acumulado = r.acumulado || {}; r.comidas = r.comidas || [];
+  for(const x of vigentes) for(const it of x.items){
+    r.comidas.push({hora: "recién", ...it});
+    for(const c of Lector.CAMPOS) r.acumulado[c] = Math.round(((r.acumulado[c] || 0) + (it[c] || 0)) * 10) / 10;
+  }
+  return r;
+}
+
+let ULTIMO_REG_CRUDO = null;   // el registro de hoy tal como vino de GitHub, sin lo local
+function repintarHoy(){
+  const caja = document.getElementById("hoy-en-vivo");
+  if(caja) caja.innerHTML = barrasHoy(mezclarLocales(ULTIMO_REG_CRUDO));
+}
+
+let TEMPORIZADOR_SILENCIO = null;
+function despertarEnSilencio(){   // guardar en GitHub sin hacerte esperar
+  clearTimeout(TEMPORIZADOR_SILENCIO);
+  TEMPORIZADOR_SILENCIO = setTimeout(() => { localStorage.setItem("ultimo_dispatch", Date.now()); ghDispatch(); }, 2500);
+}
+
 async function enviarRegistro(){
   const texto = $("#reg-texto").value.trim();
   if(!texto && !FOTOS_PENDIENTES.length) return;
   const btn = $("#reg-btn"); btn.disabled = true; btn.textContent = "Guardando…";
   avisoRegistro("");
   const id = new Date().toISOString().replace(/[:.]/g,"-");
+  const lectura = FOTOS_PENDIENTES.length ? null : leerRegistro(texto);
+  const sinIA = !!(lectura && lectura.ruta === "local");
+  const items = sinIA ? lectura.items.map(i => ({descripcion: Lector.describir(i), ...i.nutrientes})) : null;
   const entrada = {id, ruta:`entradas/${id}.json`,
                    cuerpo:{texto, fotos: FOTOS_PENDIENTES, zona: zonaDelTelefono(),
-                           hora_local: fechaHoraLocal(new Date())},
+                           hora_local: fechaHoraLocal(new Date()),
+                           ...(sinIA ? {origen: "tabla", items_comida: items} : {})},
                    mensaje:`entrada app ${id}`};
-  const limpiar = ()=>{ $("#reg-texto").value = ""; FOTOS_PENDIENTES = []; $("#reg-fotos").textContent = ""; };
+  const limpiar = ()=>{ $("#reg-texto").value = ""; FOTOS_PENDIENTES = []; $("#reg-fotos").textContent = "";
+                        const c = $("#reg-entendi"); if(c) c.textContent = ""; };
+  const avisoSinIA = extra => {
+    const t = Lector.sumar(lectura.items);
+    avisoRegistro(`⚡ Registrado al instante, sin IA: ${lectura.items.map(i => Lector.describir(i)).join(" · ")} `
+      + `— ${Math.round(t.kcal)} kcal · ${Math.round(t.proteina_g)} g proteína.${extra || ""}`);
+  };
+  if(sinIA){
+    // Se muestra ya: el guardado en GitHub va por detrás.
+    recordarLocal(id, items);
+    limpiar();
+    avisoSinIA();
+    btn.textContent = "Guardar"; btn.disabled = false;
+    repintarHoy();
+    try{
+      await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
+      despertarEnSilencio();
+    }catch(e){
+      if(esFalloDeRed(e)){
+        await BD.guardar(entrada).catch(()=>{});
+        await refrescarPendientes();
+        avisoSinIA(" Sin señal: se sube solo al volver.");
+      }else{
+        avisoSinIA(` No pude guardarlo en GitHub (${e.message}); reintenta.`);
+      }
+    }
+    return;
+  }
   try{
     await ghPut(entrada.ruta, entrada.cuerpo, entrada.mensaje);
     limpiar();
@@ -511,8 +622,9 @@ function tarjetaRegistrar(regHoy){
   return `<div class="tarjeta registrar">
     <h2>Registrar</h2>
     <textarea id="reg-texto" placeholder="Ej: 4 huevos revueltos y una tostada
-Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2"></textarea>
-    <div class="reg-ayuda">Escribe con tus palabras — el agente interpreta. La foto es opcional.</div>
+Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2" oninput="previsualizar()"></textarea>
+    <div class="reg-entendi" id="reg-entendi"></div>
+    <div class="reg-ayuda">Escribe con tus palabras y cantidades ("150 g de pollo", "1 taza de arroz"): lo conocido se registra al instante, sin IA. La foto es opcional.</div>
     <div class="reg-fila">
       <label>📷<input type="file" accept="image/*" multiple hidden onchange="elegirFotos(event)"></label>
       <button id="reg-btn" onclick="enviarRegistro()">Guardar</button>
@@ -673,7 +785,8 @@ async function render(){
       ...fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)),
     ]);
     estado = est;
-    regHoy = regs[0];
+    ULTIMO_REG_CRUDO = regs[0];
+    regHoy = mezclarLocales(regs[0]);
     historial = regs.slice(1).filter(Boolean);
   }catch(e){
     if(esFalloDeRed(e)){
@@ -752,7 +865,7 @@ async function render(){
 
     ${seccionCorrelaciones(estado.correlaciones)}
 
-    ${barrasHoy(regHoy)}
+    <div id="hoy-en-vivo">${barrasHoy(regHoy)}</div>
 
     ${seccionHistorial(historial)}
 
@@ -767,7 +880,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v19.10.0</div>`;
+    <div class="version">v20.0.0</div>`;
   animar();
 }
 
@@ -906,7 +1019,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v19.10.0</div>
+    <div class="version">v20.0.0</div>
   </div>`;
 }
 
@@ -963,7 +1076,7 @@ window.addEventListener("online", ()=>{ sincronizarPendientes().then(()=>{ if(SI
 document.addEventListener("DOMContentLoaded", ()=>{
   registrarServiceWorker();
   if(cfg.token) despertarSiHaceFalta();
-  render().then(()=>sincronizarPendientes());
+  render().then(()=>{ sincronizarPendientes(); if(cfg.token) prepararLector(); });
 });
 </script>
 </body>
