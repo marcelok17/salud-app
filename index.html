@@ -503,7 +503,8 @@ function mezclarLocales(reg){
   return r;
 }
 
-let ULTIMO_REG_CRUDO = null;   // el registro de hoy tal como vino de GitHub, sin lo local
+let ULTIMO_REG_CRUDO = null;
+let LIBRE = null;   // estado del sensor (dashboard/estado.json → libre)   // el registro de hoy tal como vino de GitHub, sin lo local
 function repintarHoy(){
   const caja = document.getElementById("hoy-en-vivo");
   if(caja) caja.innerHTML = barrasHoy(mezclarLocales(ULTIMO_REG_CRUDO));
@@ -785,6 +786,7 @@ async function render(){
       ...fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)),
     ]);
     estado = est;
+    LIBRE = est.libre || null;
     ULTIMO_REG_CRUDO = regs[0];
     regHoy = mezclarLocales(regs[0]);
     historial = regs.slice(1).filter(Boolean);
@@ -880,7 +882,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v20.0.0</div>`;
+    <div class="version">v20.2.0</div>`;
   animar();
 }
 
@@ -906,13 +908,36 @@ function barrasHoy(reg){
   </div>`;
 }
 
+/* Sensor: la ultima lectura con SU hora y cuanto hace de ella. Nunca se presenta como
+   "ahora": el grafico llega cuando corre el agente, a veces con horas de atraso. */
+function sensorHoy(reg){
+  const serie = (reg&&reg.glucosa_sensor)||[];
+  let ult = serie.length ? serie[serie.length-1] : null;
+  const delTablero = LIBRE && LIBRE.ultimo;
+  if(delTablero && (!ult || delTablero.t > ult.t)) ult = delTablero;
+  const diag = LIBRE && LIBRE.diagnostico;
+  if(!ult && !diag) return "";
+  const clase = v => v<70?"glu-baja":(v>180?"glu-alta":"glu-ok");
+  let linea = "";
+  if(ult){
+    const min = Math.max(0, Math.round((Date.now() - new Date(ult.t).getTime())/60000));
+    const hace = min < 60 ? `hace ${min} min` : (min < 1440 ? `hace ${Math.floor(min/60)} h ${min%60} min` : `hace ${Math.floor(min/1440)} d`);
+    const hora = new Date(ult.t).toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});
+    linea = `<b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${hora}</b>`;
+    linea += `</div><div style="font-size:12px;color:var(--tinta2)">Última lectura del sensor ${hace} · ${serie.length} lectura${serie.length===1?"":"s"} hoy`;
+  }
+  return `<div class="barra"><div class="fila"><span>Glucosa (sensor)</span>${linea}</div>
+    ${diag?`<div style="font-size:12px;color:var(--tinta2);margin-top:4px">⚠︎ Sensor: ${escaparHtml(diag)}</div>`:""}
+  </div>`;
+}
+
 function glucosaHoy(reg){
   const gl = (reg&&reg.glucosa)||[];
-  if(!gl.length) return "";
+  if(!gl.length) return sensorHoy(reg);
   const clase = v => v<70?"glu-baja":(v>180?"glu-alta":"glu-ok");
   const ult = gl[gl.length-1];
   const min = Math.min(...gl.map(g=>g.mg_dl));
-  return `<div class="barra"><div class="fila"><span>Glucosa (${gl.length} tomas)</span>
+  return sensorHoy(reg) + `<div class="barra"><div class="fila"><span>Glucosa (${gl.length} tomas)</span>
     <b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${ult.hora}</b></div>
     <div style="font-size:12px;color:var(--tinta2)">${gl.map(g=>`<span class="${clase(g.mg_dl)}">${g.mg_dl}</span> <small>${g.hora}${g.contexto?" "+g.contexto:""}</small>`).join(" · ")}</div>
     ${min<70?`<div class="alerta" style="margin-top:8px">⚠︎ Hubo un valor bajo 70 hoy — coméntalo al médico, sobre todo si fue nocturno.</div>`:""}
@@ -1019,7 +1044,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v20.0.0</div>
+    <div class="version">v20.2.0</div>
   </div>`;
 }
 
