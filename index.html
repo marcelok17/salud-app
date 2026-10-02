@@ -882,7 +882,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v20.2.0</div>`;
+    <div class="version">v20.3.0</div>`;
   animar();
 }
 
@@ -923,8 +923,14 @@ function sensorHoy(reg){
     const min = Math.max(0, Math.round((Date.now() - new Date(ult.t).getTime())/60000));
     const hace = min < 60 ? `hace ${min} min` : (min < 1440 ? `hace ${Math.floor(min/60)} h ${min%60} min` : `hace ${Math.floor(min/1440)} d`);
     const hora = new Date(ult.t).toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});
-    linea = `<b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${hora}</b>`;
+    const dudosa = ult.calidad && ult.calidad !== "ok";
+    linea = `<b class="${dudosa?"":clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${hora}${dudosa?" (dudosa)":""}</b>`;
     linea += `</div><div style="font-size:12px;color:var(--tinta2)">Última lectura del sensor ${hace} · ${serie.length} lectura${serie.length===1?"":"s"} hoy`;
+    /* Marcadas, no escondidas: no cuentan para el anillo ni las alertas, pero se ven. */
+    const art = serie.filter(p=>p.calidad==="artefacto").length;
+    const baja = serie.filter(p=>p.calidad==="baja_confianza").length;
+    if(art) linea += ` · ${art} artefacto${art===1?"":"s"} (compresión nocturna)`;
+    if(baja) linea += ` · ${baja} de baja confianza (sensor nuevo)`;
   }
   return `<div class="barra"><div class="fila"><span>Glucosa (sensor)</span>${linea}</div>
     ${diag?`<div style="font-size:12px;color:var(--tinta2);margin-top:4px">⚠︎ Sensor: ${escaparHtml(diag)}</div>`:""}
@@ -1044,7 +1050,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v20.2.0</div>
+    <div class="version">v20.3.0</div>
   </div>`;
 }
 
