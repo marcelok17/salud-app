@@ -882,7 +882,7 @@ async function render(){
       <button onclick="render()">Actualizar</button>
       <button onclick="renderConfig()">Configuración</button>
     </div>
-    <div class="version">v20.3.0</div>`;
+    <div class="version">v20.4.0</div>`;
   animar();
 }
 
@@ -904,6 +904,7 @@ function barrasHoy(reg){
     ${barra("Potasio", a.potasio_mg||0, 3500, "var(--micros)", "mg")}
     ${barra("Magnesio", a.magnesio_mg||0, 420, "#3E8E8A", "mg")}
     ${barra("Vitamina D", a.vitamina_d_ug||0, 15, "var(--macros)", "µg")}
+    ${curvaGlucosa(reg)}
     ${glucosaHoy(reg)}
   </div>`;
 }
@@ -937,6 +938,77 @@ function sensorHoy(reg){
   </div>`;
 }
 
+/* Hora real de una toma manual. Registros antiguos: la IA dejaba la hora de la medicion
+   en el contexto ("09:56", "madrugada (06:25)") y la hora guardada era la del proceso
+   — se veia "94 09:57 09:56". Si el contexto trae una hora, esa manda. */
+function horaToma(g){
+  const c = g.contexto||"";
+  const ini = /^\s*\(?(\d{1,2}[:.]\d{2})\)?[\s,]*(.*)$/.exec(c);
+  const fin = !ini && /^(.*?)[\s,]*\((\d{1,2}[:.]\d{2})\)\s*$/.exec(c);
+  if(ini) return {hora: ini[1].replace(".",":"), ctx: ini[2]};
+  if(fin) return {hora: fin[2].replace(".",":"), ctx: fin[1]};
+  return {hora: g.hora, ctx: c};
+}
+
+/* Curva del dia del sensor (00-24 h) con la banda 70-180, marcas en cada comida y las
+   tomas manuales como anotaciones. Lo dudoso se ve distinto: baja confianza en tenue,
+   artefactos como circulos vacios sin unir a la linea. Pieza autonoma: se puede mover. */
+function curvaGlucosa(reg){
+  const serie = ((reg&&reg.glucosa_sensor)||[]).filter(p=>p&&p.t&&typeof p.mg_dl==="number");
+  if(serie.length < 2) return "";
+  const W=320, H=128, iz=24, de=6, ar=8, ab=16, YMIN=40, YMAX=250, COLOR="#3E8E8A";
+  const dia = new Date(serie[0].t); dia.setHours(0,0,0,0);
+  const x = t => iz + (W-iz-de) * Math.min(1, Math.max(0, (new Date(t) - dia) / 864e5));
+  const y = v => ar + (H-ar-ab) * (1 - (Math.min(YMAX, Math.max(YMIN, v)) - YMIN) / (YMAX - YMIN));
+  const hhmm = h => { const [a,b] = String(h||"").split(":").map(Number); const d = new Date(dia); d.setHours(a||0, b||0); return d; };
+  // Tramos: se corta la linea en los huecos (>25 min) y en los artefactos.
+  const tramos = []; let actual = [], previo = null;
+  for(const p of serie){
+    const corte = p.calidad==="artefacto" || (previo && (new Date(p.t)-new Date(previo.t)) > 25*60000)
+      || (previo && (previo.calidad==="baja_confianza") !== (p.calidad==="baja_confianza"));
+    if(corte && actual.length){ tramos.push(actual); actual = []; }
+    if(p.calidad!=="artefacto") actual.push(p);
+    previo = p;
+  }
+  if(actual.length) tramos.push(actual);
+  const lineas = tramos.map(tr => tr.length < 2 ? "" :
+    `<polyline fill="none" stroke="${COLOR}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"
+      ${tr[0].calidad==="baja_confianza"?'stroke-opacity=".4" stroke-dasharray="3 3"':""}
+      points="${tr.map(p=>`${x(p.t).toFixed(1)},${y(p.mg_dl).toFixed(1)}`).join(" ")}"/>`).join("");
+  const artefactos = serie.filter(p=>p.calidad==="artefacto").map(p =>
+    `<circle cx="${x(p.t).toFixed(1)}" cy="${y(p.mg_dl).toFixed(1)}" r="2.6" fill="var(--tarjeta)" stroke="var(--tinta2)" stroke-width="1">
+      <title>${p.mg_dl} mg/dl · artefacto (compresión nocturna)</title></circle>`).join("");
+  // Comidas: agrupadas por hora; las casillas de suplementos y remedios no son comida.
+  const comidas = {};
+  for(const c of (reg.comidas||[])){
+    if(!c.hora || (+c.kcal||0) < 20) continue;
+    (comidas[c.hora] = comidas[c.hora] || []).push(c.descripcion||"");
+  }
+  const marcas = Object.entries(comidas).map(([h, ds]) => {
+    const cx = x(hhmm(h)).toFixed(1);
+    return `<g><line x1="${cx}" x2="${cx}" y1="${ar}" y2="${H-ab}" stroke="var(--macros)" stroke-width="1" stroke-opacity=".45"/>
+      <circle cx="${cx}" cy="${H-ab}" r="3" fill="var(--macros)"/>
+      <title>${h} · ${escaparHtml(ds.join(", "))}</title></g>`;
+  }).join("");
+  const tomas = ((reg.glucosa)||[]).filter(g=>g.mg_dl).map(g => {
+    const {hora} = horaToma(g); const cx = x(hhmm(hora)), cy = y(g.mg_dl);
+    return `<path d="M${cx.toFixed(1)} ${(cy-3.5).toFixed(1)} l3.5 3.5 l-3.5 3.5 l-3.5 -3.5z" fill="var(--tinta)">
+      <title>${g.mg_dl} mg/dl · toma manual ${hora}</title></path>`;
+  }).join("");
+  const ejeX = [0,6,12,18,24].map(h => `<text x="${(iz + (W-iz-de)*h/24).toFixed(1)}" y="${H-3}" font-size="8"
+      text-anchor="middle" fill="var(--tinta2)">${String(h).padStart(2,"0")}</text>`).join("");
+  const ejeY = [70,180].map(v => `<text x="${iz-4}" y="${(y(v)+3).toFixed(1)}" font-size="8" text-anchor="end"
+      fill="var(--tinta2)">${v}</text>`).join("");
+  return `<div class="barra"><div class="fila"><span>Curva de hoy</span>
+      <small style="color:var(--tinta2)">banda 70–180 · ● comidas · ◆ tomas</small></div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Curva de glucosa de hoy" style="display:block;margin-top:6px">
+      <rect x="${iz}" y="${y(180).toFixed(1)}" width="${W-iz-de}" height="${(y(70)-y(180)).toFixed(1)}" fill="${COLOR}" fill-opacity=".08"/>
+      <line x1="${iz}" x2="${W-de}" y1="${y(70).toFixed(1)}" y2="${y(70).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
+      <line x1="${iz}" x2="${W-de}" y1="${y(180).toFixed(1)}" y2="${y(180).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
+      ${ejeX}${ejeY}${marcas}${lineas}${artefactos}${tomas}
+    </svg></div>`;
+}
+
 function glucosaHoy(reg){
   const gl = (reg&&reg.glucosa)||[];
   if(!gl.length) return sensorHoy(reg);
@@ -944,8 +1016,11 @@ function glucosaHoy(reg){
   const ult = gl[gl.length-1];
   const min = Math.min(...gl.map(g=>g.mg_dl));
   return sensorHoy(reg) + `<div class="barra"><div class="fila"><span>Glucosa (${gl.length} tomas)</span>
-    <b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${ult.hora}</b></div>
-    <div style="font-size:12px;color:var(--tinta2)">${gl.map(g=>`<span class="${clase(g.mg_dl)}">${g.mg_dl}</span> <small>${g.hora}${g.contexto?" "+g.contexto:""}</small>`).join(" · ")}</div>
+    <b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${horaToma(ult).hora}</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">${gl.map(g=>{
+      const {hora, ctx} = horaToma(g);
+      return `<span class="${clase(g.mg_dl)}">${g.mg_dl}</span> <small>${hora}${ctx?" "+escaparHtml(ctx):""}</small>`;
+    }).join(" · ")}</div>
     ${min<70?`<div class="alerta" style="margin-top:8px">⚠︎ Hubo un valor bajo 70 hoy — coméntalo al médico, sobre todo si fue nocturno.</div>`:""}
   </div>`;
 }
@@ -1050,7 +1125,7 @@ function renderConfig(){
       <button onclick="render()">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v20.3.0</div>
+    <div class="version">v20.4.0</div>
   </div>`;
 }
 
