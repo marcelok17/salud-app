@@ -1,13 +1,13 @@
 /* Service worker de la app de salud.
    Tres cachés con vidas distintas:
      - CACHE_CONCHA: el HTML, el manifest y los iconos. Se reemplaza entero al subir VERSION.
-     - CACHE_FUENTES: Google Fonts (Fraunces / Instrument Sans), para que el diseño no se caiga sin señal.
+     - CACHE_FUENTES: Google Fonts (Libre Caslon Text / Instrument Sans), para que el diseño no se caiga sin señal.
      - CACHE_DATOS:  las lecturas GET a api.github.com — el último estado conocido del repo.
 
    Regla dura: las escrituras (PUT de registros, POST de dispatch) NUNCA pasan por caché.
    Regla dura: nada que se guarde lleva el token — se cachea por URL, con cabeceras propias. */
 
-const VERSION = "v20.4.0";
+const VERSION = "v21.0.0";
 const CACHE_CONCHA  = `salud-concha-${VERSION}`;
 const CACHE_FUENTES = "salud-fuentes-v1";
 const CACHE_DATOS   = "salud-datos-v1";
@@ -23,6 +23,7 @@ const CONCHA = [
   "./iconos/apple-touch-icon-180.png",
   "./lector.js",        // el lector funciona sin señal
   "./alimentos.json",   // y la tabla estándar también
+  "./img/paisaje.svg",  // el fondo del héroe (provisorio hasta tener la foto)
 ];
 
 self.addEventListener("install", ev => {

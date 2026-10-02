@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F6F7F6">
-<meta name="description" content="Tu tablero de salud: nueve relojes, registro diario y el agente que lo interpreta.">
+<meta name="theme-color" content="#F7F4EE">
+<meta name="description" content="Tu Salud: la flor del bienestar, tu registro diario y el agente que lo interpreta.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="iconos/icono.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="iconos/apple-touch-icon-180.png">
@@ -12,175 +12,219 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Salud">
-<title>Salud — Marcelo</title>
+<title>Tu Salud</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,460;9..144,560;9..144,640&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* Diseño "Tu Salud" (02-10-2026): la flor es la identidad; Inicio resume y decide, el detalle
+     numérico vive en las pantallas de cada tema. Colores por categoría: los mismos en toda la app. */
   :root{
-    --fondo:#F6F7F6; --tarjeta:#FFFFFF; --linea:#E6E9E7; --linea2:#EEF0EF;
-    --tinta:#1E2523; --tinta2:#75807C; --acento:#2E6B51;
-    --macros:#C07A2B; --micros:#4C8E66; --musc:#B25640;
-    --corazon:#BC5570; --grasa:#4E7CA3; --descanso:#7C6FA6;
-    --sombra:0 1px 2px rgba(30,37,35,.04), 0 8px 24px rgba(30,37,35,.05);
+    --fondo:#F7F4EE; --tarjeta:#FFFFFF; --linea:#ECE8E0; --linea2:#F1EEE8; --panel2:#F3F0EA;
+    --tinta:#1F2A24; --tinta2:#6F7A73; --acento:#2F6B4F; --acento-suave:#E4EFE7;
+    --c-descanso:#5B4FA0; --c-corazon:#D4574A; --c-nutricion:#3E8A4F; --c-metabolismo:#5FA27C;
+    --c-cuerpo:#2F6A96; --c-composicion:#C9653F; --c-micros:#D69631; --c-aerobico:#4B7FA8;
+    /* nombres que usa el código de siempre (barras, curva, historial) */
+    --macros:#D58A2E; --micros:#3E8A4F; --musc:#B8553C; --corazon:#D4574A; --grasa:#2F6A96; --descanso:#5B4FA0;
+    --sombra:0 1px 2px rgba(31,42,36,.04), 0 10px 28px rgba(31,42,36,.06);
+    --serif:'Libre Caslon Text',Georgia,serif; --sans:'Instrument Sans',system-ui,sans-serif;
+    --foto-heroe:url(img/paisaje.svg);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    background:var(--fondo); color:var(--tinta);
-    font-family:'Instrument Sans',system-ui,sans-serif;
-    padding:22px 18px 70px; max-width:520px; margin:0 auto;
-    -webkit-font-smoothing:antialiased;
+  html{background:var(--fondo)}
+  body{background:var(--fondo);color:var(--tinta);font-family:var(--sans);max-width:980px;margin:0 auto;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  button{font:inherit;color:inherit}
+  .ico{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---- Cabecera ---- */
+  .cabecera{display:flex;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top)) 18px 0;position:relative;z-index:2}
+  .heroe-grid{padding:0 18px}
+  .logo{width:46px;height:46px;flex:none}
+  .marca .nombre{font-family:var(--serif);font-size:29px;line-height:1;letter-spacing:-.01em}
+  .marca .lema{font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--tinta);margin-top:6px;opacity:.85}
+  .cabecera .derecha{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .cabecera .hoy{text-align:right;font-size:12.5px;line-height:1.35}
+  .cabecera .hoy b{font-weight:500;font-size:13.5px}
+  .perfil{width:44px;height:44px;border-radius:50%;background:#fff;border:none;box-shadow:var(--sombra);
+    display:grid;place-items:center;cursor:pointer}
+
+  /* ---- Héroe: foto + titular + flor ---- */
+  .heroe{position:relative;padding:0 0 46px;
+    background:linear-gradient(180deg,rgba(247,244,238,.0) 70%,var(--fondo) 100%),var(--foto-heroe) center/cover no-repeat}
+  .heroe-grid{display:grid;grid-template-columns:1fr;gap:6px;align-items:center}
+  .heroe h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.1;letter-spacing:-.01em;max-width:13ch}
+  .heroe .bajada{font-size:15px;line-height:1.45;color:#3E4A43;margin-top:10px}
+  .flor{width:100%;max-width:420px;margin:4px auto 0;display:block;overflow:visible}
+  .flor .petalo{cursor:pointer;transition:opacity .35s}
+  .flor .centro{cursor:pointer;filter:drop-shadow(0 6px 14px rgba(31,42,36,.16))}
+  .flor.foco-energia .petalo:not([data-grupo=energia]),
+  .flor.foco-salud .petalo:not([data-grupo=salud]),
+  .flor.foco-rendimiento .petalo:not([data-grupo=rendimiento]){opacity:.22}
+  .chips-heroe{display:flex;gap:14px;justify-content:center;margin-top:8px}
+  .chip-h{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px}
+  .chip-h .circ{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.82);box-shadow:var(--sombra);
+    display:grid;place-items:center;position:relative}
+  .chip-h .circ svg.prog{position:absolute;inset:0;width:56px;height:56px}
+  .chip-h.activo .circ{background:#fff;outline:2px solid var(--acento);outline-offset:2px}
+  @media (min-width:700px){
+    .heroe-grid{grid-template-columns:1fr 1.15fr}
+    .heroe h1{font-size:46px}
+    .chips-heroe{justify-content:flex-start}
+    .heroe .texto{padding-bottom:40px}
   }
-  h1,.num,.centro-num,.dia-fecha .d{font-family:'Fraunces',Georgia,serif}
-  header{margin-bottom:18px;padding:0 2px}
-  header .fecha{color:var(--tinta2);font-size:11.5px;text-transform:uppercase;letter-spacing:.16em;font-weight:500}
-  header h1{font-size:32px;font-weight:560;line-height:1.08;margin-top:4px;letter-spacing:-.01em}
-  .tarjeta{background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;
-    padding:20px;margin-bottom:16px;box-shadow:var(--sombra)}
-  h2{font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--tinta2);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-  h2::after{content:"";flex:1;height:1px;background:var(--linea2)}
 
-  /* ---- Reloj grande ---- */
-  .grande{display:flex;flex-direction:column;align-items:center;padding:26px 20px 22px}
-  .grande svg{width:225px;height:225px}
-  .grande .centro-num{font-size:58px;font-weight:560;line-height:1;letter-spacing:-.02em}
-  .grande .centro-txt{color:var(--tinta2);font-size:13px;text-align:center;margin-top:8px;max-width:230px;line-height:1.45}
-  .leyenda{display:flex;flex-wrap:wrap;gap:7px 16px;justify-content:center;margin-top:16px}
-  .leyenda span{font-size:11.5px;color:var(--tinta2);display:flex;align-items:center;gap:6px;letter-spacing:.02em}
-  .leyenda i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  /* ---- Panel de contenido ---- */
+  .panel{background:var(--fondo);border-radius:28px 28px 0 0;margin-top:-30px;position:relative;padding:12px 14px 20px}
+  .pestanas{display:flex;background:var(--panel2);border-radius:28px;padding:5px;gap:2px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+  .pestanas::-webkit-scrollbar{display:none}
+  .pestana{flex:1;min-width:66px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 6px;border:none;
+    background:none;border-radius:24px;font-size:12.5px;color:#3E4A43;cursor:pointer;white-space:nowrap}
+  .pestana.activa{background:var(--acento);color:#fff}
+  .cabecera-detalle{display:flex;align-items:center;gap:10px;padding:calc(16px + env(safe-area-inset-top)) 16px 12px}
+  .cabecera-detalle h1{font-family:var(--serif);font-weight:400;font-size:27px;line-height:1.1}
+  .volver{width:40px;height:40px;border-radius:50%;border:none;background:#fff;box-shadow:var(--sombra);display:grid;place-items:center;cursor:pointer}
+  .detalle-cuerpo{padding:4px 14px 20px}
 
-  /* ---- Grilla de relojes ---- */
-  .grilla{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:6px}
-  .fila-titulo{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta2);margin:14px 4px 8px}
-  .reloj{background:var(--tarjeta);border:1px solid var(--linea);border-radius:18px;
-    padding:12px 6px 10px;text-align:center;box-shadow:var(--sombra)}
-  .reloj svg{width:64px;height:64px}
-  .reloj .nombre{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-    margin-top:8px;color:var(--tinta)}
-  .reloj .detalle{font-size:10px;color:var(--tinta2);margin-top:4px;min-height:16px;line-height:1.4}
-  .reloj .num{font-size:16px;font-weight:560}
+  /* ---- Tarjetas ---- */
+  .tarjeta{background:var(--tarjeta);border-radius:22px;padding:16px;margin-bottom:12px;box-shadow:var(--sombra)}
+  .rejilla-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:12px;margin-bottom:12px}
+  .rejilla-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+  .rejilla-2>.tarjeta,.rejilla-3>.tarjeta{margin-bottom:0}
+  /* En el teléfono, la edad y el registro van uno sobre otro: 4 anillos no caben en media pantalla. */
+  @media (max-width:560px){.rejilla-2{grid-template-columns:minmax(0,1fr)}}
+  .t-titulo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:17px;line-height:1.2;color:var(--tinta)}
+  .t-titulo .mas{margin-left:auto;color:var(--tinta2);flex:none}
+  .rejilla-3>.tarjeta{padding:13px 12px}
+  .t-sub{font-size:12px;color:var(--tinta2);margin-top:6px;line-height:1.4}
+  a.tarjeta,button.tarjeta{display:block;width:100%;text-align:left;text-decoration:none;color:inherit;border:none;cursor:pointer}
+  .estado{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11.5px;background:var(--acento-suave);color:var(--acento);white-space:nowrap}
+  .estado.atencion{background:#FBEDE6;color:#B4532F}
+  .estado.neutro{background:var(--panel2);color:var(--tinta2)}
+  .mini{width:100%;height:auto;display:block;margin-top:8px}
+  h2{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--tinta);margin-bottom:12px}
+  .boton{display:inline-flex;align-items:center;gap:6px;background:var(--acento);color:#fff;border:none;border-radius:999px;
+    padding:8px 14px;font-size:13.5px;font-weight:500;cursor:pointer}
+  .anillos4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:12px;text-align:center}
+  .anillos4 .a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;color:var(--tinta2);min-width:0}
+  .anillos4 .r{position:relative;width:100%;max-width:62px}
+  .anillos4 .r>svg{width:100%;height:auto;display:block}
+  .anillos4 .ic{position:absolute;inset:0;display:grid;place-items:center}
+  .anillos4 .n{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .aviso-medico{display:flex;align-items:center;gap:12px;font-size:13.5px;line-height:1.4}
+  .aviso-medico .ico{color:var(--c-corazon)}
+  .habitos{background:var(--panel2);border-radius:22px;padding:14px;margin-bottom:12px}
+  .habitos .cab{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .habitos .cab .t-titulo{font-size:18px}
+  .habitos .cab small{margin-left:auto;font-size:12px;color:var(--tinta2)}
+  .habito{background:#fff;border-radius:16px;padding:12px 10px;box-shadow:var(--sombra);position:relative;min-width:0}
+  .habito .f{display:flex;align-items:center;gap:5px;font-size:12.5px;min-width:0;padding-right:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .habito .ok{position:absolute;top:10px;right:9px;width:20px;height:20px;border-radius:50%;border:1.5px solid #CFCBC3;display:grid;place-items:center}
+  .habito .ok.si{background:var(--acento);border-color:var(--acento);color:#fff}
+  .habito .p{height:5px;border-radius:4px;background:var(--linea2);margin:12px 0 8px;overflow:hidden}
+  .habito .p i{display:block;height:100%;border-radius:4px}
+  .habito .c{font-size:11px;color:var(--tinta2);line-height:1.35}
+  .lista-mas a{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--linea2);
+    color:var(--tinta);text-decoration:none;font-size:15px}
+  .lista-mas a:last-child{border-bottom:none}
+  .lista-mas a .mas{margin-left:auto;color:var(--tinta2)}
+  .fila-arbol{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:start;padding:12px 2px;border-bottom:1px solid var(--linea2)}
+  .fila-arbol:last-child{border-bottom:none}
+  .fila-arbol i{width:12px;height:12px;border-radius:50%;margin-top:4px}
+  .fila-arbol .n{font-size:15px;font-weight:500}
+  .fila-arbol .d{font-size:12.5px;color:var(--tinta2);margin-top:3px;line-height:1.45}
+  .fila-arbol .s{font-family:var(--serif);font-size:18px}
+  .metricas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .metrica{background:var(--panel2);border-radius:14px;padding:10px 12px}
+  .metrica .v{font-family:var(--serif);font-size:21px}
+  .metrica .l{font-size:11.5px;color:var(--tinta2);margin-top:2px}
+  .nota{font-size:12px;color:var(--tinta2);line-height:1.5;margin-top:10px}
 
-  .anillo-fondo{stroke:var(--linea2);fill:none}
-  .anillo-valor{fill:none;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;
-    transition:stroke-dashoffset 1.1s cubic-bezier(.22,.9,.35,1)}
-  @media (prefers-reduced-motion:reduce){.anillo-valor{transition:none}}
+  /* ---- Navegación inferior ---- */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;max-width:980px;margin:0 auto;background:#fff;
+    border-radius:24px 24px 0 0;box-shadow:0 -6px 24px rgba(31,42,36,.07);display:grid;grid-template-columns:repeat(5,1fr);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+  .nav a{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;line-height:1.15;text-align:center;color:var(--tinta2);text-decoration:none;padding:6px 0}
+  .nav a.activa{color:var(--acento)}
+  .nav .fab{justify-self:center;width:60px;height:60px;border-radius:50%;background:var(--acento);color:#fff;
+    display:grid;place-items:center;margin-top:-30px;box-shadow:0 8px 20px rgba(47,107,79,.35);padding:0}
+  .nav .fab .ico{width:28px;height:28px;stroke-width:2}
 
-  /* ---- Rutina / objetivos ---- */
-  .rutina{font-size:15.5px;line-height:1.6;color:var(--tinta)}
+  /* ---- Piezas que ya existían (registro, listas, detalle) ---- */
+  .barra{margin-bottom:14px}
+  .barra .fila{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px;color:var(--tinta2);gap:8px}
+  .barra .fila b{font-family:var(--serif);font-size:15px;font-weight:400;color:var(--tinta);text-align:right}
+  .pista{height:6px;background:var(--linea2);border-radius:4px;overflow:hidden}
+  .pista i{display:block;height:100%;border-radius:4px}
+  .rutina{font-size:15.5px;line-height:1.6}
   .rutina b{color:var(--acento);font-weight:600}
   ul.objetivos{list-style:none}
-  ul.objetivos li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;
-    border-bottom:1px solid var(--linea2);font-size:14.5px;line-height:1.45}
+  ul.objetivos li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--linea2);font-size:14.5px;line-height:1.45}
   ul.objetivos li:last-child{border-bottom:none;padding-bottom:2px}
   ul.objetivos input{width:18px;height:18px;accent-color:var(--acento);margin-top:1px;flex:none}
   li.hecho label{color:var(--tinta2);text-decoration:line-through}
-  .analisis{font-size:14.5px;line-height:1.6;color:var(--tinta)}
-  .alerta{margin-top:12px;background:#FBF3EC;border:1px solid #E8CDB4;color:#8A5A2B;
-    border-radius:12px;padding:11px 14px;font-size:13.5px;line-height:1.5}
-  .dos-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-  /* ---- Barras de hoy ---- */
-  .barra{margin-bottom:14px}
-  .barra .fila{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;
-    margin-bottom:5px;color:var(--tinta2)}
-  .barra .fila b{font-family:'Fraunces',serif;font-size:16px;font-weight:560;color:var(--tinta)}
-  .pista{height:6px;background:var(--linea2);border-radius:4px;overflow:hidden}
-  .pista i{display:block;height:100%;border-radius:4px}
-
-  /* ---- Config / botones ---- */
-  .config input{width:100%;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta);
-    border-radius:11px;padding:12px 13px;font-size:15px;margin-bottom:10px}
-  .config button,.recargar{width:100%;background:var(--acento);color:#fff;border:none;border-radius:11px;
-    padding:13px;font-size:15px;font-weight:600;cursor:pointer}
+  .analisis{font-size:14.5px;line-height:1.6}
+  .alerta{margin-top:12px;background:#FBF1EA;border:1px solid #EBCDB8;color:#8A4F2B;border-radius:12px;padding:11px 14px;font-size:13.5px;line-height:1.5}
+  .config input{width:100%;background:#FAF9F6;border:1px solid var(--linea);color:var(--tinta);border-radius:12px;padding:12px 13px;font-size:15px;margin-bottom:10px}
+  .config button,.recargar{width:100%;background:var(--acento);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:600;cursor:pointer}
   .config .ayuda{font-size:13px;color:var(--tinta2);line-height:1.55;margin-bottom:12px}
   .estado-msg{color:var(--tinta2);font-size:14px;text-align:center;padding:36px 0}
   .pie{display:flex;gap:10px;margin-top:4px}
-  .pie button{flex:1;background:transparent;border:1px solid var(--linea);color:var(--tinta2);
-    border-radius:11px;padding:10px;font-size:13px;cursor:pointer}
-  a{color:var(--grasa)}
-
-  /* ---- Historial ---- */
-  .dia-fila{display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;
-    padding:12px 0;border-bottom:1px solid var(--linea2)}
+  .pie button{flex:1;background:transparent;border:1px solid var(--linea);color:var(--tinta2);border-radius:12px;padding:10px;font-size:13px;cursor:pointer}
+  a{color:var(--acento)}
+  .dia-fila{display:grid;grid-template-columns:50px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--linea2)}
   .dia-fila:last-child{border-bottom:none}
   .dia-fecha{text-align:center}
-  .dia-fecha .d{font-size:23px;font-weight:560;line-height:1}
+  .dia-fecha .d{font-family:var(--serif);font-size:23px;line-height:1}
   .dia-fecha .m{font-size:10px;color:var(--tinta2);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
   .dia-datos{font-size:12.5px;color:var(--tinta2);line-height:1.55}
   .dia-datos b{color:var(--tinta);font-weight:600}
   .dia-marcas{display:flex;flex-direction:column;gap:5px;align-items:flex-end;font-size:11px}
   .chip{border-radius:20px;padding:3px 9px;font-weight:600;letter-spacing:.03em}
-  .chip.gym{background:#F5EAE6;color:var(--musc)}
-  .chip.peso{background:#EAF0F5;color:var(--grasa)}
-  .chip.hipo{background:#FBF3EC;color:#8A5A2B}
-  .glu-ok{color:var(--micros)} .glu-baja{color:#B07A2E;font-weight:600} .glu-alta{color:var(--corazon);font-weight:600}
-
-  /* ---- Correlaciones ---- */
-  .corr{border-left:2px solid var(--linea);padding:11px 14px;margin-bottom:11px;
-    border-radius:0 12px 12px 0;background:#FAFBFA}
-  .corr.medica{border-left-color:var(--corazon)} .corr.accion{border-left-color:var(--macros)} .corr.info{border-left-color:var(--grasa)}
+  .chip.gym{background:#E8EFF5;color:var(--c-cuerpo)}
+  .chip.peso{background:#F7EAE3;color:var(--c-composicion)}
+  .chip.hipo{background:#FBF1EA;color:#8A4F2B}
+  .glu-ok{color:var(--c-nutricion)} .glu-baja{color:#B07A2E;font-weight:600} .glu-alta{color:var(--c-corazon);font-weight:600}
+  .corr{border-left:2px solid var(--linea);padding:11px 14px;margin-bottom:11px;border-radius:0 12px 12px 0;background:#FAF9F6}
+  .corr.medica{border-left-color:var(--c-corazon)} .corr.accion{border-left-color:var(--c-micros)} .corr.info{border-left-color:var(--c-cuerpo)}
   .corr .s{font-weight:600;font-size:14px}
   .corr .e{font-size:12px;color:var(--tinta2);margin:4px 0}
   .corr .h{font-size:13.5px;line-height:1.5;margin:4px 0}
   .corr .a{font-size:13px;color:var(--acento)}
-
-  /* ---- Registrar ---- */
-  .registrar textarea{width:100%;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta);
-    border-radius:12px;padding:13px 14px;font-size:15px;line-height:1.5;min-height:112px;
-    resize:vertical;font-family:inherit}
+  .registrar textarea{width:100%;background:#FAF9F6;border:1px solid var(--linea);color:var(--tinta);border-radius:14px;
+    padding:13px 14px;font-size:15px;line-height:1.5;min-height:112px;resize:vertical;font-family:inherit}
   .registrar textarea::placeholder{color:var(--tinta2);opacity:.75}
   .reg-ayuda{font-size:12.5px;color:var(--tinta2);margin-top:8px;line-height:1.45}
-  .reg-entendi{font-size:13px;line-height:1.45;margin-top:8px;color:var(--tinta)}
+  .reg-entendi{font-size:13px;line-height:1.45;margin-top:8px}
   .reg-entendi:empty{display:none}
   .reg-entendi .asumido{color:var(--tinta2);font-size:12px}
   .reg-fila{display:flex;gap:8px;margin-top:10px}
-  .reg-fila label{flex:0 0 auto;background:#FAFBFA;border:1px solid var(--linea);color:var(--tinta2);
-    border-radius:11px;padding:11px 15px;font-size:14px;cursor:pointer}
-  .reg-fila button{flex:1;background:var(--acento);color:#fff;border:none;border-radius:11px;
-    padding:11px;font-size:14.5px;font-weight:600;cursor:pointer}
+  .reg-fila label{flex:0 0 auto;background:#FAF9F6;border:1px solid var(--linea);color:var(--tinta2);border-radius:12px;padding:11px 15px;font-size:14px;cursor:pointer;display:grid;place-items:center}
+  .reg-fila button{flex:1;background:var(--acento);color:#fff;border:none;border-radius:12px;padding:11px;font-size:14.5px;font-weight:600;cursor:pointer}
   .reg-fila button:disabled{opacity:.5}
   .reg-fotos{font-size:12.5px;color:var(--tinta2);margin-top:7px}
   .resp-agente{margin-top:14px;border-top:1px solid var(--linea2);padding-top:12px;font-size:14px;line-height:1.55}
   .resp-agente .hora{font-size:11px;color:var(--tinta2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
-  .banner-carbs{background:#FBF6EA;border:1px solid #E8D9AE;color:#7C6224;border-radius:14px;
-    padding:12px 15px;font-size:13.5px;line-height:1.5;margin-bottom:16px}
-  .banner-sistema{border-radius:14px;padding:11px 15px;font-size:13px;line-height:1.45;
-    margin-bottom:14px;display:flex;align-items:center;gap:12px;justify-content:space-between}
-  .banner-offline{background:#F1F2F4;border:1px solid #DFE2E5;color:#4A5560}
-  .banner-nueva{background:#EDF4EF;border:1px solid #CBE0D3;color:var(--acento)}
-  .banner-espera{background:#FBF6EA;border:1px solid #E8D9AE;color:#7C6224;display:block}
-  .banner-sistema button{background:none;border:1px solid currentColor;color:inherit;border-radius:999px;
-    padding:5px 13px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .banner-carbs{background:#FBF5E8;border:1px solid #EADBB4;color:#7C6224;border-radius:16px;padding:12px 15px;font-size:13.5px;line-height:1.5;margin-bottom:12px}
+  .banner-sistema{border-radius:16px;padding:11px 15px;font-size:13px;line-height:1.45;margin:0 14px 12px;display:flex;align-items:center;gap:12px;justify-content:space-between}
+  .panel .banner-sistema,.detalle-cuerpo .banner-sistema{margin:0 0 12px}
+  .banner-offline{background:#F1F2F1;border:1px solid #DFE2DF;color:#4A5550}
+  .banner-nueva{background:var(--acento-suave);border:1px solid #CBE0D3;color:var(--acento)}
+  .banner-espera{background:#FBF5E8;border:1px solid #EADBB4;color:#7C6224;display:block}
+  .banner-sistema button{background:none;border:1px solid currentColor;color:inherit;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .pendientes{font-size:12.5px;color:var(--tinta2);margin-top:7px}
-  .version{text-align:center;font-size:10.5px;color:var(--tinta2);letter-spacing:.1em;
-    margin-top:14px;opacity:.65}
+  .version{text-align:center;font-size:10.5px;color:var(--tinta2);letter-spacing:.1em;margin-top:14px;opacity:.65}
+  .solo-ancho{display:none}
+  @media (min-width:700px){.solo-ancho{display:block}.solo-angosto{display:none}}
+  @media (prefers-reduced-motion:reduce){.flor .petalo{transition:none}}
 </style>
 </head>
 <body>
-<header>
-  <div class="fecha" id="fecha">—</div>
-  <h1 id="titulo">Tu salud, hoy</h1>
-</header>
-
 <div id="app"><div class="estado-msg">Cargando…</div></div>
 
 <script src="lector.js"></script>
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
-const COLORES = {
-  presion:"var(--corazon)", fc_reposo:"#A8506A", fc_esfuerzo:"#8E4A5E",
-  macros:"var(--macros)", micros:"var(--micros)", glucosa:"#3E8E8A",
-  musculacion:"var(--musc)", grasa:"var(--grasa)", descanso:"var(--descanso)"};
-const NOMBRES = {presion:"Presión", fc_reposo:"FC reposo", fc_esfuerzo:"FC esfuerzo",
-  macros:"Macros", micros:"Micros", glucosa:"Glucosa",
-  musculacion:"Músculo", grasa:"Grasa", descanso:"Descanso"};
-const FILAS = [
-  {titulo:"Corazón", claves:["presion","fc_reposo","fc_esfuerzo"]},
-  {titulo:"Alimentación", claves:["macros","micros","glucosa"]},
-  {titulo:"Cuerpo", claves:["musculacion","grasa","descanso"]}];
-const ORDEN = FILAS.flatMap(f=>f.claves);
-
 const cfg = {
   get owner(){return localStorage.getItem("gh_owner")||""},
   get repo(){return localStorage.getItem("gh_repo")||""},
@@ -254,7 +298,7 @@ let PENDIENTES = [];
 function textoPendientes(){
   const n = PENDIENTES.length;
   if(!n) return "";
-  return `⏳ ${n} registro${n>1?"s":""} esperando señal — se ${n>1?"envían":"envía"} solo${n>1?"s":""} al reconectar.`;
+  return `${n} registro${n>1?"s":""} esperando señal — se ${n>1?"envían":"envía"} solo${n>1?"s":""} al reconectar.`;
 }
 
 async function refrescarPendientes(){
@@ -379,7 +423,7 @@ function elegirFotos(ev){
         const aviso = (dias.length === 1 && dias[0] !== hoy)
           ? ` · del ${dias[0].slice(8)}/${dias[0].slice(5,7)}, se registra en ese día`
           : "";
-        $("#reg-fotos").textContent = `📸 ${FOTOS_PENDIENTES.length} foto(s) lista(s)${aviso}`;
+        $("#reg-fotos").textContent = `${FOTOS_PENDIENTES.length} foto(s) lista(s)${aviso}`;
         previsualizar();
       }
     };
@@ -467,13 +511,13 @@ function previsualizar(){
   TEMPORIZADOR_VISTA = setTimeout(() => {
     const caja = $("#reg-entendi"), campo = $("#reg-texto");
     if(!caja || !campo) return;
-    if(FOTOS_PENDIENTES.length){ caja.textContent = "📷 Con foto: la analiza la IA."; return; }
+    if(FOTOS_PENDIENTES.length){ caja.textContent = "Con foto: la analiza la IA."; return; }
     const r = leerRegistro(campo.value);
     if(!r){ caja.textContent = ""; return; }
-    if(r.ruta !== "local"){ caja.textContent = `🤖 Lo analiza la IA (${r.motivo}).`; return; }
+    if(r.ruta !== "local"){ caja.textContent = `Lo analiza la IA (${r.motivo}).`; return; }
     const t = Lector.sumar(r.items);
     const asumido = r.items.some(i => i.asumido);
-    caja.innerHTML = `⚡ Sin IA: ${r.items.map(i => escaparHtml(Lector.describir(i))).join(" · ")}
+    caja.innerHTML = `Sin IA: ${r.items.map(i => escaparHtml(Lector.describir(i))).join(" · ")}
       — <b>${Math.round(t.kcal)} kcal · ${Math.round(t.proteina_g)} g proteína</b>`
       + (asumido ? `<br><span class="asumido">"Porción estándar": si fue otra cantidad, escríbela (ej. "150 g", "2 tazas").</span>` : "");
   }, 180);
@@ -504,10 +548,16 @@ function mezclarLocales(reg){
 }
 
 let ULTIMO_REG_CRUDO = null;
-let LIBRE = null;   // estado del sensor (dashboard/estado.json → libre)   // el registro de hoy tal como vino de GitHub, sin lo local
+let LIBRE = null;   // estado del sensor (dashboard/estado.json → libre)
+/* Lo registrado sin IA se ve al instante: solo se repintan los anillos y las barras del día,
+   nunca la pantalla entera (borraría el mensaje de confirmación del formulario). */
 function repintarHoy(){
+  const reg = mezclarLocales(ULTIMO_REG_CRUDO);
+  if(DATOS) DATOS.regHoy = reg;
   const caja = document.getElementById("hoy-en-vivo");
-  if(caja) caja.innerHTML = barrasHoy(mezclarLocales(ULTIMO_REG_CRUDO));
+  if(caja) caja.innerHTML = anillosRegistro(reg);
+  const barras = document.getElementById("barras-hoy");
+  if(barras) barras.innerHTML = barrasNutrientes(reg);
 }
 
 let TEMPORIZADOR_SILENCIO = null;
@@ -534,7 +584,7 @@ async function enviarRegistro(){
                         const c = $("#reg-entendi"); if(c) c.textContent = ""; };
   const avisoSinIA = extra => {
     const t = Lector.sumar(lectura.items);
-    avisoRegistro(`⚡ Registrado al instante, sin IA: ${lectura.items.map(i => Lector.describir(i)).join(" · ")} `
+    avisoRegistro(`Registrado al instante, sin IA: ${lectura.items.map(i => Lector.describir(i)).join(" · ")} `
       + `— ${Math.round(t.kcal)} kcal · ${Math.round(t.proteina_g)} g proteína.${extra || ""}`);
   };
   if(sinIA){
@@ -588,6 +638,8 @@ async function enviarRegistro(){
 }
 
 async function esperarRespuesta(btn){
+  // Desde Medicación no hay botón de Guardar en pantalla: se espera igual, sin tocarlo.
+  btn = btn || {set textContent(v){}, set disabled(v){}};
   // Sondeo rapido al principio (el agente suele tardar 15-25 s) y tranquilo despues,
   // para no gastar cuota de API esperando algo que ya se demoro.
   const rutaHoy = () => `registro/${fechaLocal()}.json`;
@@ -627,7 +679,7 @@ Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2" oninput="previsualizar()"><
     <div class="reg-entendi" id="reg-entendi"></div>
     <div class="reg-ayuda">Escribe con tus palabras y cantidades ("150 g de pollo", "1 taza de arroz"): lo conocido se registra al instante, sin IA. La foto es opcional.</div>
     <div class="reg-fila">
-      <label>📷<input type="file" accept="image/*" multiple hidden onchange="elegirFotos(event)"></label>
+      <label aria-label="Agregar foto">${ico("camara")}<input type="file" accept="image/*" multiple hidden onchange="elegirFotos(event)"></label>
       <button id="reg-btn" onclick="enviarRegistro()">Guardar</button>
     </div>
     <div class="reg-fotos" id="reg-fotos"></div>
@@ -674,45 +726,8 @@ function bannerCarbs(regHoy, estado){
   if(rutina.includes("DESCANSO")) return "";
   const carbs = ((regHoy&&regHoy.acumulado)||{}).carbohidratos_g||0;
   if(carbs>=40) return "";
-  return `<div class="banner-carbs">🍚 Van <b>${Math.round(carbs)} g</b> de carbohidratos y hoy es día de entrenamiento —
+  return `<div class="banner-carbs">Van <b>${Math.round(carbs)} g</b> de carbohidratos y hoy es día de entrenamiento —
     el piso con Jardiance es 75 g. La cena es el momento: legumbres, papa o arroz.</div>`;
-}
-
-/* ---------- anillos SVG ---------- */
-function anillo(score,color,radio,grosor){
-  const c = 2*Math.PI*radio, s = score==null?0:Math.max(0,Math.min(1,score));
-  const dim = (radio+grosor)*2;
-  return `<svg viewBox="0 0 ${dim} ${dim}">
-    <circle class="anillo-fondo" cx="${dim/2}" cy="${dim/2}" r="${radio}" stroke-width="${grosor}"/>
-    <circle class="anillo-valor" cx="${dim/2}" cy="${dim/2}" r="${radio}" stroke-width="${grosor}"
-      stroke="${color}" stroke-dasharray="${c}" stroke-dashoffset="${c}" data-final="${c*(1-s)}"/>
-  </svg>`;
-}
-
-/* Reloj grande: 6 sectores de 60°, cada uno se llena según su score */
-function relojGrande(relojes){
-  const R=100, G=15, dim=(R+G)*2, gap=5, sector=360/ORDEN.length;
-  let arcos="";
-  ORDEN.forEach((k,i)=>{
-    const s = relojes[k]?.score;
-    const ini = -90 + i*sector + gap/2, span = sector-gap;
-    const rad = a=>a*Math.PI/180;
-    const arco=(a0,a1,cls,color)=>{
-      const x0=dim/2+R*Math.cos(rad(a0)), y0=dim/2+R*Math.sin(rad(a0));
-      const x1=dim/2+R*Math.cos(rad(a1)), y1=dim/2+R*Math.sin(rad(a1));
-      return `<path d="M ${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1}" fill="none"
-        stroke="${color}" stroke-width="${G}" stroke-linecap="round" class="${cls}"/>`;
-    };
-    arcos += arco(ini, ini+span, "", "#EEF0EF");
-    if(s!=null && s>0.02) arcos += arco(ini, ini+span*Math.min(1,s), "sector", COLORES[k]);
-  });
-  return `<svg viewBox="0 0 ${dim} ${dim}">${arcos}</svg>`;
-}
-
-function animar(){
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.querySelectorAll(".anillo-valor").forEach(el=>{el.style.strokeDashoffset=el.dataset.final;});
-  }));
 }
 
 /* ---------- checklist con memoria del día ---------- */
@@ -769,146 +784,6 @@ async function marcarItem(claveBase, i, marcado){
   }
 }
 
-/* ---------- pantalla principal ---------- */
-async function render(){
-  const app = $("#app");
-  if(!cfg.token){ renderConfig(); return; }
-  app.innerHTML = `<div class="estado-msg">Leyendo tu repo…</div>`;
-  SIN_CONEXION = false; SELLO_CACHE = null;
-  PENDIENTES = await BD.todos().catch(()=>[]);
-  let estado, regHoy, historial=[];
-  try{
-    // Una sola tanda: el tablero y los 8 dias van juntos. Antes eran dos viajes
-    // encadenados (tablero primero, historial despues), y en el celular se notaba.
-    const fechas=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return fechaLocal(d);});
-    const [est, ...regs] = await Promise.all([
-      ghJson("dashboard/estado.json"),
-      ...fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)),
-    ]);
-    estado = est;
-    LIBRE = est.libre || null;
-    ULTIMO_REG_CRUDO = regs[0];
-    regHoy = mezclarLocales(regs[0]);
-    historial = regs.slice(1).filter(Boolean);
-  }catch(e){
-    if(esFalloDeRed(e)){
-      app.innerHTML = `<div class="tarjeta"><p class="analisis">Sin conexión, y todavía no hay datos guardados
-        en este teléfono. Ábrela una vez con señal y desde ahí funciona aunque te quedes sin red.</p>
-        ${PENDIENTES.length?`<p class="pendientes">${textoPendientes()}</p>`:""}
-        <div class="pie"><button onclick="render()">Reintentar</button></div></div>`;
-      return;
-    }
-    app.innerHTML = `<div class="tarjeta"><p class="analisis">No pude leer el repo: ${e.message}.</p>
-      <div class="pie"><button onclick="renderConfig()">Cambiar configuración</button>
-      <button onclick="render()">Reintentar</button></div></div>`;
-    return;
-  }
-  if(!estado){
-    app.innerHTML = `<div class="tarjeta"><p class="analisis">Aún no existe <b>dashboard/estado.json</b>.
-      Corre el workflow "Agente de Salud — correo diario" (botón <i>Run workflow</i> en GitHub) y recarga.</p>
-      <div class="pie"><button onclick="render()">Recargar</button></div></div>`;
-    return;
-  }
-
-  const rel = estado.relojes||{};
-  const gen = rel.general?.score;
-  $("#fecha").textContent = `${estado.dia||""} · actualizado ${String(estado.generado||"").slice(11,16)}`;
-  const ia = estado.analisis_ia||{};
-
-  app.innerHTML = `
-    ${bannerSinConexion()}
-    ${bannerPendientes(estado)}
-    ${bannerCarbs(regHoy, estado)}
-    ${tarjetaRegistrar(regHoy)}
-    <div class="tarjeta grande">
-      <div style="position:relative">
-        ${relojGrande(rel)}
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div class="centro-num num">${gen!=null?Math.round(gen*100)+"%":"—"}</div>
-        </div>
-      </div>
-      <div class="centro-txt">Salud general — cada sector es uno de tus nueve relojes</div>
-      <div class="leyenda">${ORDEN.map(k=>`<span><i style="background:${COLORES[k]}"></i>${NOMBRES[k]}</span>`).join("")}</div>
-    </div>
-
-    ${FILAS.map(fila=>`
-    <div class="fila-titulo">${fila.titulo}</div>
-    <div class="grilla">
-      ${fila.claves.map(k=>{
-        const r=rel[k]||{}; const pct=r.score!=null?Math.round(r.score*100)+"%":"—";
-        return `<div class="reloj">
-          <div style="position:relative;display:inline-block">
-            ${anillo(r.score,COLORES[k],28,6.5)}
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-              <span class="num" style="color:${COLORES[k]}">${pct}</span></div>
-          </div>
-          <div class="nombre">${NOMBRES[k]}</div>
-          <div class="detalle">${r.detalle||""}</div>
-        </div>`;
-      }).join("")}
-    </div>`).join("")}
-
-    <div class="tarjeta" style="margin-top:14px">
-      <h2>Rutina de hoy</h2>
-      <p class="rutina">${(estado.rutina_de_hoy||"—").replace(/^(Semana \d+:)/,"<b>$1</b>")}</p>
-    </div>
-
-    <div class="tarjeta">
-      <h2>Objetivos de hoy · IA</h2>
-      ${checklist(ia.objetivos_hoy||[], "obj")}
-      <p class="analisis" style="margin-top:10px">${ia.analisis||""}</p>
-      ${ia.comentario_cientifico?`<p style="margin-top:10px;font-size:13.5px;line-height:1.5;color:var(--tinta2);border-top:1px solid var(--linea);padding-top:10px">🔬 ${ia.comentario_cientifico}</p>`:""}
-      ${ia.alerta?`<div class="alerta">⚠︎ ${ia.alerta}</div>`:""}
-    </div>
-
-    ${tarjetaAlimentacion(estado.alimentacion)}
-
-    ${tarjetaCardio(estado.cardio)}
-
-    ${seccionCorrelaciones(estado.correlaciones)}
-
-    <div id="hoy-en-vivo">${barrasHoy(regHoy)}</div>
-
-    ${seccionHistorial(historial)}
-
-    <div class="dos-col">
-      <div class="tarjeta" style="margin-bottom:0"><h2>Medicamentos</h2>
-        ${checklist(estado.medicamentos||[], "med")}</div>
-      <div class="tarjeta" style="margin-bottom:0"><h2>Suplementos</h2>
-        ${checklist(estado.suplementos||[], "sup")}</div>
-    </div>
-
-    <div class="pie">
-      <button onclick="render()">Actualizar</button>
-      <button onclick="renderConfig()">Configuración</button>
-    </div>
-    <div class="version">v20.4.0</div>`;
-  animar();
-}
-
-function barrasHoy(reg){
-  if(!reg||!reg.acumulado) return "";
-  const a=reg.acumulado;
-  const barra=(n,v,meta,color,unidad,invertir)=>{
-    const p=Math.min(1, invertir? (v<=meta?v/meta:1) : v/meta);
-    const exceso = invertir && v>meta;
-    return `<div class="barra"><div class="fila"><span>${n}</span><b style="color:${exceso?"var(--musc)":color}">${Math.round(v)} / ${meta} ${unidad}</b></div>
-      <div class="pista"><i style="width:${Math.round(p*100)}%;background:${exceso?"var(--musc)":color}"></i></div></div>`;
-  };
-  return `<div class="tarjeta"><h2>Hoy en vivo</h2>
-    ${barra("Proteína", a.proteina_g||0, 170, "var(--macros)", "g")}
-    ${barra("Carbohidratos", a.carbohidratos_g||0, 100, "var(--grasa)", "g")}
-    ${barra("Calorías", a.kcal||0, 2000, "var(--micros)", "kcal")}
-    ${barra("Sodio", a.sodio_mg||0, 2300, "var(--corazon)", "mg", true)}
-    ${barra("Fibra", a.fibra_g||0, 25, "var(--descanso)", "g")}
-    ${barra("Potasio", a.potasio_mg||0, 3500, "var(--micros)", "mg")}
-    ${barra("Magnesio", a.magnesio_mg||0, 420, "#3E8E8A", "mg")}
-    ${barra("Vitamina D", a.vitamina_d_ug||0, 15, "var(--macros)", "µg")}
-    ${curvaGlucosa(reg)}
-    ${glucosaHoy(reg)}
-  </div>`;
-}
-
 /* Sensor: la ultima lectura con SU hora y cuanto hace de ella. Nunca se presenta como
    "ahora": el grafico llega cuando corre el agente, a veces con horas de atraso. */
 function sensorHoy(reg){
@@ -934,7 +809,7 @@ function sensorHoy(reg){
     if(baja) linea += ` · ${baja} de baja confianza (sensor nuevo)`;
   }
   return `<div class="barra"><div class="fila"><span>Glucosa (sensor)</span>${linea}</div>
-    ${diag?`<div style="font-size:12px;color:var(--tinta2);margin-top:4px">⚠︎ Sensor: ${escaparHtml(diag)}</div>`:""}
+    ${diag?`<div style="font-size:12px;color:var(--tinta2);margin-top:4px">Sensor: ${escaparHtml(diag)}</div>`:""}
   </div>`;
 }
 
@@ -950,8 +825,8 @@ function horaToma(g){
   return {hora: g.hora, ctx: c};
 }
 
-/* Curva del dia del sensor (00-24 h) con la banda 70-180, marcas en cada comida y las
-   tomas manuales como anotaciones. Lo dudoso se ve distinto: baja confianza en tenue,
+/* Curva del dia del sensor (00-24 h) con la banda 70-180 y marcas en cada comida. Solo datos
+   directos del sensor: las tomas manuales y pantallazos no se dibujan (decision de Marcelo, 02-10). Lo dudoso se ve distinto: baja confianza en tenue,
    artefactos como circulos vacios sin unir a la linea. Pieza autonoma: se puede mover. */
 function curvaGlucosa(reg){
   const serie = ((reg&&reg.glucosa_sensor)||[]).filter(p=>p&&p.t&&typeof p.mg_dl==="number");
@@ -990,44 +865,25 @@ function curvaGlucosa(reg){
       <circle cx="${cx}" cy="${H-ab}" r="3" fill="var(--macros)"/>
       <title>${h} · ${escaparHtml(ds.join(", "))}</title></g>`;
   }).join("");
-  const tomas = ((reg.glucosa)||[]).filter(g=>g.mg_dl).map(g => {
-    const {hora} = horaToma(g); const cx = x(hhmm(hora)), cy = y(g.mg_dl);
-    return `<path d="M${cx.toFixed(1)} ${(cy-3.5).toFixed(1)} l3.5 3.5 l-3.5 3.5 l-3.5 -3.5z" fill="var(--tinta)">
-      <title>${g.mg_dl} mg/dl · toma manual ${hora}</title></path>`;
-  }).join("");
   const ejeX = [0,6,12,18,24].map(h => `<text x="${(iz + (W-iz-de)*h/24).toFixed(1)}" y="${H-3}" font-size="8"
       text-anchor="middle" fill="var(--tinta2)">${String(h).padStart(2,"0")}</text>`).join("");
   const ejeY = [70,180].map(v => `<text x="${iz-4}" y="${(y(v)+3).toFixed(1)}" font-size="8" text-anchor="end"
       fill="var(--tinta2)">${v}</text>`).join("");
   return `<div class="barra"><div class="fila"><span>Curva de hoy</span>
-      <small style="color:var(--tinta2)">banda 70–180 · ● comidas · ◆ tomas</small></div>
+      <small style="color:var(--tinta2)">banda 70–180 · ● comidas</small></div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Curva de glucosa de hoy" style="display:block;margin-top:6px">
       <rect x="${iz}" y="${y(180).toFixed(1)}" width="${W-iz-de}" height="${(y(70)-y(180)).toFixed(1)}" fill="${COLOR}" fill-opacity=".08"/>
       <line x1="${iz}" x2="${W-de}" y1="${y(70).toFixed(1)}" y2="${y(70).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
       <line x1="${iz}" x2="${W-de}" y1="${y(180).toFixed(1)}" y2="${y(180).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
-      ${ejeX}${ejeY}${marcas}${lineas}${artefactos}${tomas}
+      ${ejeX}${ejeY}${marcas}${lineas}${artefactos}
     </svg></div>`;
-}
-
-function glucosaHoy(reg){
-  const gl = (reg&&reg.glucosa)||[];
-  if(!gl.length) return sensorHoy(reg);
-  const clase = v => v<70?"glu-baja":(v>180?"glu-alta":"glu-ok");
-  const ult = gl[gl.length-1];
-  const min = Math.min(...gl.map(g=>g.mg_dl));
-  return sensorHoy(reg) + `<div class="barra"><div class="fila"><span>Glucosa (${gl.length} tomas)</span>
-    <b class="${clase(ult.mg_dl)}">${ult.mg_dl} mg/dl · ${horaToma(ult).hora}</b></div>
-    <div style="font-size:12px;color:var(--tinta2)">${gl.map(g=>{
-      const {hora, ctx} = horaToma(g);
-      return `<span class="${clase(g.mg_dl)}">${g.mg_dl}</span> <small>${hora}${ctx?" "+escaparHtml(ctx):""}</small>`;
-    }).join(" · ")}</div>
-    ${min<70?`<div class="alerta" style="margin-top:8px">⚠︎ Hubo un valor bajo 70 hoy — coméntalo al médico, sobre todo si fue nocturno.</div>`:""}
-  </div>`;
 }
 
 function seccionCorrelaciones(corr){
   if(!corr||!corr.length) return "";
-  const ICONO={medica:"🩺",accion:"⚡",info:"💡"};
+  const ICONO={medica:ico("estetoscopio",'style="width:16px;height:16px;vertical-align:-3px;color:var(--c-corazon)"'),
+    accion:ico("rayo",'style="width:16px;height:16px;vertical-align:-3px;color:var(--c-micros)"'),
+    info:ico("info",'style="width:16px;height:16px;vertical-align:-3px;color:var(--c-cuerpo)"')};
   return `<div class="tarjeta"><h2>Conexiones que veo</h2>` + corr.map(c=>`
     <div class="corr ${c.urgencia}">
       <div class="s">${ICONO[c.urgencia]||""} ${c.senal}</div>
@@ -1035,7 +891,7 @@ function seccionCorrelaciones(corr){
       <div class="h">${c.hipotesis}</div>
       <div class="a">→ ${c.accion}</div>
     </div>`).join("") +
-    `<div style="font-size:11.5px;color:var(--tinta2)">Hipótesis con evidencia, no diagnósticos. Las 🩺 van al médico.</div></div>`;
+    `<div style="font-size:11.5px;color:var(--tinta2)">Hipótesis con evidencia, no diagnósticos. Las marcadas con el estetoscopio van al médico.</div></div>`;
 }
 
 function tarjetaAlimentacion(al){
@@ -1048,11 +904,11 @@ function tarjetaAlimentacion(al){
   if(al.micros) filas += `<div class="barra"><div class="fila"><span>Micronutrientes</span>
     <b>sodio ${al.micros.sodio_ayer??"—"} mg · fibra ${al.micros.fibra_ayer??"—"} g</b></div>
     <div style="font-size:12px;color:var(--tinta2)">Ayer, contra <2.300 mg y >=25 g · tendencia 90 d: ${pct(al.micros.tendencia)}</div></div>`;
-  if(al.glucosa) filas += `<div class="barra"><div class="fila"><span>Glucosa</span>
+  if(al.glucosa && !al.glucosa.calibrando) filas += `<div class="barra"><div class="fila"><span>Glucosa (sensor)</span>
     <b>${al.glucosa.prom_7d} mg/dl · ${al.glucosa.en_rango_pct}% en rango</b></div>
-    <div style="font-size:12px;color:var(--tinta2)">${al.glucosa.n_tomas} tomas en 7 días · rango 70-180
-    ${al.glucosa.bajo_70?` · <span class="glu-baja">${al.glucosa.bajo_70} bajo 70</span>`:""}${al.glucosa.sobre_180?` · <span class="glu-alta">${al.glucosa.sobre_180} sobre 180</span>`:""}</div></div>`;
-  return `<div class="tarjeta"><h2>Alimentación en detalle — 3 indicadores</h2>${filas}</div>`;
+    <div style="font-size:12px;color:var(--tinta2)">${al.glucosa.n_lecturas} lecturas confiables en 7 días · rango 70-180
+    ${al.glucosa.bajo_70?` · <span class="glu-baja">${String(al.glucosa.bajo_70_pct).replace(".",",")}% bajo 70</span>`:""}${al.glucosa.sobre_180?` · <span class="glu-alta">${String(al.glucosa.sobre_180_pct).replace(".",",")}% sobre 180</span>`:""}</div></div>`;
+  return `<div class="tarjeta"><h2>Alimentación en detalle</h2>${filas}</div>`;
 }
 
 function tarjetaCardio(cardio){
@@ -1069,7 +925,7 @@ function tarjetaCardio(cardio){
   if(cardio.presion) filas += `<div class="barra"><div class="fila"><span>Presión arterial</span>
     <b>${cardio.presion.hoy||"—"}</b></div>
     <div style="font-size:12px;color:var(--tinta2)">Promedio 7 días: ${Math.round(cardio.presion.prom_7d_sis)}/${Math.round(cardio.presion.prom_7d_dia)} (${cardio.presion.n_tomas_7d} tomas). La semana es la señal; la toma del día es ruido.</div></div>`;
-  return `<div class="tarjeta"><h2>Corazón en detalle — mejora medible</h2>${filas}</div>`;
+  return `<div class="tarjeta"><h2>Corazón en detalle</h2>${filas}</div>`;
 }
 
 function seccionHistorial(hist){
@@ -1079,9 +935,10 @@ function seccionHistorial(hist){
     const f = new Date(r.fecha+"T12:00:00");
     const a = r.acumulado||{};
     const entreno = (r.entrenamiento||[]).length>0;
-    const gl = r.glucosa||[];
-    const glMin = gl.length?Math.min(...gl.map(g=>g.mg_dl)):null;
-    const glTxt = gl.length?` · glucosa ${Math.min(...gl.map(g=>g.mg_dl))}–${Math.max(...gl.map(g=>g.mg_dl))}`:"";
+    // Glucosa del día: solo lecturas confiables del sensor.
+    const gl = (r.glucosa_sensor||[]).filter(p=>(p.calidad||"ok")==="ok").map(p=>p.mg_dl);
+    const glMin = gl.length?Math.min(...gl):null;
+    const glTxt = gl.length?` · glucosa ${glMin}–${Math.max(...gl)}`:"";
     return `<div class="dia-fila">
       <div class="dia-fecha"><div class="d">${f.getDate()}</div><div class="m">${MESES[f.getMonth()]}</div></div>
       <div class="dia-datos">
@@ -1095,20 +952,626 @@ function seccionHistorial(hist){
       </div>
     </div>`;
   }).join("");
-  return `<div class="tarjeta"><h2>Historial — cómo estuve cada día</h2>${filas}</div>`;
+  return `<div class="tarjeta"><h2>Cómo estuve cada día</h2>${filas}</div>`;
 }
+
+/* =====================================================================================
+   DISEÑO "TU SALUD" (02-10-2026)
+   Reglas de Marcelo: la flor es la identidad y manda; Inicio resume y decide (estados y
+   tendencias, no tablas de números); ninguna métrica dos veces en Inicio; el detalle numérico
+   vive en las pantallas de cada tema; un color por categoría en toda la app; una sola
+   familia de íconos de contorno. Glucosa: SOLO datos directos del sensor (MCG).
+   ===================================================================================== */
+
+/* ---------- íconos de contorno (24×24, mismo trazo) ---------- */
+const ICONOS = {
+  luna:'<path d="M20.5 13.2A8.5 8.5 0 1 1 10.8 3.5a6.6 6.6 0 0 0 9.7 9.7z"/>',
+  corazon:'<path d="M12 20s-7.5-4.6-7.5-10.1A4.4 4.4 0 0 1 12 7.1a4.4 4.4 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/>',
+  manzana:'<path d="M12 7.5c-1.6-1.3-5.4-1.4-6.6 1.6-1.4 3.4.4 8.6 3.2 10.6 1.2.9 2.3.5 3.4-.1 1.1.6 2.2 1 3.4.1 2.8-2 4.6-7.2 3.2-10.6-1.2-3-5-2.9-6.6-1.6z"/><path d="M12 7.5c0-2.2 1.2-3.6 3.2-4"/>',
+  hoja:'<path d="M5 19C5 10.5 10 5 19.5 4.5 19 14 13.5 19 5 19z"/><path d="M5 19l8.5-8.5"/>',
+  pesa:'<path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
+  medidor:'<path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l3.5-4.5"/><path d="M4 17h16"/>',
+  sol:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  pulso:'<path d="M3 12h4l2.5-6 4 12 2.5-6H21"/>',
+  rayo:'<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/>',
+  montana:'<path d="M2.5 19.5 9.5 7l4 6.5 2-3 6 9z"/><path d="M7.8 10.2l1.7 1.3 1.5-1.4"/>',
+  calendario:'<rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/>',
+  barras:'<path d="M5 20v-8M10 20V7M15 20v-5M20 20V4M3 20h18"/>',
+  diana:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l5.5-5.5M15 4.5h2.8v2.8"/>',
+  capsula:'<rect x="3.2" y="8.5" width="17.6" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/>',
+  puntos:'<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>',
+  casa:'<path d="M4 11 12 4.5l8 6.5v8.5h-5.2v-5.5H9.2v5.5H4z"/>',
+  mas:'<path d="M12 5v14M5 12h14"/>',
+  arbol:'<path d="M12 21v-8"/><path d="M12 13c-4.2 0-6.5-2.8-6.5-7 4.2 0 6.5 2.8 6.5 7z"/><path d="M12 10.5c0-3.8 2.2-6.5 6.5-6.5 0 3.8-2.2 6.5-6.5 6.5z"/>',
+  engranaje:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/><circle cx="12" cy="12" r="6.6"/>',
+  persona:'<circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c1.2-3.8 4-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/>',
+  gota:'<path d="M12 3.2c3.6 4.4 6 7.7 6 11a6 6 0 0 1-12 0c0-3.3 2.4-6.6 6-11z"/>',
+  cubiertos:'<path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10"/><path d="M17 21V3c-2.2 1.2-3.2 4-3.2 7.5H17"/>',
+  espiga:'<path d="M12 21V8"/><path d="M12 8c-2.6-.4-4-2.2-4-4.5 2.6.4 4 2.2 4 4.5zM12 8c2.6-.4 4-2.2 4-4.5-2.6.4-4 2.2-4 4.5z"/><path d="M12 13c-2.6-.4-4-2.2-4-4.5 2.6.4 4 2.2 4 4.5zM12 13c2.6-.4 4-2.2 4-4.5-2.6.4-4 2.2-4 4.5z"/><path d="M12 18c-2.6-.4-4-2.2-4-4.5 2.6.4 4 2.2 4 4.5zM12 18c2.6-.4 4-2.2 4-4.5-2.6.4-4 2.2-4 4.5z"/>',
+  llama:'<path d="M12 21c3.6 0 6-2.5 6-5.8 0-3.8-3.1-6-3.9-10.2-2.4 1.6-3.6 3.8-3.3 6.3-1.3-.6-2-1.8-2.1-3.1C7.1 9.6 6 11.8 6 15.2 6 18.5 8.4 21 12 21z"/>',
+  balanza:'<rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M8.5 9a5 5 0 0 1 7 0"/><path d="M12 9.5l1.3-1.6"/>',
+  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.2"/>',
+  derecha:'<path d="M9.5 5.5 16 12l-6.5 6.5"/>',
+  atras:'<path d="M14.5 5.5 8 12l6.5 6.5"/>',
+  check:'<path d="M6 12.5l4 4 8-9"/>',
+  sube:'<path d="M7 17 17 7M9 7h8v8"/>',
+  baja:'<path d="M7 7l10 10M17 9v8H9"/>',
+  estetoscopio:'<path d="M6 3.5v5a4 4 0 0 0 8 0v-5"/><path d="M10 12.5v2.5a4.5 4.5 0 0 0 9 0v-2"/><circle cx="19" cy="11" r="2"/>',
+  camara:'<path d="M4 8.5A2 2 0 0 1 6 6.5h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>',
+  refrescar:'<path d="M20 11a8 8 0 0 0-14.3-4.6M4 5v4h4M4 13a8 8 0 0 0 14.3 4.6M20 19v-4h-4"/>',
+};
+const ico = (n, extra="") => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICONOS[n]||""}</svg>`;
+
+/* ---------- las 8 categorías: un color cada una, el mismo en toda la app ----------
+   Mente, Social y Energía del diseño original no tenían datos: se reemplazaron por
+   dimensiones que sí se miden (decisión de Marcelo, 02-10-2026). */
+const CATEGORIAS = [
+  {k:"descanso",    nombre:"Descanso",    lema:"Más recuperación", icono:"luna",    hex:"#5B4FA0", relojes:["descanso"],             grupo:"rendimiento"},
+  {k:"corazon",     nombre:"Corazón",     lema:"Más resistencia",  icono:"corazon", hex:"#D4574A", relojes:["presion","fc_reposo"],  grupo:"salud"},
+  {k:"nutricion",   nombre:"Nutrición",   lema:"Más equilibrio",   icono:"manzana", hex:"#3E8A4F", relojes:["macros"],               grupo:"energia"},
+  {k:"metabolismo", nombre:"Metabolismo", lema:"Más eficiencia",   icono:"hoja",    hex:"#5FA27C", relojes:["glucosa"],              grupo:"energia"},
+  {k:"cuerpo",      nombre:"Cuerpo",      lema:"Más fuerza",       icono:"pesa",    hex:"#2F6A96", relojes:["musculacion"],          grupo:"rendimiento"},
+  {k:"composicion", nombre:"Composición", lema:"Menos grasa",      icono:"medidor", hex:"#C9653F", relojes:["grasa"],                grupo:"rendimiento"},
+  {k:"micros",      nombre:"Micros",      lema:"Más vitalidad",    icono:"sol",     hex:"#D69631", relojes:["micros"],               grupo:"energia"},
+  {k:"aerobico",    nombre:"Aeróbico",    lema:"Más capacidad",    icono:"pulso",   hex:"#4B7FA8", relojes:["fc_esfuerzo"],          grupo:"salud"},
+];
+const GRUPOS = [
+  {k:"energia",     nombre:"Energía",     icono:"rayo",    hex:"#D69631"},
+  {k:"salud",       nombre:"Salud",       icono:"corazon", hex:"#D4574A"},
+  {k:"rendimiento", nombre:"Rendimiento", icono:"montana", hex:"#2F6A96"},
+];
+const NOMBRE_RELOJ = {presion:"Presión", fc_reposo:"FC de reposo", fc_esfuerzo:"FC en esfuerzo", macros:"Macronutrientes",
+  micros:"Micronutrientes", glucosa:"Glucosa (sensor)", musculacion:"Entrenamiento", grasa:"Grasa corporal", descanso:"Sueño"};
+
+function puntajeCategoria(rel, cat){
+  const v = cat.relojes.map(k => rel[k] && rel[k].score).filter(s => s != null);
+  return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
+}
+function aclarar(hex, t){   // mezcla con blanco
+  const n = parseInt(hex.slice(1),16), r=n>>16, g=(n>>8)&255, b=n&255;
+  const m = c => Math.round(c + (255-c)*t);
+  return `rgb(${m(r)},${m(g)},${m(b)})`;
+}
+
+/* ---------- la flor ---------- */
+let FOCO_GRUPO = null;
+function flor(rel, edad){
+  const defs = [], hojas = [], petalos = [], etiquetas = [];
+  // Hojas detrás de los pétalos: la identidad orgánica, sin ramas realistas.
+  for(let i=0;i<8;i++){
+    const a = i*45 + 22.5, largo = i%2 ? 176 : 190;
+    hojas.push(`<g transform="rotate(${a})">
+      <path d="M0,-62 C30,-92 34,${-largo+44} 0,${-largo} C-34,${-largo+44} -30,-92 0,-62Z" fill="${i%2?"#6E9A5B":"#58864C"}"/>
+      <path d="M0,-66 L0,${-largo+8}" stroke="#A9C79A" stroke-width="1.2" opacity=".7"/></g>`);
+  }
+  CATEGORIAS.forEach((c, i) => {
+    const s = puntajeCategoria(rel, c);
+    const sin = s == null;
+    const base = sin ? "#B9BFB8" : c.hex;
+    defs.push(`<linearGradient id="gp-${c.k}" gradientUnits="userSpaceOnUse" x1="0" y1="-60" x2="0" y2="-200">
+      <stop offset="0" stop-color="${aclarar(base,.42)}"/><stop offset=".55" stop-color="${aclarar(base,.08)}"/><stop offset="1" stop-color="${base}"/></linearGradient>`);
+    const a = i*45, rad = a*Math.PI/180, d = 132;
+    const lx = (Math.sin(rad)*d).toFixed(1), ly = (-Math.cos(rad)*d).toFixed(1);
+    // El puntaje se ve como intensidad, no como número (Inicio muestra estados).
+    const op = sin ? 1 : (0.72 + 0.28*s).toFixed(2);
+    petalos.push(`<g class="petalo" data-grupo="${c.grupo}" style="opacity:${op}" onclick="ir('arbol')" role="button"
+        aria-label="${c.nombre}: ${sin?"sin datos":Math.round(s*100)+"%"}">
+      <g transform="rotate(${a})"><path d="M0,-58 C64,-72 80,-152 0,-204 C-80,-152 -64,-72 0,-58Z" fill="url(#gp-${c.k})"
+        stroke="rgba(255,255,255,.55)" stroke-width="1.2"/></g></g>`);
+    etiquetas.push(`<g class="petalo" data-grupo="${c.grupo}" style="pointer-events:none">
+      <g transform="translate(${lx},${ly})" fill="#fff" text-anchor="middle">
+        <svg x="-13" y="-36" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round">${ICONOS[c.icono]}</svg>
+        <text y="6" font-size="15" font-weight="600" font-family="var(--sans)">${c.nombre}</text>
+        <text y="22" font-size="10.5" opacity=".92" font-family="var(--sans)">${sin?"Sin datos":c.lema}</text>
+      </g></g>`);
+  });
+  const e = edad || null;
+  let centro;
+  if(e){
+    const cambio = e.cambio_anos;
+    const hace = e.comparado_con ? Math.round((Date.now() - new Date(e.comparado_con+"T12:00:00"))/864e5) : null;
+    centro = `
+      <text y="-40" font-size="12.5" text-anchor="middle" fill="var(--tinta)">Edad</text>
+      <text y="-25" font-size="12.5" text-anchor="middle" fill="var(--tinta)">metabólica</text>
+      <text y="18" font-size="50" text-anchor="middle" font-family="var(--serif)" fill="var(--tinta)">${e.equivalente}</text>
+      <text y="34" font-size="11.5" text-anchor="middle" fill="var(--tinta)">años</text>
+      ${cambio != null && hace ? `
+        <rect x="-21" y="41" width="42" height="17" rx="8.5" fill="${cambio<=0?"#E4EFE7":"#FBEDE6"}"/>
+        <text y="53.5" font-size="11.5" text-anchor="middle" fill="${cambio<=0?"#2F6B4F":"#B4532F"}">${cambio<0?"↓":cambio>0?"↑":"="} ${Math.abs(cambio)}</text>
+        <text y="70" font-size="9" text-anchor="middle" fill="var(--tinta2)">vs. hace ${hace} días</text>`
+      : `<text y="54" font-size="9.5" text-anchor="middle" fill="var(--tinta2)">equivalente</text>`}`;
+  }else{
+    centro = `<text y="-6" font-size="13" text-anchor="middle" fill="var(--tinta2)">Edad metabólica</text>
+      <text y="16" font-size="12" text-anchor="middle" fill="var(--tinta2)">calibrando</text>`;
+  }
+  return `<svg class="flor${FOCO_GRUPO?" foco-"+FOCO_GRUPO:""}" id="flor" viewBox="-215 -215 430 430" role="img"
+      aria-label="Flor del bienestar: ocho dimensiones de tu salud">
+    <defs>${defs.join("")}</defs>
+    ${hojas.join("")}${petalos.join("")}${etiquetas.join("")}
+    <g class="centro" onclick="ir('edad')" role="button" aria-label="Edad metabólica">
+      <circle r="78" fill="#FFFDF8" stroke="rgba(255,255,255,.9)" stroke-width="4"/>${centro}</g>
+  </svg>`;
+}
+
+function chipsHeroe(rel){
+  return `<div class="chips-heroe">${GRUPOS.map(g => {
+    const cats = CATEGORIAS.filter(c => c.grupo === g.k);
+    const v = cats.map(c => puntajeCategoria(rel, c)).filter(s => s != null);
+    const s = v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
+    const C = 2*Math.PI*25;
+    const prog = s == null ? "" : `<svg class="prog" viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none"
+        stroke="${g.hex}" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${(C*(1-s)).toFixed(1)}"
+        transform="rotate(-90 28 28)" opacity=".85"/></svg>`;
+    return `<button class="chip-h${FOCO_GRUPO===g.k?" activo":""}" onclick="enfocarGrupo('${g.k}')" aria-pressed="${FOCO_GRUPO===g.k}">
+      <span class="circ" style="color:${g.hex}">${prog}${ico(g.icono,'style="width:26px;height:26px"')}</span>${g.nombre}</button>`;
+  }).join("")}</div>`;
+}
+
+function enfocarGrupo(k){
+  FOCO_GRUPO = FOCO_GRUPO === k ? null : k;
+  const f = document.getElementById("flor");
+  if(f) f.setAttribute("class", "flor" + (FOCO_GRUPO ? " foco-"+FOCO_GRUPO : ""));
+  document.querySelectorAll(".chip-h").forEach(b => {
+    const activo = b.getAttribute("onclick").includes(`'${FOCO_GRUPO}'`);
+    b.classList.toggle("activo", activo); b.setAttribute("aria-pressed", activo);
+  });
+}
+
+/* ---------- cabecera y héroe ---------- */
+const DIAS_SEM = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const MESES_C = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const LOGO = `<svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+  <circle cx="24" cy="24" r="23" fill="#FFFDF8"/>
+  <circle cx="24" cy="21" r="8" fill="#E9A23B"/>
+  <path d="M10 21h28" stroke="#FFFDF8" stroke-width="2"/>
+  <path d="M5 27c6-3 12-3 19 0s13 3 19 0v4c-6 3-12 3-19 0S11 28 5 31z" fill="#2F6B4F"/>
+  <path d="M5 33c6-3 12-3 19 0s13 3 19 0v3a23 23 0 0 1-38 0z" fill="#3B7FA3"/></svg>`;
+
+function cabecera(){
+  const d = new Date();
+  return `<div class="cabecera">
+    ${LOGO}
+    <div class="marca"><div class="nombre">Tu Salud</div><div class="lema">Más vida para lo que importa</div></div>
+    <div class="derecha">
+      <div class="hoy"><b>${DIAS_SEM[d.getDay()]}</b><br>${d.getDate()} de ${MESES_C[d.getMonth()]}, ${d.getFullYear()}</div>
+      <button class="perfil" onclick="ir('config')" aria-label="Configuración">${ico("persona")}</button>
+    </div></div>`;
+}
+
+function heroe(rel, edad){
+  return `<section class="heroe">
+    ${cabecera()}
+    <div class="heroe-grid" style="margin-top:18px">
+      <div class="texto">
+        <h1>Tu bienestar florece con cada hábito</h1>
+        <p class="bajada">Equilibrio hoy.<br>Más vida mañana.</p>
+        <div class="solo-ancho">${chipsHeroe(rel)}</div>
+      </div>
+      <div>${flor(rel, edad)}<div class="solo-angosto">${chipsHeroe(rel)}</div></div>
+    </div></section>`;
+}
+
+/* ---------- navegación ---------- */
+const PESTANAS = [
+  {k:"inicio", nombre:"Hoy", icono:"calendario"}, {k:"tendencias", nombre:"Tendencias", icono:"barras"},
+  {k:"plan", nombre:"Plan", icono:"diana"}, {k:"medicacion", nombre:"Medicación", icono:"capsula"},
+  {k:"mas", nombre:"Más", icono:"puntos"}];
+const RUTAS_CON_HEROE = PESTANAS.map(p => p.k);
+
+function rutaActual(){ return (location.hash || "#inicio").slice(1) || "inicio"; }
+function ir(ruta){ if(rutaActual() === ruta) pintar(); else location.hash = ruta; }
+
+function navInferior(ruta){
+  const item = (k, nombre, icono, activa) =>
+    `<a href="#${k}" class="${activa?"activa":""}" aria-current="${activa?"page":"false"}">${ico(icono)}${nombre}</a>`;
+  return `<nav class="nav" aria-label="Navegación principal">
+    ${item("inicio","Inicio","casa", RUTAS_CON_HEROE.includes(ruta) && ruta !== "tendencias")}
+    ${item("tendencias","Progreso","barras", ruta==="tendencias")}
+    <a href="#registrar" class="fab" aria-label="Registrar">${ico("mas")}</a>
+    ${item("arbol","Árbol de la vida","arbol", ruta==="arbol")}
+    ${item("config","Configuración","engranaje", ruta==="config")}
+  </nav>`;
+}
+
+function pestanas(ruta){
+  return `<div class="pestanas" role="tablist">${PESTANAS.map(p =>
+    `<button class="pestana${p.k===ruta?" activa":""}" role="tab" aria-selected="${p.k===ruta}" onclick="ir('${p.k}')">
+      ${ico(p.icono)}${p.nombre}</button>`).join("")}</div>`;
+}
+
+function cabeceraDetalle(titulo){
+  return `<div class="cabecera-detalle"><button class="volver" onclick="history.length>1?history.back():ir('inicio')" aria-label="Volver">${ico("atras")}</button>
+    <h1>${titulo}</h1></div>`;
+}
+
+/* ---------- datos de la pasada (se pintan sin volver a pedirlos al cambiar de pantalla) ---------- */
+let DATOS = null;   // {estado, regHoy, historial}
+
+function metas(){
+  const m = (DATOS && DATOS.estado && DATOS.estado.metas) || {};
+  const num = (txt, cual) => { const v = String(txt||"").match(/\d+(?:[.,]\d+)?/g); return v ? +(cual==="max" ? v[v.length-1] : v[0]).replace(",",".") : null; };
+  return {prot: num(m.proteina_g) || 170, carbs: num(m.carbohidratos_g_entrenamiento, "max") || 100, kcal: 2000, sodio: 2300};
+}
+
+/* ---------- tarjetas de Inicio ---------- */
+function tarjetaEdad(edad){
+  const serie = (edad && edad.serie) || [];
+  let cuerpo;
+  if(!edad){
+    cuerpo = `<p class="t-sub">Aparece cuando haya puntaje de Salud general.</p>`;
+  }else if(serie.length < 7 || edad.cambio_anos == null){
+    cuerpo = `<p class="t-sub" style="margin-top:10px">${ico("hoja",'style="width:18px;height:18px;vertical-align:-4px;color:var(--c-metabolismo)"')}
+      Calibrando: la tendencia aparece al juntar ${Math.max(0, 7-serie.length)} día${7-serie.length===1?"":"s"} más de datos.</p>`;
+  }else{
+    const c = edad.cambio_anos;
+    const txt = c < 0 ? `${-c} año${c===-1?"":"s"} menor` : c > 0 ? `${c} año${c===1?"":"s"} mayor` : "Igual";
+    cuerpo = `<div style="display:flex;gap:8px;align-items:center;margin-top:10px;color:var(--c-metabolismo)">
+        ${ico("hoja")}<div><div style="font-size:15px;color:${c<=0?"var(--acento)":"#B4532F"}">${txt}</div>
+        <div class="t-sub" style="margin-top:0">que hace ${Math.round((Date.now()-new Date(edad.comparado_con+"T12:00:00"))/864e5)} días</div></div></div>
+      ${lineaMini(serie.map(x => x.edad), "#3E8A4F", 200, 70, true)}`;
+  }
+  return `<button class="tarjeta" onclick="ir('edad')">
+    <div class="t-titulo">Tu edad metabólica ${ico("info",'style="width:18px;height:18px;color:var(--tinta2)"')}</div>${cuerpo}</button>`;
+}
+
+function lineaMini(vals, color, W=100, H=34, relleno=false){
+  if(!vals || vals.length < 2) return "";
+  const min = Math.min(...vals), max = Math.max(...vals), r = (max-min) || 1;
+  const pts = vals.map((v,i) => [4 + (W-8)*i/(vals.length-1), 4 + (H-8)*(1-(v-min)/r)]);
+  const d = pts.map(p => p.map(n=>n.toFixed(1)).join(",")).join(" ");
+  const u = pts[pts.length-1];
+  return `<svg class="mini" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    ${relleno?`<polygon points="${pts[0][0]},${H} ${d} ${u[0]},${H}" fill="${color}" opacity=".1"/>`:""}
+    <polyline points="${d}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${u[0].toFixed(1)}" cy="${u[1].toFixed(1)}" r="2.8" fill="${color}"/></svg>`;
+}
+
+function anillosRegistro(reg){
+  const a = (reg && reg.acumulado) || {}, m = metas();
+  const ARS = [
+    {n:"Proteína", v:a.proteina_g, meta:m.prot, color:"#E08A2C", icono:"cubiertos"},
+    {n:"Carbohidratos", v:a.carbohidratos_g, meta:m.carbs, color:"#3E7BC4", icono:"espiga"},
+    {n:"Calorías", v:a.kcal, meta:m.kcal, color:"#3E8A4F", icono:"llama", icColor:"#E07B2C"},
+    {n:"Sodio", v:a.sodio_mg, meta:m.sodio, color:"#8DB8E8", icono:"gota", tope:true},
+  ];
+  const C = 2*Math.PI*26;
+  return `<div class="anillos4">${ARS.map(x => {
+    const p = Math.max(0, Math.min(1, (x.v||0)/x.meta));
+    const pasado = x.tope && (x.v||0) > x.meta;
+    return `<div class="a" title="${x.n}"><div class="r">
+      <svg viewBox="0 0 62 62" aria-hidden="true"><circle cx="31" cy="31" r="26" fill="none" stroke="#EFECE6" stroke-width="5.5"/>
+        <circle cx="31" cy="31" r="26" fill="none" stroke="${pasado?"#D4574A":x.color}" stroke-width="5.5" stroke-linecap="round"
+          stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-p)).toFixed(1)}" transform="rotate(-90 31 31)"/></svg>
+      <span class="ic" style="color:${x.icColor||x.color}">${ico(x.icono)}</span></div><span class="n">${x.n}</span></div>`;
+  }).join("")}</div>`;
+}
+
+function tarjetaRegistroHoy(reg){
+  return `<div class="tarjeta">
+    <div class="t-titulo">${ico("sol",'style="color:#E9A23B"')}Registro de hoy
+      <button class="boton" style="margin-left:auto" onclick="ir('registrar')">${ico("mas",'style="width:16px;height:16px"')}Añadir</button></div>
+    <div id="hoy-en-vivo">${anillosRegistro(reg)}</div></div>`;
+}
+
+/* Glucosa de hoy, SOLO del sensor. El estado sale de las lecturas confiables. */
+function estadoGlucosaHoy(reg){
+  const serie = ((reg && reg.glucosa_sensor) || []);
+  const ok = serie.filter(p => (p.calidad||"ok") === "ok");
+  if(!serie.length) return {txt:"Sin datos", cls:"neutro"};
+  if(ok.length < 12) return {txt:"Calibrando", cls:"neutro"};   // el mismo mínimo que el tablero: 3 h de señal
+  if(ok.some(p => p.mg_dl < 70)) return {txt:"Bajo 70 hoy", cls:"atencion"};
+  const enRango = ok.filter(p => p.mg_dl >= 70 && p.mg_dl <= 180).length / ok.length;
+  return enRango >= .7 ? {txt:"En rango", cls:""} : {txt:"Fuera de rango", cls:"atencion"};
+}
+
+function curvaMini(reg){
+  const serie = ((reg && reg.glucosa_sensor) || []).filter(p => p.calidad !== "artefacto");
+  if(serie.length < 2) return "";
+  const W=110, H=44, dia = new Date(serie[0].t); dia.setHours(0,0,0,0);
+  const x = t => 3 + (W-6)*Math.min(1, Math.max(0, (new Date(t)-dia)/864e5));
+  const y = v => 3 + (H-15)*(1 - (Math.min(250, Math.max(40, v))-40)/210);
+  const pts = serie.map(p => `${x(p.t).toFixed(1)},${y(p.mg_dl).toFixed(1)}`).join(" ");
+  return `<svg class="mini" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <rect x="3" y="${y(180).toFixed(1)}" width="${W-6}" height="${(y(70)-y(180)).toFixed(1)}" fill="#5FA27C" opacity=".1"/>
+    <line x1="3" x2="${W-3}" y1="${y(110).toFixed(1)}" y2="${y(110).toFixed(1)}" stroke="#5FA27C" stroke-dasharray="2 3" opacity=".6"/>
+    <polyline points="${pts}" fill="none" stroke="#3E8A6A" stroke-width="1.4" stroke-linejoin="round"/>
+    ${["00","06","12","18","24"].map((h,i)=>`<text x="${(3+(W-6)*i/4).toFixed(1)}" y="${H-1}" font-size="6.5" text-anchor="middle" fill="var(--tinta2)">${h}</text>`).join("")}
+  </svg>`;
+}
+
+function tarjetaMiniGlucosa(reg){
+  const e = estadoGlucosaHoy(reg);
+  return `<button class="tarjeta" onclick="ir('glucosa')">
+    <div class="t-titulo" style="font-size:15px"><span style="color:var(--c-metabolismo)">${ico("gota")}</span>Glucosa<span class="mas">${ico("derecha",'style="width:16px;height:16px"')}</span></div>
+    <div style="text-align:right;margin-top:10px"><span class="estado ${e.cls}">${e.txt}</span></div>
+    ${curvaMini(reg)}</button>`;
+}
+
+const TXT_PRESION = {normal:["En rango",""], elevada:["Elevada","atencion"], elevada_1:["Alta, etapa 1","atencion"], alta:["Alta","atencion"]};
+function tarjetaMiniPresion(cardio){
+  const pa = cardio && cardio.presion, serie = (cardio && cardio.presion_serie) || [];
+  const [txt, cls] = pa && pa.categoria ? TXT_PRESION[pa.categoria] : ["Sin tomas","neutro"];
+  const max = Math.max(150, ...serie.map(t => t.sistolica));
+  const barras = serie.map((t,i) => {
+    const h = 30*(t.sistolica-60)/(max-60), xx = 4 + i*10.5;
+    return `<rect x="${xx.toFixed(1)}" y="${(34-h).toFixed(1)}" width="6.5" height="${h.toFixed(1)}" rx="2"
+      fill="#D4574A" opacity="${i===serie.length-1?.9:.32}"/>`;
+  }).join("");
+  return `<button class="tarjeta" onclick="ir('presion')">
+    <div class="t-titulo" style="font-size:15px"><span style="color:var(--c-corazon)">${ico("corazon")}</span>Presión arterial<span class="mas">${ico("derecha",'style="width:16px;height:16px"')}</span></div>
+    <div class="t-sub">Promedio 7 días${pa?` (${pa.n_tomas_7d} toma${pa.n_tomas_7d===1?"":"s"})`:""}</div>
+    <div style="text-align:right;margin-top:6px"><span class="estado ${cls}">${txt}</span></div>
+    ${serie.length?`<svg class="mini" viewBox="0 0 110 36" aria-hidden="true">${barras}</svg>`:""}</button>`;
+}
+
+function tarjetaMiniPeso(peso){
+  const c = peso && peso.cambio_kg;
+  const sube = c != null && c > 0;
+  const chip = c == null ? `<span class="estado neutro">${peso?"Pocos pesajes":"Sin datos"}</span>`
+    : `<span class="estado ${sube?"atencion":""}">${c>0?"+":""}${String(c).replace(".",",")} kg</span>`;
+  return `<button class="tarjeta" onclick="ir('peso')">
+    <div class="t-titulo" style="font-size:15px"><span style="color:var(--c-composicion)">${ico("balanza")}</span>Peso<span class="mas">${ico("derecha",'style="width:16px;height:16px"')}</span></div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:10px">
+      ${c!=null&&c!==0?`<span style="color:${sube?"#D4574A":"var(--acento)"}">${ico(sube?"sube":"baja",'style="width:18px;height:18px"')}</span>`:""}${chip}</div>
+    ${c!=null?`<div class="t-sub" style="text-align:right;margin-top:3px">en ${peso.cambio_dias} días</div>`:""}
+    ${peso?lineaMini(peso.serie.map(x=>x.kg), "#D4574A", 110, 34):""}</button>`;
+}
+
+function horasDeSueno(txt){ const m = /(\d+)\s*h\s*(\d+)?/.exec(String(txt||"")); return m ? +m[1] + (+m[2]||0)/60 : null; }
+
+function tarjetaHabitos(reg, estado){
+  const rutina = String(estado.rutina_de_hoy || "");
+  const descanso = /DESCANSO/i.test(rutina);
+  const entreno = ((reg && reg.entrenamiento) || []).length > 0;
+  const horas = horasDeSueno(reg && reg.sueno);
+  const prot = +(((reg && reg.acumulado) || {}).proteina_g || 0), m = metas();
+  const corto = t => { const s = t.replace(/^Semana \d+:\s*/,"").split(/[—.(]/)[0].trim(); return s.length>34 ? s.slice(0,32)+"…" : s; };
+  const H = [
+    {n:"Movimiento", icono:"pesa", color:"#D4574A", hecho: descanso || entreno, p: descanso||entreno ? 1 : 0,
+     c: descanso ? "Día de descanso" : (corto(rutina) || "Sesión del plan")},
+    {n:"Sueño", icono:"luna", color:"#5B4FA0", hecho: horas != null && horas >= 7, p: horas == null ? 0 : Math.min(1, horas/7),
+     c: horas == null ? "Dormir 7 h o más" : `Dormir 7 h o más · anoche ${String(Math.round(horas*10)/10).replace(".",",")} h`},
+    {n:"Nutrición", icono:"manzana", color:"#3E8A4F", hecho: prot >= m.prot, p: Math.min(1, prot/m.prot),
+     c: `Proteína ${m.prot} g hoy`},
+  ];
+  const listos = H.filter(h => h.hecho).length;
+  return `<div class="habitos">
+    <div class="cab"><span style="color:var(--c-nutricion)">${ico("hoja")}</span><div class="t-titulo">Hábitos de hoy</div>
+      <small>${listos} de 3 completados</small></div>
+    <div class="rejilla-3" style="margin-bottom:0">${H.map(h => `<div class="habito">
+      <div class="f"><span style="color:${h.color}">${ico(h.icono,'style="width:20px;height:20px"')}</span>${h.n}
+        <span class="ok ${h.hecho?"si":""}">${h.hecho?ico("check",'style="width:13px;height:13px;stroke-width:2.4"'):""}</span></div>
+      <div class="p"><i style="width:${Math.round(h.p*100)}%;background:${h.hecho?"var(--acento)":h.color}"></i></div>
+      <div class="c">${escaparHtml(h.c)}</div></div>`).join("")}</div></div>`;
+}
+
+/* Un aviso para el médico no puede esconderse en otra pantalla: si existe, aparece aquí. */
+function avisoMedico(estado){
+  const n = (estado.correlaciones||[]).filter(c => c.urgencia === "medica").length + ((estado.analisis_ia||{}).alerta ? 1 : 0);
+  if(!n) return "";
+  return `<button class="tarjeta aviso-medico" onclick="ir('tendencias')">${ico("estetoscopio")}
+    <span>${n} aviso${n>1?"s":""} para comentar con tu médico</span>
+    <span style="margin-left:auto;color:var(--tinta2)">${ico("derecha",'style="width:16px;height:16px"')}</span></button>`;
+}
+
+/* ---------- vistas ---------- */
+function vistaInicio(){
+  const {estado, regHoy} = DATOS;
+  return `${avisoMedico(estado)}
+    <div class="rejilla-2">${tarjetaEdad(estado.edad_metabolica)}${tarjetaRegistroHoy(regHoy)}</div>
+    <div class="rejilla-3">${tarjetaMiniGlucosa(regHoy)}${tarjetaMiniPresion(estado.cardio)}${tarjetaMiniPeso(estado.peso)}</div>
+    ${tarjetaHabitos(regHoy, estado)}`;
+}
+
+function vistaTendencias(){
+  const {estado, historial} = DATOS;
+  return `${seccionCorrelaciones(estado.correlaciones)}${tarjetaAlimentacion(estado.alimentacion)}
+    ${tarjetaCardio(estado.cardio)}${seccionHistorial(historial)}`;
+}
+
+function vistaPlan(){
+  const ia = DATOS.estado.analisis_ia || {};
+  return `<div class="tarjeta"><h2>Rutina de hoy</h2>
+      <p class="rutina">${(DATOS.estado.rutina_de_hoy||"—").replace(/^(Semana \d+:)/,"<b>$1</b>")}</p></div>
+    <div class="tarjeta"><h2>Objetivos de hoy</h2>${checklist(ia.objetivos_hoy||[], "obj")}
+      <p class="analisis" style="margin-top:10px">${ia.analisis||""}</p>
+      ${ia.comentario_cientifico?`<p style="margin-top:10px;font-size:13.5px;line-height:1.5;color:var(--tinta2);border-top:1px solid var(--linea2);padding-top:10px">${ia.comentario_cientifico}</p>`:""}
+      ${ia.alerta?`<div class="alerta">${ia.alerta}</div>`:""}</div>`;
+}
+
+function vistaMedicacion(){
+  const e = DATOS.estado;
+  return `<div class="tarjeta"><h2>Medicamentos</h2>${checklist(e.medicamentos||[], "med")}</div>
+    <div class="tarjeta"><h2>Suplementos</h2>${checklist(e.suplementos||[], "sup")}</div>
+    <div class="pendientes" id="reg-aviso"></div>`;
+}
+
+function vistaMas(){
+  const fila = (ruta, icono, color, txt) => `<a href="#${ruta}"><span style="color:${color}">${ico(icono)}</span>${txt}<span class="mas">${ico("derecha",'style="width:16px;height:16px"')}</span></a>`;
+  return `<div class="tarjeta lista-mas">
+      ${fila("glucosa","gota","var(--c-metabolismo)","Glucosa (sensor)")}
+      ${fila("presion","corazon","var(--c-corazon)","Presión arterial")}
+      ${fila("peso","balanza","var(--c-composicion)","Peso y composición")}
+      ${fila("edad","hoja","var(--c-nutricion)","Edad metabólica: cómo se calcula")}
+      ${fila("registrar","mas","var(--acento)","Registrar")}
+      ${fila("arbol","arbol","var(--acento)","Árbol de la vida")}
+      ${fila("config","engranaje","var(--tinta2)","Configuración")}
+    </div>
+    <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
+    <div class="version">v21.0.0</div>`;
+}
+
+function vistaArbol(){
+  const rel = DATOS.estado.relojes || {};
+  return `${flor(rel, DATOS.estado.edad_metabolica)}
+    <div class="tarjeta" style="margin-top:12px">${CATEGORIAS.map(c => {
+      const s = puntajeCategoria(rel, c);
+      const det = c.relojes.map(k => rel[k] && rel[k].detalle ? `${NOMBRE_RELOJ[k]}: ${rel[k].detalle}` : `${NOMBRE_RELOJ[k]}: sin datos`).join(" · ");
+      return `<div class="fila-arbol"><i style="background:${c.hex}"></i>
+        <div><div class="n">${c.nombre}</div><div class="d">${escaparHtml(det)}</div></div>
+        <div class="s">${s==null?"—":Math.round(s*100)+"%"}</div></div>`;
+    }).join("")}
+    <p class="nota">Cada pétalo es más intenso mientras mejor va. Los gris son los que aún no tienen datos.
+      Salud general (${rel.general&&rel.general.score!=null?Math.round(rel.general.score*100)+"%":"—"}) es el promedio ponderado de todos.</p></div>`;
+}
+
+function vistaGlucosa(){
+  const {regHoy, estado} = DATOS;
+  const g = (estado.alimentacion || {}).glucosa;
+  let metr = `<p class="t-sub">Aún no hay lecturas del sensor en los últimos 7 días.</p>`;
+  if(g && g.calibrando){
+    metr = `<p class="t-sub">Calibrando: hay ${g.n_lecturas} lecturas confiables; los números de 7 días aparecen con 3 horas de señal.</p>`;
+  }else if(g){
+    const m = (v, l) => `<div class="metrica"><div class="v">${v}</div><div class="l">${l}</div></div>`;
+    metr = `<div class="metricas">${m(g.prom_7d+" mg/dl","Promedio 7 días")}${m(g.en_rango_pct+"%","En rango 70–180")}
+      ${m(String(g.bajo_70_pct).replace(".",",")+"%","Bajo 70")}${m(String(g.sobre_180_pct).replace(".",",")+"%","Sobre 180")}
+      ${m(g.cv_pct!=null?g.cv_pct+"%":"—","Variabilidad (CV)")}${m(g.n_lecturas,"Lecturas confiables")}</div>`;
+  }
+  return `<div class="tarjeta">${sensorHoy(regHoy)}${curvaGlucosa(regHoy)}</div>
+    <div class="tarjeta"><h2>Últimos 7 días</h2>${metr}
+      <p class="nota">Solo datos directos del sensor (MCG). Las tomas manuales y los pantallazos no se usan en glucosa.
+      Las lecturas dudosas (primeras 24 h del sensor, compresión nocturna) se ven en la curva pero no cuentan.</p></div>`;
+}
+
+function vistaPresion(){
+  const c = DATOS.estado.cardio || {}, serie = c.presion_serie || [];
+  return `${tarjetaCardio(c)}
+    ${serie.length?`<div class="tarjeta"><h2>Últimas tomas</h2>${serie.slice().reverse().map(t =>
+      `<div class="barra"><div class="fila"><span>${t.fecha.slice(8)}/${t.fecha.slice(5,7)}</span><b>${t.sistolica}/${t.diastolica||"—"}</b></div></div>`).join("")}</div>`:""}`;
+}
+
+function vistaPeso(){
+  const p = DATOS.estado.peso, w = ((DATOS.estado.withings||{}).peso)||{};
+  const comp = [["grasa_pct","Grasa","%"],["masa_muscular_kg","Masa muscular","kg"],["agua_kg","Agua","kg"],["masa_osea_kg","Masa ósea","kg"]]
+    .filter(([k]) => w[k] != null).map(([k,l,u]) => `<div class="metrica"><div class="v">${String(w[k]).replace(".",",")} ${u}</div><div class="l">${l}</div></div>`).join("");
+  return `<div class="tarjeta"><h2>Peso, últimos 30 días</h2>
+      ${p?`${lineaMini(p.serie.map(x=>x.kg), "#C9653F", 320, 110, true)}
+      <p class="nota">Último: ${String(p.ultimo.kg).replace(".",",")} kg (${p.ultimo.fecha.slice(8)}/${p.ultimo.fecha.slice(5,7)})${p.cambio_kg!=null?` · ${p.cambio_kg>0?"+":""}${String(p.cambio_kg).replace(".",",")} kg en ${p.cambio_dias} días`:""}.
+      Los saltos de 1-2 kg en pocos días suelen ser agua (creatina, carbohidratos, sal), no grasa.</p>`
+      :`<p class="t-sub">Sin pesajes en los últimos 30 días.</p>`}</div>
+    ${comp?`<div class="tarjeta"><h2>Composición (Withings)</h2><div class="metricas">${comp}</div></div>`:""}`;
+}
+
+function vistaEdad(){
+  const e = DATOS.estado.edad_metabolica;
+  if(!e) return `<div class="tarjeta"><p class="analisis">Aparece cuando haya puntaje de Salud general.</p></div>`;
+  const p = e.parametros || {puntaje_neutro:.7, anos_por_10_puntos:2.5, tope_anos:10};
+  return `<div class="tarjeta" style="text-align:center">
+      <div style="font-family:var(--serif);font-size:64px;line-height:1">${e.equivalente}</div>
+      <div class="t-sub">años · equivalente de tu Salud general (${Math.round(e.puntaje*100)}%) · edad real ${e.cronologica}</div>
+      ${(e.serie||[]).length>1?lineaMini(e.serie.map(x=>x.edad), "#3E8A4F", 320, 90, true):""}</div>
+    <div class="tarjeta"><h2>Cómo se calcula</h2>
+      <p class="analisis">No es una medición: es tu puntaje de <b>Salud general</b> traducido a años, partiendo de tu edad real.</p>
+      <p class="analisis" style="margin-top:8px">Con ${Math.round(p.puntaje_neutro*100)}% quedas en tu edad (${e.cronologica}).
+        Cada 10 puntos por encima restan ${String(p.anos_por_10_puntos).replace(".",",")} años, y cada 10 por debajo los suman,
+        con un tope de ±${p.tope_anos} años.</p>
+      <p class="nota">Edad = ${e.cronologica} − (puntaje − ${Math.round(p.puntaje_neutro*100)}%) × ${String(p.anos_por_10_puntos).replace(".",",")} por cada 10 puntos.
+        Se ajusta en plan.json → edad_metabolica. La tendencia usa solo fotos diarias reales, desde el 02-10-2026.</p></div>`;
+}
+
+function vistaRegistrar(){
+  const {estado, regHoy} = DATOS;
+  return `${bannerCarbs(regHoy, estado)}${tarjetaRegistrar(regHoy)}
+    <div class="tarjeta"><h2>Hoy en vivo</h2><div id="hoy-en-vivo">${anillosRegistro(regHoy)}</div>
+      <div id="barras-hoy" style="margin-top:14px">${barrasNutrientes(regHoy)}</div></div>`;
+}
+
+function barrasNutrientes(reg){
+  if(!reg || !reg.acumulado) return "";
+  const a = reg.acumulado, m = metas();
+  const barra = (n,v,meta,color,unidad,invertir) => {
+    const p = Math.min(1, invertir ? (v<=meta ? v/meta : 1) : v/meta);
+    const exceso = invertir && v > meta;
+    return `<div class="barra"><div class="fila"><span>${n}</span><b style="color:${exceso?"var(--c-corazon)":"var(--tinta)"}">${Math.round(v)} / ${meta} ${unidad}</b></div>
+      <div class="pista"><i style="width:${Math.round(p*100)}%;background:${exceso?"var(--c-corazon)":color}"></i></div></div>`;
+  };
+  return `${barra("Proteína", a.proteina_g||0, m.prot, "#E08A2C", "g")}
+    ${barra("Carbohidratos", a.carbohidratos_g||0, m.carbs, "#3E7BC4", "g")}
+    ${barra("Calorías", a.kcal||0, m.kcal, "#3E8A4F", "kcal")}
+    ${barra("Sodio", a.sodio_mg||0, m.sodio, "#8DB8E8", "mg", true)}
+    ${barra("Fibra", a.fibra_g||0, 25, "var(--c-nutricion)", "g")}
+    ${barra("Potasio", a.potasio_mg||0, 3500, "var(--c-micros)", "mg")}
+    ${barra("Magnesio", a.magnesio_mg||0, 420, "var(--c-metabolismo)", "mg")}
+    ${barra("Vitamina D", a.vitamina_d_ug||0, 15, "var(--c-micros)", "µg")}`;
+}
+
+const VISTAS = {
+  inicio:["Hoy", vistaInicio], tendencias:["Tendencias", vistaTendencias], plan:["Plan", vistaPlan],
+  medicacion:["Medicación", vistaMedicacion], mas:["Más", vistaMas],
+  arbol:["Árbol de la vida", vistaArbol], glucosa:["Glucosa", vistaGlucosa], presion:["Presión arterial", vistaPresion],
+  peso:["Peso", vistaPeso], edad:["Edad metabólica", vistaEdad], registrar:["Registrar", vistaRegistrar],
+};
+
+/* Pinta la ruta actual con los datos ya leídos (cambiar de pantalla no vuelve a pedir nada). */
+function pintar(){
+  const ruta = rutaActual();
+  if(ruta === "config" || !cfg.token){ renderConfig(); return; }
+  if(!DATOS){ render(); return; }
+  const vista = VISTAS[ruta] || VISTAS.inicio;
+  const banners = `${bannerSinConexion()}${bannerPendientes(DATOS.estado)}`;
+  const rel = DATOS.estado.relojes || {};
+  const conHeroe = RUTAS_CON_HEROE.includes(ruta) || !VISTAS[ruta];
+  $("#app").innerHTML = conHeroe
+    ? `${heroe(rel, DATOS.estado.edad_metabolica)}<main class="panel">${banners}${pestanas(VISTAS[ruta]?ruta:"inicio")}${vista[1]()}</main>${navInferior(ruta)}`
+    : `${cabeceraDetalle(vista[0])}<main class="detalle-cuerpo">${banners}${vista[1]()}</main>${navInferior(ruta)}`;
+  if(!conHeroe) window.scrollTo(0, 0);
+}
+
+/* ---------- pantalla principal: lee el repo y pinta ---------- */
+async function render(){
+  const app = $("#app");
+  if(!cfg.token){ renderConfig(); return; }
+  if(!DATOS) app.innerHTML = `${cabecera()}<div class="estado-msg">Leyendo tu repo…</div>`;
+  SIN_CONEXION = false; SELLO_CACHE = null;
+  PENDIENTES = await BD.todos().catch(()=>[]);
+  try{
+    // Una sola tanda: el tablero y los 8 días van juntos.
+    const fechas=[...Array(8)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return fechaLocal(d);});
+    const [est, ...regs] = await Promise.all([
+      ghJson("dashboard/estado.json"),
+      ...fechas.map(f=>ghJson(`registro/${f}.json`).catch(()=>null)),
+    ]);
+    if(!est){
+      app.innerHTML = `${cabecera()}<div class="detalle-cuerpo"><div class="tarjeta"><p class="analisis">Aún no existe <b>dashboard/estado.json</b>.
+        Corre el workflow "Agente de Salud — correo diario" (botón <i>Run workflow</i> en GitHub) y recarga.</p>
+        <div class="pie"><button onclick="render()">Recargar</button></div></div></div>`;
+      return;
+    }
+    LIBRE = est.libre || null;
+    ULTIMO_REG_CRUDO = regs[0];
+    DATOS = {estado: est, regHoy: mezclarLocales(regs[0]), historial: regs.slice(1).filter(Boolean)};
+  }catch(e){
+    if(esFalloDeRed(e)){
+      app.innerHTML = `${cabecera()}<div class="detalle-cuerpo"><div class="tarjeta"><p class="analisis">Sin conexión, y todavía no hay datos guardados
+        en este teléfono. Ábrela una vez con señal y desde ahí funciona aunque te quedes sin red.</p>
+        ${PENDIENTES.length?`<p class="pendientes">${textoPendientes()}</p>`:""}
+        <div class="pie"><button onclick="render()">Reintentar</button></div></div></div>`;
+      return;
+    }
+    app.innerHTML = `${cabecera()}<div class="detalle-cuerpo"><div class="tarjeta"><p class="analisis">No pude leer el repo: ${escaparHtml(e.message)}.</p>
+      <div class="pie"><button onclick="ir('config')">Cambiar configuración</button>
+      <button onclick="render()">Reintentar</button></div></div></div>`;
+    return;
+  }
+  pintar();
+}
+
+window.addEventListener("hashchange", pintar);
 
 /* ---------- conectar / reconfigurar ---------- */
 function guardarConfig(){
   const token = $("#c-token").value.trim() || cfg.token;   // en blanco = conservar el que ya estaba
   if(!token){ $("#c-aviso").textContent = "Falta el token."; return; }
   cfg.guardar($("#c-owner").value.trim(), $("#c-repo").value.trim(), token);
+  DATOS = null;
+  location.hash = "inicio";
   render();
 }
 
 function renderConfig(){
   const yaConectado = !!cfg.token;
-  $("#app").innerHTML = `<div class="tarjeta config">
+  $("#app").innerHTML = `${cabeceraDetalle(yaConectado ? "Configuración" : "Conectar")}<main class="detalle-cuerpo"><div class="tarjeta config">
     <h2>${yaConectado ? "Configuración" : "Conectar con tu repo"}</h2>
     <p class="ayuda">La app lee tu repo privado <b>agente-salud</b> directo desde este teléfono.
       Necesitas un token: GitHub → Settings → Developer settings →
@@ -1122,11 +1585,11 @@ function renderConfig(){
     <div class="ayuda" id="c-aviso" style="color:var(--musc);min-height:14px"></div>
     <button onclick="guardarConfig()">${yaConectado ? "Guardar" : "Conectar"}</button>
     ${yaConectado ? `<div class="pie">
-      <button onclick="render()">Volver</button>
+      <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v20.4.0</div>
-  </div>`;
+    <div class="version">v21.0.0</div>
+  </div></main>${yaConectado ? navInferior("config") : ""}`;
 }
 
 /* ---------- app instalable: service worker, actualizaciones e instalacion ---------- */

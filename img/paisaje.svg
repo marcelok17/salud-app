@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice">
+  <!-- Paisaje provisorio (lago, montañas, bosque, luz de mañana) hasta tener la foto real:
+       se reemplaza dejando app/img/paisaje.jpg y cambiando la variable foto-heroe del CSS. -->
+  <defs>
+    <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9DCE6"/><stop offset=".45" stop-color="#E9E6DA"/><stop offset="1" stop-color="#F3EBDC"/>
+    </linearGradient>
+    <radialGradient id="sol" cx=".78" cy=".2" r=".45">
+      <stop offset="0" stop-color="#FFF6DE" stop-opacity=".95"/><stop offset="1" stop-color="#FFF6DE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lago" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C7D7DC"/><stop offset="1" stop-color="#A9C0C6"/>
+    </linearGradient>
+    <linearGradient id="niebla" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3EFE6" stop-opacity="0"/><stop offset="1" stop-color="#F3EFE6" stop-opacity=".85"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="700" fill="url(#cielo)"/>
+  <rect width="600" height="700" fill="url(#sol)"/>
+  <path d="M0 330 L70 280 L130 300 L210 240 L280 290 L350 250 L430 300 L520 260 L600 290 V420 H0Z" fill="#AEBFC6" opacity=".75"/>
+  <path d="M0 370 L90 320 L170 350 L250 310 L330 360 L420 330 L500 360 L600 335 V440 H0Z" fill="#8FA7A6" opacity=".8"/>
+  <rect y="410" width="600" height="110" fill="url(#lago)"/>
+  <path d="M0 430 C120 425 240 438 360 432 C450 428 530 436 600 433" stroke="#E8EEF0" stroke-width="2" fill="none" opacity=".6"/>
+  <path d="M0 500 L30 470 L45 490 L70 455 L95 488 L120 462 L150 495 L180 470 L215 500 L250 478 L290 505 L340 490 L400 512 L470 498 L540 515 L600 505 V700 H0Z" fill="#5E7E62"/>
+  <path d="M0 560 L25 520 L50 550 L80 505 L110 548 L140 515 L175 560 L215 530 L260 570 L320 548 L380 580 L450 560 L520 585 L600 570 V700 H0Z" fill="#3F6247"/>
+  <rect y="380" width="600" height="320" fill="url(#niebla)"/>
+</svg>
