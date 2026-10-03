@@ -1434,7 +1434,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.7.0</div>`;
+    <div class="version">v21.8.0</div>`;
 }
 
 function vistaArbol(){
@@ -1628,7 +1628,7 @@ window.addEventListener("hashchange", pintar);
 function tarjetaSincronizacion(){
   const w = estadoWithings();
   const L = (DATOS && DATOS.estado && DATOS.estado.libre) || null;
-  const NOM = {peso:"Peso", composicion:"Composición corporal", presion:"Presión", pulso:"Pulso / FC reposo", sueno:"Sueño", actividad:"Actividad"};
+  const NOM = {peso:"Peso", composicion:"Composición corporal", presion:"Presión", pulso:"Pulso / FC reposo", sueno:"Sueño", actividad:"Actividad", entrenamiento:"Entrenamientos"};
   const filas = w ? Object.keys(NOM).map(k => `<div class="barra"><div class="fila"><span>${NOM[k]}</span>
       <b style="font-size:13px">${(w.ultima_ok||{})[k] ? fechaCorta(w.ultima_ok[k]) + " " + w.ultima_ok[k].slice(11,16) : "nunca"}</b></div>
       <div class="t-sub" style="margin-top:0">último dato: ${(w.ultimo_dato||{})[k] ? fechaCorta(w.ultimo_dato[k]) : "—"}${(w.errores||{})[k==="sueno"?"sueno":k==="actividad"?"actividad":"medidas"] ? " · error en la última consulta" : ""}</div></div>`).join("")
@@ -1671,7 +1671,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.7.0</div>
+    <div class="version">v21.8.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
