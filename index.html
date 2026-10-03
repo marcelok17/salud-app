@@ -1074,24 +1074,21 @@ function flor(rel, edad){
         <text y="22" font-size="10.5" opacity=".92" font-family="var(--sans)">${sin?"Sin datos":c.lema}</text>
       </g></g>`);
   });
-  const e = edad || null;
+  // Edad metabólica (edad_metabolica.py): índice de tendencia con dato duro. Sin cintura, no hay edad.
+  const E = edad || null, P = (E && E.pantalla) || {};
   let centro;
-  if(e){
-    const cambio = e.cambio_anos;
-    const hace = e.comparado_con ? Math.round((Date.now() - new Date(e.comparado_con+"T12:00:00"))/864e5) : null;
+  if(P.centro){
     centro = `
       <text y="-40" font-size="12.5" text-anchor="middle" fill="var(--tinta)">Edad</text>
       <text y="-25" font-size="12.5" text-anchor="middle" fill="var(--tinta)">metabólica</text>
-      <text y="18" font-size="50" text-anchor="middle" font-family="var(--serif)" fill="var(--tinta)">${e.equivalente}</text>
+      <text y="18" font-size="50" text-anchor="middle" font-family="var(--serif)" fill="var(--tinta)">${P.centro.anos}</text>
       <text y="34" font-size="11.5" text-anchor="middle" fill="var(--tinta)">años</text>
-      ${cambio != null && hace ? `
-        <rect x="-21" y="41" width="42" height="17" rx="8.5" fill="${cambio<=0?"#E4EFE7":"#FBEDE6"}"/>
-        <text y="53.5" font-size="11.5" text-anchor="middle" fill="${cambio<=0?"#2F6B4F":"#B4532F"}">${cambio<0?"↓":cambio>0?"↑":"="} ${Math.abs(cambio)}</text>
-        <text y="70" font-size="9" text-anchor="middle" fill="var(--tinta2)">vs. hace ${hace} días</text>`
-      : `<text y="54" font-size="9.5" text-anchor="middle" fill="var(--tinta2)">equivalente</text>`}`;
+      <text y="51" font-size="11" text-anchor="middle" fill="var(--tinta)">${P.centro.meses} m ${P.centro.dias} d</text>
+      ${P.por_confirmar_dias?`<text y="66" font-size="9" text-anchor="middle" fill="var(--tinta2)">${P.por_confirmar_dias} d por confirmar</text>`:""}`;
   }else{
-    centro = `<text y="-6" font-size="13" text-anchor="middle" fill="var(--tinta2)">Edad metabólica</text>
-      <text y="16" font-size="12" text-anchor="middle" fill="var(--tinta2)">calibrando</text>`;
+    centro = `<text y="-14" font-size="12.5" text-anchor="middle" fill="var(--tinta)">Edad metabólica</text>
+      <text y="8" font-size="13" text-anchor="middle" fill="var(--tinta2)">falta tu</text>
+      <text y="25" font-size="13" text-anchor="middle" fill="var(--tinta2)">cintura</text>`;
   }
   return `<svg class="flor${FOCO_GRUPO?" foco-"+FOCO_GRUPO:""}" id="flor" viewBox="-215 -215 430 430" role="img"
       aria-label="Flor del bienestar: ocho dimensiones de tu salud">
@@ -1206,20 +1203,20 @@ function metas(){
 
 /* ---------- tarjetas de Inicio ---------- */
 function tarjetaEdad(edad){
-  const serie = (edad && edad.serie) || [];
+  const P = (edad && edad.pantalla) || {};
   let cuerpo;
-  if(!edad){
-    cuerpo = `<p class="t-sub">Aparece cuando haya puntaje de Salud general.</p>`;
-  }else if(serie.length < 7 || edad.cambio_anos == null){
+  if(!P.edad){
     cuerpo = `<p class="t-sub" style="margin-top:10px">${ico("hoja",'style="width:18px;height:18px;vertical-align:-4px;color:var(--c-metabolismo)"')}
-      Calibrando: la tendencia aparece al juntar ${Math.max(0, 7-serie.length)} día${7-serie.length===1?"":"s"} más de datos.</p>`;
+      Falta tu cintura: escribe «cintura 98» en Registrar. ${edad && edad.cobertura ? `Datos: ${edad.cobertura}.` : ""}</p>`;
   }else{
-    const c = edad.cambio_anos;
-    const txt = c < 0 ? `${-c} año${c===-1?"":"s"} menor` : c > 0 ? `${c} año${c===1?"":"s"} mayor` : "Igual";
-    cuerpo = `<div style="display:flex;gap:8px;align-items:center;margin-top:10px;color:var(--c-metabolismo)">
-        ${ico("hoja")}<div><div style="font-size:15px;color:${c<=0?"var(--acento)":"#B4532F"}">${txt}</div>
-        <div class="t-sub" style="margin-top:0">que hace ${Math.round((Date.now()-new Date(edad.comparado_con+"T12:00:00"))/864e5)} días</div></div></div>
-      ${lineaMini(serie.map(x => x.edad), "#3E8A4F", 200, 70, true)}`;
+    const sobre = (edad.brecha_dias||0) > 0;
+    const c = P.cambios || {};
+    const linea = ["7","14","30"].filter(n => c[n]).map(n => `${n} d: ${c[n].dias>0?"+":""}${c[n].dias}`).join(" · ");
+    const serie = (edad.serie||[]).filter(x => x.brecha_dias != null).map(x => x.brecha_dias);
+    cuerpo = `<div style="font-size:15px;margin-top:10px;color:${sobre?"#B4532F":"var(--acento)"}">${escaparHtml(P.brecha)}</div>
+      ${linea?`<div class="t-sub">Cambio en días · ${linea}</div>`:""}
+      <div class="t-sub">${escaparHtml(P.explicacion_hoy||"")}</div>
+      ${serie.length >= 7 ? lineaMini(serie, sobre ? "#C9653F" : "#3E8A4F", 200, 60, true) : ""}`;
   }
   return `<button class="tarjeta" onclick="ir('edad')">
     <div class="t-titulo">Tu edad metabólica ${ico("info",'style="width:18px;height:18px;color:var(--tinta2)"')}</div>${cuerpo}</button>`;
@@ -1420,7 +1417,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.2.0</div>`;
+    <div class="version">v21.3.0</div>`;
 }
 
 function vistaArbol(){
@@ -1475,20 +1472,48 @@ function vistaPeso(){
 }
 
 function vistaEdad(){
-  const e = DATOS.estado.edad_metabolica;
-  if(!e) return `<div class="tarjeta"><p class="analisis">Aparece cuando haya puntaje de Salud general.</p></div>`;
-  const p = e.parametros || {puntaje_neutro:.7, anos_por_10_puntos:2.5, tope_anos:10};
-  return `<div class="tarjeta" style="text-align:center">
-      <div style="font-family:var(--serif);font-size:64px;line-height:1">${e.equivalente}</div>
-      <div class="t-sub">años · equivalente de tu Salud general (${Math.round(e.puntaje*100)}%) · edad real ${e.cronologica}</div>
-      ${(e.serie||[]).length>1?lineaMini(e.serie.map(x=>x.edad), "#3E8A4F", 320, 90, true):""}</div>
+  const E = DATOS.estado.edad_metabolica;
+  if(!E) return `<div class="tarjeta"><p class="analisis">Aún no hay datos para la edad metabólica.</p></div>`;
+  const P = E.pantalla || {}, par = E.parametros || {};
+  const fila = (a, b) => `<div class="barra"><div class="fila"><span>${a}</span><b>${b}</b></div></div>`;
+  let principal;
+  if(!P.edad){
+    principal = `<div class="tarjeta"><h2>${escaparHtml(P.linea||"Edad metabólica")}</h2>
+      <p class="analisis">${escaparHtml(P.como_medir||"")}</p>
+      <p class="nota">Datos con que cuento: ${E.cobertura}. Faltan: ${escaparHtml((P.faltantes||[]).join(", ")||"—")}.</p></div>`;
+  }else{
+    principal = `<div class="tarjeta">
+      <div style="font-family:var(--serif);font-size:24px;line-height:1.25">${escaparHtml(P.linea)}</div>
+      <div class="t-sub">${escaparHtml(P.brecha)} · margen ${escaparHtml(P.margen)} · datos ${escaparHtml(P.cobertura)}</div>
+      <p class="analisis" style="margin-top:10px">${escaparHtml(P.explicacion_hoy||"")}</p>
+      ${Object.values(P.cambios||{}).map(c=>`<div class="t-sub">${escaparHtml(c.texto)}</div>`).join("")}
+      ${P.camino_de_vuelta?`<div class="alerta">${escaparHtml(P.camino_de_vuelta)}</div>`:""}
+      ${P.mejor_marca?`<p class="nota">${escaparHtml(P.mejor_marca)}</p>`:""}
+    </div>
+    <div class="tarjeta"><h2>Por componente</h2>
+      ${(P.desglose||[]).map(d=>fila(escaparHtml(d.nombre),
+          `${d.aporta_dias>0?"+":""}${d.aporta_dias} días${d.por_ganar_dias?` · quedan ${d.por_ganar_dias} por ganar`:""}`)).join("")}
+      ${P.mayor_palanca?`<p class="analisis" style="margin-top:6px"><b>Mayor palanca:</b> ${escaparHtml(P.mayor_palanca)}</p>`:""}
+      ${(P.faltantes||[]).length?`<p class="nota">Sin dato (no se rellena): ${escaparHtml(P.faltantes.join(", "))}.</p>`:""}
+      ${(E.congeladas||[]).length?`<p class="nota">Congeladas por evento de agua: ${E.congeladas.length} medición(es); no cuentan hasta que pase.</p>`:""}
+      ${(E.atipicos||[]).length?`<p class="nota">Atípicas sin confirmar (no se usan): ${E.atipicos.map(a=>`${a.tipo} ${a.valor} (${a.fecha.slice(8)}/${a.fecha.slice(5,7)})`).join(", ")}.</p>`:""}
+    </div>`;
+  }
+  const cal = E.calibracion || {}, mant = E.mantenimiento || {};
+  const refs = Object.entries(E.referencias||{}).map(([k, r]) =>
+    `<li style="margin-bottom:6px"><b>${escaparHtml(k)}</b>: ${escaparHtml(r.fuente)}. <span style="color:var(--tinta2)">${escaparHtml(r.estado)}</span></li>`).join("");
+  return `${principal}
     <div class="tarjeta"><h2>Cómo se calcula</h2>
-      <p class="analisis">No es una medición: es tu puntaje de <b>Salud general</b> traducido a años, partiendo de tu edad real.</p>
-      <p class="analisis" style="margin-top:8px">Con ${Math.round(p.puntaje_neutro*100)}% quedas en tu edad (${e.cronologica}).
-        Cada 10 puntos por encima restan ${String(p.anos_por_10_puntos).replace(".",",")} años, y cada 10 por debajo los suman,
-        con un tope de ±${p.tope_anos} años.</p>
-      <p class="nota">Edad = ${e.cronologica} − (puntaje − ${Math.round(p.puntaje_neutro*100)}%) × ${String(p.anos_por_10_puntos).replace(".",",")} por cada 10 puntos.
-        Se ajusta en plan.json → edad_metabolica. La tendencia usa solo fotos diarias reales, desde el 02-10-2026.</p></div>`;
+      <p class="analisis">Tu edad real exacta en días, más la suma ponderada de cuánto se aleja cada componente de la mediana
+        de un hombre de tu edad, en años: ${par.anos_por_de||5} años por desviación estándar (convención), con tope de
+        ±${par.tope_anos_componente||8} años por componente. El calendario suma un día por día. La conducta mueve el número
+        solo de forma provisoria, hasta que llega el dato duro.</p>
+      ${fila("Conducta", cal.estado==="calibrado" ? `calibrada: rinde ${Math.round(cal.rendimiento*100)}% de lo esperado` : "calibrando (valores por defecto)")}
+      ${fila("Mantenimiento estimado", `${mant.kcal||"—"} kcal · ${escaparHtml(mant.fuente||"")}`)}
+      ${fila("Fórmula", `versión ${escaparHtml(par.version||"")}`)}
+      <p class="nota">${escaparHtml(P.aviso||"Índice personal de tendencia, no diagnóstico.")} La bioimpedancia (Withings) no es DXA:
+        el % grasa y la masa magra pueden estar desplazados respecto de las tablas de referencia.</p>
+      <ul style="font-size:12px;line-height:1.45;margin-top:10px;padding-left:16px">${refs}</ul></div>`;
 }
 
 function vistaRegistrar(){
@@ -1610,7 +1635,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.2.0</div>
+    <div class="version">v21.3.0</div>
   </div></main>${yaConectado ? navInferior("config") : ""}`;
 }
 
