@@ -1208,8 +1208,11 @@ function metas(){
   const m = (DATOS && DATOS.estado && DATOS.estado.metas) || {};
   const num = (txt, cual) => { const v = String(txt||"").match(/\d+(?:[.,]\d+)?/g); return v ? +(cual==="max" ? v[v.length-1] : v[0]).replace(",",".") : null; };
   const rc = (DATOS && DATOS.estado && DATOS.estado.regla_carbos) || {};
+  // Sodio: techo (o rango) con margen; el rojo aparece recién sobre la meta + margen (plan.json).
+  const so = (m.sodio_mg && typeof m.sodio_mg === "object") ? m.sodio_mg : {max: 2300, margen_pct: 10};
+  const sodio = +so.max || 2300, sodioAlerta = Math.round(sodio * (1 + (+so.margen_pct || 0)/100));
   return {prot: num(m.proteina_g) || 170, carbs: rc.meta_max_g || num(m.carbohidratos_g_entrenamiento, "max") || 100,
-          netos: !!rc.netos, kcal: 2000, sodio: 2300};
+          netos: !!rc.netos, kcal: 2000, sodio, sodioAlerta};
 }
 
 /* ---------- tarjetas de Inicio ---------- */
@@ -1259,12 +1262,12 @@ function anillosRegistro(reg){
     {n: m.netos ? "Carbos netos" : "Carbohidratos", v: m.netos ? carbosNetos(reg) : a.carbohidratos_g, meta:m.carbs,
      color:"#3E7BC4", icono:"espiga", tope: m.netos},
     {n:"Calorías", v:a.kcal, meta:m.kcal, color:"#3E8A4F", icono:"llama", icColor:"#E07B2C"},
-    {n:"Sodio", v:a.sodio_mg, meta:m.sodio, color:"#8DB8E8", icono:"gota", tope:true},
+    {n:"Sodio", v:a.sodio_mg, meta:m.sodio, color:"#8DB8E8", icono:"gota", tope:true, alerta:m.sodioAlerta},
   ];
   const C = 2*Math.PI*26;
   return `<div class="anillos4">${ARS.map(x => {
     const p = Math.max(0, Math.min(1, (x.v||0)/x.meta));
-    const pasado = x.tope && (x.v||0) > x.meta;
+    const pasado = x.tope && (x.v||0) > (x.alerta || x.meta);
     return `<div class="a" title="${x.n}"><div class="r">
       <svg viewBox="0 0 62 62" aria-hidden="true"><circle cx="31" cy="31" r="26" fill="none" stroke="#EFECE6" stroke-width="5.5"/>
         <circle cx="31" cy="31" r="26" fill="none" stroke="${pasado?"#D4574A":x.color}" stroke-width="5.5" stroke-linecap="round"
@@ -1429,7 +1432,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.5.0</div>`;
+    <div class="version">v21.6.0</div>`;
 }
 
 function vistaArbol(){
@@ -1539,9 +1542,9 @@ function vistaRegistrar(){
 function barrasNutrientes(reg){
   if(!reg || !reg.acumulado) return "";
   const a = reg.acumulado, m = metas();
-  const barra = (n,v,meta,color,unidad,invertir) => {
+  const barra = (n,v,meta,color,unidad,invertir,alerta) => {
     const p = Math.min(1, invertir ? (v<=meta ? v/meta : 1) : v/meta);
-    const exceso = invertir && v > meta;
+    const exceso = invertir && v > (alerta || meta);
     return `<div class="barra"><div class="fila"><span>${n}</span><b style="color:${exceso?"var(--c-corazon)":"var(--tinta)"}">${Math.round(v)} / ${meta} ${unidad}</b></div>
       <div class="pista"><i style="width:${Math.round(p*100)}%;background:${exceso?"var(--c-corazon)":color}"></i></div></div>`;
   };
@@ -1549,7 +1552,7 @@ function barrasNutrientes(reg){
     ${m.netos ? barra("Carbos netos (keto)", carbosNetos(reg), m.carbs, "#3E7BC4", "g", true)
               : barra("Carbohidratos", a.carbohidratos_g||0, m.carbs, "#3E7BC4", "g")}
     ${barra("Calorías", a.kcal||0, m.kcal, "#3E8A4F", "kcal")}
-    ${barra("Sodio", a.sodio_mg||0, m.sodio, "#8DB8E8", "mg", true)}
+    ${barra("Sodio", a.sodio_mg||0, m.sodio, "#8DB8E8", "mg", true, m.sodioAlerta)}
     ${barra("Fibra", a.fibra_g||0, 25, "var(--c-nutricion)", "g")}
     ${barra("Potasio", a.potasio_mg||0, 3500, "var(--c-micros)", "mg")}
     ${barra("Magnesio", a.magnesio_mg||0, 420, "var(--c-metabolismo)", "mg")}
@@ -1666,7 +1669,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.5.0</div>
+    <div class="version">v21.6.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
