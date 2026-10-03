@@ -574,7 +574,7 @@ async function enviarRegistro(){
   const id = new Date().toISOString().replace(/[:.]/g,"-");
   const lectura = FOTOS_PENDIENTES.length ? null : leerRegistro(texto);
   const sinIA = !!(lectura && lectura.ruta === "local");
-  const items = sinIA ? lectura.items.map(i => ({descripcion: Lector.describir(i), ...i.nutrientes})) : null;
+  const items = sinIA ? lectura.items.map(i => ({descripcion: Lector.describir(i), fuente: i.fuente, ...i.nutrientes})) : null;
   const entrada = {id, ruta:`entradas/${id}.json`,
                    cuerpo:{texto, fotos: FOTOS_PENDIENTES, zona: zonaDelTelefono(),
                            hora_local: fechaHoraLocal(new Date()),
@@ -720,6 +720,8 @@ function bannerSinConexion(){
 }
 
 function bannerCarbs(regHoy, estado){
+  // El piso de 75 g es una regla de Jardiance: con Jardiance pausado (keto en curso) no aplica.
+  if(!/^jardiance/.test(((estado.regla_carbos)||{}).modo||"")) return "";
   const h = new Date().getHours();
   if(h<17||h>=22) return "";
   const rutina = (estado.rutina_de_hoy||"").toUpperCase();
@@ -1191,7 +1193,9 @@ let DATOS = null;   // {estado, regHoy, historial}
 function metas(){
   const m = (DATOS && DATOS.estado && DATOS.estado.metas) || {};
   const num = (txt, cual) => { const v = String(txt||"").match(/\d+(?:[.,]\d+)?/g); return v ? +(cual==="max" ? v[v.length-1] : v[0]).replace(",",".") : null; };
-  return {prot: num(m.proteina_g) || 170, carbs: num(m.carbohidratos_g_entrenamiento, "max") || 100, kcal: 2000, sodio: 2300};
+  const rc = (DATOS && DATOS.estado && DATOS.estado.regla_carbos) || {};
+  return {prot: num(m.proteina_g) || 170, carbs: rc.meta_max_g || num(m.carbohidratos_g_entrenamiento, "max") || 100,
+          netos: !!rc.netos, kcal: 2000, sodio: 2300};
 }
 
 /* ---------- tarjetas de Inicio ---------- */
@@ -1227,11 +1231,18 @@ function lineaMini(vals, color, W=100, H=34, relleno=false){
     <circle cx="${u[0].toFixed(1)}" cy="${u[1].toFixed(1)}" r="2.8" fill="${color}"/></svg>`;
 }
 
+/* Carbos netos del día (fase keto): la tabla USDA resta la fibra; las etiquetas ya son netas. */
+function carbosNetos(reg){
+  return Math.round(((reg && reg.comidas) || []).reduce((s, c) =>
+    s + Math.max(0, (+c.carbohidratos_g||0) - (c.fuente === "tabla" ? (+c.fibra_g||0) : 0)), 0) * 10) / 10;
+}
+
 function anillosRegistro(reg){
   const a = (reg && reg.acumulado) || {}, m = metas();
   const ARS = [
     {n:"Proteína", v:a.proteina_g, meta:m.prot, color:"#E08A2C", icono:"cubiertos"},
-    {n:"Carbohidratos", v:a.carbohidratos_g, meta:m.carbs, color:"#3E7BC4", icono:"espiga"},
+    {n: m.netos ? "Carbos netos" : "Carbohidratos", v: m.netos ? carbosNetos(reg) : a.carbohidratos_g, meta:m.carbs,
+     color:"#3E7BC4", icono:"espiga", tope: m.netos},
     {n:"Calorías", v:a.kcal, meta:m.kcal, color:"#3E8A4F", icono:"llama", icColor:"#E07B2C"},
     {n:"Sodio", v:a.sodio_mg, meta:m.sodio, color:"#8DB8E8", icono:"gota", tope:true},
   ];
@@ -1382,7 +1393,11 @@ function vistaPlan(){
 
 function vistaMedicacion(){
   const e = DATOS.estado;
-  return `<div class="tarjeta"><h2>Medicamentos</h2>${checklist(e.medicamentos||[], "med")}</div>
+  const pausados = (e.medicamentos_no_activos||[]).map(m => `<li><span style="color:var(--tinta2)">${escaparHtml(m.nombre)}</span>
+      <span class="estado neutro" style="margin-left:auto">${m.estado==="pausado"?"Pausado":"Suspendido"}${m.desde?` desde ${m.desde.slice(8)}/${m.desde.slice(5,7)}`:""}</span></li>`).join("");
+  return `<div class="tarjeta"><h2>Medicamentos</h2>${checklist(e.medicamentos||[], "med")}
+      ${pausados?`<ul class="objetivos" style="margin-top:6px">${pausados}</ul>
+      <p class="nota">Lo pausado no cuenta como pendiente del día.</p>`:""}</div>
     <div class="tarjeta"><h2>Suplementos</h2>${checklist(e.suplementos||[], "sup")}</div>
     <div class="pendientes" id="reg-aviso"></div>`;
 }
@@ -1399,7 +1414,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.0.0</div>`;
+    <div class="version">v21.1.0</div>`;
 }
 
 function vistaArbol(){
@@ -1487,7 +1502,8 @@ function barrasNutrientes(reg){
       <div class="pista"><i style="width:${Math.round(p*100)}%;background:${exceso?"var(--c-corazon)":color}"></i></div></div>`;
   };
   return `${barra("Proteína", a.proteina_g||0, m.prot, "#E08A2C", "g")}
-    ${barra("Carbohidratos", a.carbohidratos_g||0, m.carbs, "#3E7BC4", "g")}
+    ${m.netos ? barra("Carbos netos (keto)", carbosNetos(reg), m.carbs, "#3E7BC4", "g", true)
+              : barra("Carbohidratos", a.carbohidratos_g||0, m.carbs, "#3E7BC4", "g")}
     ${barra("Calorías", a.kcal||0, m.kcal, "#3E8A4F", "kcal")}
     ${barra("Sodio", a.sodio_mg||0, m.sodio, "#8DB8E8", "mg", true)}
     ${barra("Fibra", a.fibra_g||0, 25, "var(--c-nutricion)", "g")}
@@ -1588,7 +1604,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.0.0</div>
+    <div class="version">v21.1.0</div>
   </div></main>${yaConectado ? navInferior("config") : ""}`;
 }
 
