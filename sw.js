@@ -7,7 +7,7 @@
    Regla dura: las escrituras (PUT de registros, POST de dispatch) NUNCA pasan por caché.
    Regla dura: nada que se guarde lleva el token — se cachea por URL, con cabeceras propias. */
 
-const VERSION = "v21.4.0";
+const VERSION = "v21.5.0";
 const CACHE_CONCHA  = `salud-concha-${VERSION}`;
 const CACHE_FUENTES = "salud-fuentes-v1";
 const CACHE_DATOS   = "salud-datos-v1";
@@ -23,7 +23,6 @@ const CONCHA = [
   "./iconos/apple-touch-icon-180.png",
   "./lector.js",        // el lector funciona sin señal
   "./alimentos.json",   // y la tabla estándar también
-  "./img/paisaje.svg",  // el fondo del héroe (provisorio hasta tener la foto)
 ];
 
 self.addEventListener("install", ev => {
