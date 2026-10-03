@@ -1042,6 +1042,18 @@ function aclarar(hex, t){   // mezcla con blanco
   return `rgb(${m(r)},${m(g)},${m(b)})`;
 }
 
+/* ---------- Withings: si no conecta se dice, con fecha (antes decía "sin datos") ---------- */
+const DE_WITHINGS = new Set(["descanso", "corazon", "composicion", "aerobico"]);
+function estadoWithings(){ return (DATOS && DATOS.estado && DATOS.estado.withings_estado) || null; }
+function withingsCaido(){ const w = estadoWithings(); return !!(w && w.conexion && w.conexion.ok === false); }
+function fechaCorta(iso){ return iso ? `${iso.slice(8,10)}-${iso.slice(5,7)}` : "—"; }
+function bannerWithings(){
+  if(!withingsCaido()) return "";
+  const w = estadoWithings();
+  return `<div class="banner-sistema banner-espera"><span><b>Withings: sin conexión desde el ${fechaCorta(w.sin_conexion_desde)}.</b>
+    ${escaparHtml((w.conexion.motivo||"").slice(0,140))} Detalle en Configuración.</span></div>`;
+}
+
 /* ---------- la flor ---------- */
 let FOCO_GRUPO = null;
 function flor(rel, edad){
@@ -1072,7 +1084,7 @@ function flor(rel, edad){
         <svg x="-13" y="-36" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"
           stroke-linecap="round" stroke-linejoin="round">${ICONOS[c.icono]}</svg>
         <text y="6" font-size="15" font-weight="600" font-family="var(--sans)">${c.nombre}</text>
-        <text y="22" font-size="10.5" opacity=".92" font-family="var(--sans)">${sin?"Sin datos":c.lema}</text>
+        <text y="22" font-size="10.5" opacity=".92" font-family="var(--sans)">${sin?(withingsCaido()&&DE_WITHINGS.has(c.k)?"Sin conexión":"Sin datos"):c.lema}</text>
       </g></g>`);
   });
   // Edad metabólica (edad_metabolica.py): índice de tendencia con dato duro. Sin cintura, no hay edad.
@@ -1419,7 +1431,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.3.1</div>`;
+    <div class="version">v21.4.0</div>`;
 }
 
 function vistaArbol(){
@@ -1559,7 +1571,7 @@ function pintar(){
   if(ruta === "config" || !cfg.token){ renderConfig(); return; }
   if(!DATOS){ render(); return; }
   const vista = VISTAS[ruta] || VISTAS.inicio;
-  const banners = `${bannerSinConexion()}${bannerPendientes(DATOS.estado)}`;
+  const banners = `${bannerSinConexion()}${bannerWithings()}${bannerPendientes(DATOS.estado)}`;
   const rel = DATOS.estado.relojes || {};
   const conHeroe = RUTAS_CON_HEROE.includes(ruta) || !VISTAS[ruta];
   $("#app").innerHTML = conHeroe
@@ -1609,6 +1621,24 @@ async function render(){
 
 window.addEventListener("hashchange", pintar);
 
+/* Por tipo de dato: la última sincronización correcta con Withings y el último dato recibido. */
+function tarjetaSincronizacion(){
+  const w = estadoWithings();
+  const L = (DATOS && DATOS.estado && DATOS.estado.libre) || null;
+  const NOM = {peso:"Peso", composicion:"Composición corporal", presion:"Presión", pulso:"Pulso / FC reposo", sueno:"Sueño", actividad:"Actividad"};
+  const filas = w ? Object.keys(NOM).map(k => `<div class="barra"><div class="fila"><span>${NOM[k]}</span>
+      <b style="font-size:13px">${(w.ultima_ok||{})[k] ? fechaCorta(w.ultima_ok[k]) + " " + w.ultima_ok[k].slice(11,16) : "nunca"}</b></div>
+      <div class="t-sub" style="margin-top:0">último dato: ${(w.ultimo_dato||{})[k] ? fechaCorta(w.ultimo_dato[k]) : "—"}${(w.errores||{})[k==="sueno"?"sueno":k==="actividad"?"actividad":"medidas"] ? " · error en la última consulta" : ""}</div></div>`).join("")
+    : `<p class="t-sub">Aún no hay registro de sincronización con Withings.</p>`;
+  return `<div class="tarjeta"><h2>Sincronización</h2>
+    <p class="t-sub" style="margin-bottom:10px">Withings: ${w && w.conexion ? (w.conexion.ok ? "conectado" : `<b>sin conexión desde el ${fechaCorta(w.sin_conexion_desde)}</b> — ${escaparHtml(w.conexion.motivo||"")}`) : "—"}</p>
+    ${filas}
+    <div class="barra" style="margin-top:6px"><div class="fila"><span>Sensor de glucosa</span>
+      <b style="font-size:13px">${L && L.consultado ? fechaCorta(L.consultado) + " " + L.consultado.slice(11,16) : "—"}</b></div>
+      ${L && L.diagnostico ? `<div class="t-sub" style="margin-top:0">${escaparHtml(L.diagnostico)}</div>` : ""}</div>
+  </div>`;
+}
+
 /* ---------- conectar / reconfigurar ---------- */
 function guardarConfig(){
   const token = $("#c-token").value.trim() || cfg.token;   // en blanco = conservar el que ya estaba
@@ -1638,8 +1668,8 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.3.1</div>
-  </div></main>${yaConectado ? navInferior("config") : ""}`;
+    <div class="version">v21.4.0</div>
+  </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
 /* ---------- app instalable: service worker, actualizaciones e instalacion ---------- */
