@@ -941,7 +941,7 @@ function seccionHistorial(hist){
   const filas = hist.map(r=>{
     const f = new Date(r.fecha+"T12:00:00");
     const a = r.acumulado||{};
-    const entreno = (r.entrenamiento||[]).length>0;
+    const entreno = (r.entrenamiento||[]).some(e=>e.sesion!==false);
     // Glucosa del día: solo lecturas confiables del sensor.
     const gl = (r.glucosa_sensor||[]).filter(p=>(p.calidad||"ok")==="ok").map(p=>p.mg_dl);
     const glMin = gl.length?Math.min(...gl):null;
@@ -1354,7 +1354,7 @@ function horasDeSueno(txt){ const m = /(\d+)\s*h\s*(\d+)?/.exec(String(txt||""))
 function tarjetaHabitos(reg, estado){
   const rutina = String(estado.rutina_de_hoy || "");
   const descanso = /DESCANSO/i.test(rutina);
-  const entreno = ((reg && reg.entrenamiento) || []).length > 0;
+  const entreno = ((reg && reg.entrenamiento) || []).some(e => e.sesion !== false);   // caminatas detectadas por el reloj no cuentan
   const horas = horasDeSueno(reg && reg.sueno);
   const prot = +(((reg && reg.acumulado) || {}).proteina_g || 0), m = metas();
   const corto = t => { const s = t.replace(/^Semana \d+:\s*/,"").split(/[—.(]/)[0].trim(); return s.length>34 ? s.slice(0,32)+"…" : s; };
@@ -1434,7 +1434,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.8.0</div>`;
+    <div class="version">v21.8.1</div>`;
 }
 
 function vistaArbol(){
@@ -1671,7 +1671,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.8.0</div>
+    <div class="version">v21.8.1</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
