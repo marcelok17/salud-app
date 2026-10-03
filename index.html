@@ -512,6 +512,12 @@ function previsualizar(){
     const caja = $("#reg-entendi"), campo = $("#reg-texto");
     if(!caja || !campo) return;
     if(FOTOS_PENDIENTES.length){ caja.textContent = "Con foto: la analiza la IA."; return; }
+    if(/^\s*((cintura|vo2\s*max|examen|triglic[eé]ridos?|hdl|tg)\b[\s\d.,:/-]*(cm|de|del|y|mg\/?dl)?\s*)+$/i.test(campo.value)){
+      caja.textContent = (/triglic|hdl|\btg\b/i.test(campo.value) && !/examen/i.test(campo.value))
+        ? "Examen: agrega la fecha (ej. «examen 15-09 triglicéridos 140 hdl 42») para registrarlo sin IA."
+        : "Medición para tu edad metabólica: se registra sin IA.";
+      return;
+    }
     const r = leerRegistro(campo.value);
     if(!r){ caja.textContent = ""; return; }
     if(r.ruta !== "local"){ caja.textContent = `Lo analiza la IA (${r.motivo}).`; return; }
@@ -1414,7 +1420,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.1.0</div>`;
+    <div class="version">v21.2.0</div>`;
 }
 
 function vistaArbol(){
@@ -1604,7 +1610,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.1.0</div>
+    <div class="version">v21.2.0</div>
   </div></main>${yaConectado ? navInferior("config") : ""}`;
 }
 
