@@ -1320,7 +1320,9 @@ function tarjetaMiniGlucosa(reg){
 const TXT_PRESION = {normal:["En rango",""], elevada:["Elevada","atencion"], elevada_1:["Alta, etapa 1","atencion"], alta:["Alta","atencion"]};
 function tarjetaMiniPresion(cardio){
   const pa = cardio && cardio.presion, serie = (cardio && cardio.presion_serie) || [];
-  const [txt, cls] = pa && pa.categoria ? TXT_PRESION[pa.categoria] : ["Sin tomas","neutro"];
+  // Con menos de 4 tomas en 7 días no se interpreta el promedio: se pide medir a diario.
+  const [txt, cls] = !pa ? ["Sin tomas","neutro"] : pa.pocas_tomas ? ["Mide a diario","neutro"]
+    : (pa.categoria ? TXT_PRESION[pa.categoria] : ["Sin tomas","neutro"]);
   const max = Math.max(150, ...serie.map(t => t.sistolica));
   const barras = serie.map((t,i) => {
     const h = 30*(t.sistolica-60)/(max-60), xx = 4 + i*10.5;
@@ -1432,7 +1434,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.6.0</div>`;
+    <div class="version">v21.7.0</div>`;
 }
 
 function vistaArbol(){
@@ -1669,7 +1671,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.6.0</div>
+    <div class="version">v21.7.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
