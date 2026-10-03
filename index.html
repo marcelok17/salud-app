@@ -512,7 +512,8 @@ function previsualizar(){
     const caja = $("#reg-entendi"), campo = $("#reg-texto");
     if(!caja || !campo) return;
     if(FOTOS_PENDIENTES.length){ caja.textContent = "Con foto: la analiza la IA."; return; }
-    if(/^\s*((cintura|vo2\s*max|examen|triglic[eé]ridos?|hdl|tg)\b[\s\d.,:/-]*(cm|de|del|y|mg\/?dl)?\s*)+$/i.test(campo.value)){
+    if(/^\s*(mi\s+)?((cintura|vo2\s*max|examen|triglic[eé]ridos?|hdl|tg)\b[\s\d.,:/-]*(cm|de|del|y|es|mide|mg\/?dl)?\s*)+$/i.test(campo.value)
+       || /^\s*\d{2,3}([.,]\d)?\s*(cm)?\s*(de\s+)?cintura\s*$/i.test(campo.value)){
       caja.textContent = (/triglic|hdl|\btg\b/i.test(campo.value) && !/examen/i.test(campo.value))
         ? "Examen: agrega la fecha (ej. «examen 15-09 triglicéridos 140 hdl 42») para registrarlo sin IA."
         : "Medición para tu edad metabólica: se registra sin IA.";
@@ -1216,6 +1217,7 @@ function tarjetaEdad(edad){
     cuerpo = `<div style="font-size:15px;margin-top:10px;color:${sobre?"#B4532F":"var(--acento)"}">${escaparHtml(P.brecha)}</div>
       ${linea?`<div class="t-sub">Cambio en días · ${linea}</div>`:""}
       <div class="t-sub">${escaparHtml(P.explicacion_hoy||"")}</div>
+      ${P.nota_marcas?`<div class="t-sub">${escaparHtml(P.nota_marcas)}</div>`:""}
       ${serie.length >= 7 ? lineaMini(serie, sobre ? "#C9653F" : "#3E8A4F", 200, 60, true) : ""}`;
   }
   return `<button class="tarjeta" onclick="ir('edad')">
@@ -1417,7 +1419,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.3.0</div>`;
+    <div class="version">v21.3.1</div>`;
 }
 
 function vistaArbol(){
@@ -1486,6 +1488,7 @@ function vistaEdad(){
       <div style="font-family:var(--serif);font-size:24px;line-height:1.25">${escaparHtml(P.linea)}</div>
       <div class="t-sub">${escaparHtml(P.brecha)} · margen ${escaparHtml(P.margen)} · datos ${escaparHtml(P.cobertura)}</div>
       <p class="analisis" style="margin-top:10px">${escaparHtml(P.explicacion_hoy||"")}</p>
+      ${P.nota_marcas?`<p class="nota">${escaparHtml(P.nota_marcas)}</p>`:""}
       ${Object.values(P.cambios||{}).map(c=>`<div class="t-sub">${escaparHtml(c.texto)}</div>`).join("")}
       ${P.camino_de_vuelta?`<div class="alerta">${escaparHtml(P.camino_de_vuelta)}</div>`:""}
       ${P.mejor_marca?`<p class="nota">${escaparHtml(P.mejor_marca)}</p>`:""}
@@ -1635,7 +1638,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.3.0</div>
+    <div class="version">v21.3.1</div>
   </div></main>${yaConectado ? navInferior("config") : ""}`;
 }
 
