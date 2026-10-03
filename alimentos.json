@@ -1,6 +1,6 @@
 {
  "fuente": "USDA FoodData Central, SR Legacy (abril 2018). Valores por 100 g.",
- "generado": "2026-09-22",
+ "generado": "2026-10-03",
  "campos": [
   "kcal",
   "proteina_g",
@@ -2844,6 +2844,47 @@
    "fuente": {
     "fdc_id": 173410,
     "usda": "Butter, salted"
+   }
+  },
+  {
+   "id": "sal",
+   "nombre": "Sal de mesa",
+   "buscar": [
+    "sal",
+    "sal de mesa",
+    "pizca de sal"
+   ],
+   "porciones": [
+    [
+     "1 pizca",
+     0.4
+    ],
+    [
+     "1/4 cucharadita",
+     1.5
+    ],
+    [
+     "1 cucharadita",
+     6
+    ]
+   ],
+   "por_100g": {
+    "kcal": 0.0,
+    "proteina_g": 0.0,
+    "carbohidratos_g": 0.0,
+    "grasa_g": 0.0,
+    "fibra_g": 0.0,
+    "sodio_mg": 38758.0,
+    "potasio_mg": 8.0,
+    "magnesio_mg": 1.0,
+    "vitamina_d_ug": 0.0
+   },
+   "sin_dato": [],
+   "nota": "Solo si Marcelo dice que agregó sal; la de platos preparados o etiquetas ya viene incluida.",
+   "acompanamiento": null,
+   "fuente": {
+    "fdc_id": 173468,
+    "usda": "Salt, table"
    }
   },
   {
