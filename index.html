@@ -832,7 +832,16 @@ function horaToma(g){
   return {hora: g.hora, ctx: c};
 }
 
-/* Curva del dia del sensor (00-24 h) con la banda 70-180 y marcas en cada comida. Solo datos
+/* Umbrales de glucosa del plan (por confirmar con el médico). Mismos valores por defecto que glucosa.py. */
+function umbralesGlucosa(){
+  const u = ((typeof DATOS!=="undefined" && DATOS.estado) || {}).umbrales_glucosa || {};
+  return {obj: Object.assign({min:70, max:140, meta_pct:90}, u.objetivo||{}),
+          clin: Object.assign({min:70, max:180}, u.referencia_clinica||{}),
+          ayunas: Object.assign({min:70, max:100}, u.ayunas||{}),
+          cv: u.cv_max_pct || 20, confirmado: !!u.confirmado_por_medico};
+}
+
+/* Curva del dia del sensor (00-24 h) con la banda objetivo (70-140), la línea clínica de 180 y marcas en cada comida. Solo datos
    directos del sensor: las tomas manuales y pantallazos no se dibujan (decision de Marcelo, 02-10). Lo dudoso se ve distinto: baja confianza en tenue,
    artefactos como circulos vacios sin unir a la linea. Pieza autonoma: se puede mover. */
 function curvaGlucosa(reg){
@@ -874,14 +883,15 @@ function curvaGlucosa(reg){
   }).join("");
   const ejeX = [0,6,12,18,24].map(h => `<text x="${(iz + (W-iz-de)*h/24).toFixed(1)}" y="${H-3}" font-size="8"
       text-anchor="middle" fill="var(--tinta2)">${String(h).padStart(2,"0")}</text>`).join("");
-  const ejeY = [70,180].map(v => `<text x="${iz-4}" y="${(y(v)+3).toFixed(1)}" font-size="8" text-anchor="end"
+  const U = umbralesGlucosa();
+  const ejeY = [U.obj.min, U.obj.max, U.clin.max].map(v => `<text x="${iz-4}" y="${(y(v)+3).toFixed(1)}" font-size="8" text-anchor="end"
       fill="var(--tinta2)">${v}</text>`).join("");
   return `<div class="barra"><div class="fila"><span>Curva de hoy</span>
-      <small style="color:var(--tinta2)">banda 70–180 · ● comidas</small></div>
+      <small style="color:var(--tinta2)">banda ${U.obj.min}–${U.obj.max} · línea ${U.clin.max} · ● comidas</small></div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Curva de glucosa de hoy" style="display:block;margin-top:6px">
-      <rect x="${iz}" y="${y(180).toFixed(1)}" width="${W-iz-de}" height="${(y(70)-y(180)).toFixed(1)}" fill="${COLOR}" fill-opacity=".08"/>
-      <line x1="${iz}" x2="${W-de}" y1="${y(70).toFixed(1)}" y2="${y(70).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
-      <line x1="${iz}" x2="${W-de}" y1="${y(180).toFixed(1)}" y2="${y(180).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
+      <rect x="${iz}" y="${y(U.obj.max).toFixed(1)}" width="${W-iz-de}" height="${(y(U.obj.min)-y(U.obj.max)).toFixed(1)}" fill="${COLOR}" fill-opacity=".10"/>
+      <line x1="${iz}" x2="${W-de}" y1="${y(U.obj.min).toFixed(1)}" y2="${y(U.obj.min).toFixed(1)}" stroke="var(--linea)" stroke-width="1"/>
+      <line x1="${iz}" x2="${W-de}" y1="${y(U.clin.max).toFixed(1)}" y2="${y(U.clin.max).toFixed(1)}" stroke="var(--linea)" stroke-width="1" stroke-dasharray="3 3"/>
       ${ejeX}${ejeY}${marcas}${lineas}${artefactos}
     </svg></div>`;
 }
@@ -912,8 +922,8 @@ function tarjetaAlimentacion(al){
     <b>sodio ${al.micros.sodio_ayer??"—"} mg · fibra ${al.micros.fibra_ayer??"—"} g</b></div>
     <div style="font-size:12px;color:var(--tinta2)">Ayer, contra <2.300 mg y >=25 g · tendencia 90 d: ${pct(al.micros.tendencia)}</div></div>`;
   if(al.glucosa && !al.glucosa.calibrando) filas += `<div class="barra"><div class="fila"><span>Glucosa (sensor)</span>
-    <b>${al.glucosa.prom_7d} mg/dl · ${al.glucosa.en_rango_pct}% en rango</b></div>
-    <div style="font-size:12px;color:var(--tinta2)">${al.glucosa.n_lecturas} lecturas confiables en 7 días · rango 70-180
+    <b>${al.glucosa.prom_7d} mg/dl · ${al.glucosa.en_objetivo_pct ?? al.glucosa.en_rango_pct}% en ${umbralesGlucosa().obj.min}–${umbralesGlucosa().obj.max}</b></div>
+    <div style="font-size:12px;color:var(--tinta2)">${al.glucosa.n_lecturas} lecturas confiables en 7 días · meta ${umbralesGlucosa().obj.meta_pct}% del tiempo · ${al.glucosa.en_rango_pct}% en 70–180
     ${al.glucosa.bajo_70?` · <span class="glu-baja">${String(al.glucosa.bajo_70_pct).replace(".",",")}% bajo 70</span>`:""}${al.glucosa.sobre_180?` · <span class="glu-alta">${String(al.glucosa.sobre_180_pct).replace(".",",")}% sobre 180</span>`:""}</div></div>`;
   return `<div class="tarjeta"><h2>Alimentación en detalle</h2>${filas}</div>`;
 }
@@ -1290,8 +1300,9 @@ function estadoGlucosaHoy(reg){
   if(!serie.length) return {txt:"Sin datos", cls:"neutro"};
   if(ok.length < 12) return {txt:"Calibrando", cls:"neutro"};   // el mismo mínimo que el tablero: 3 h de señal
   if(ok.some(p => p.mg_dl < 70)) return {txt:"Bajo 70 hoy", cls:"atencion"};
-  const enRango = ok.filter(p => p.mg_dl >= 70 && p.mg_dl <= 180).length / ok.length;
-  return enRango >= .7 ? {txt:"En rango", cls:""} : {txt:"Fuera de rango", cls:"atencion"};
+  const U = umbralesGlucosa();
+  const enObj = ok.filter(p => p.mg_dl >= U.obj.min && p.mg_dl <= U.obj.max).length / ok.length;
+  return enObj >= U.obj.meta_pct/100 ? {txt:"En objetivo", cls:""} : {txt:`${Math.round(enObj*100)}% en ${U.obj.min}–${U.obj.max}`, cls:"atencion"};
 }
 
 function curvaMini(reg){
@@ -1434,7 +1445,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.8.1</div>`;
+    <div class="version">v21.9.0</div>`;
 }
 
 function vistaArbol(){
@@ -1459,9 +1470,13 @@ function vistaGlucosa(){
     metr = `<p class="t-sub">Calibrando: hay ${g.n_lecturas} lecturas confiables; los números de 7 días aparecen con 3 horas de señal.</p>`;
   }else if(g){
     const m = (v, l) => `<div class="metrica"><div class="v">${v}</div><div class="l">${l}</div></div>`;
-    metr = `<div class="metricas">${m(g.prom_7d+" mg/dl","Promedio 7 días")}${m(g.en_rango_pct+"%","En rango 70–180")}
+    const U = umbralesGlucosa();
+    metr = `<div class="metricas">${m(g.prom_7d+" mg/dl","Promedio 7 días")}
+      ${m((g.en_objetivo_pct ?? "—")+"%",`En ${U.obj.min}–${U.obj.max} (meta ${U.obj.meta_pct}%)`)}${m(g.en_rango_pct+"%",`En ${U.clin.min}–${U.clin.max} (clínico)`)}
       ${m(String(g.bajo_70_pct).replace(".",",")+"%","Bajo 70")}${m(String(g.sobre_180_pct).replace(".",",")+"%","Sobre 180")}
-      ${m(g.cv_pct!=null?g.cv_pct+"%":"—","Variabilidad (CV)")}${m(g.n_lecturas,"Lecturas confiables")}</div>`;
+      ${m(g.cv_pct!=null?g.cv_pct+"%":"—",`Variabilidad (CV, meta <${U.cv}%)`)}
+      ${m(g.ayunas_prom!=null?g.ayunas_prom+" mg/dl":"—",`Ayunas (meta ${U.ayunas.min}–${U.ayunas.max})`)}${m(g.n_lecturas,"Lecturas confiables")}</div>
+      ${U.confirmado?"":`<p class="nota">Umbrales por confirmar con tu médico (plan.json).</p>`}`;
   }
   return `<div class="tarjeta">${sensorHoy(regHoy)}${curvaGlucosa(regHoy)}</div>
     <div class="tarjeta"><h2>Últimos 7 días</h2>${metr}
@@ -1671,7 +1686,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.8.1</div>
+    <div class="version">v21.9.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
