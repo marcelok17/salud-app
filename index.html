@@ -210,6 +210,31 @@
   .banner-espera{background:#FBF5E8;border:1px solid #EADBB4;color:#7C6224;display:block}
   .banner-sistema button{background:none;border:1px solid currentColor;color:inherit;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .pendientes{font-size:12.5px;color:var(--tinta2);margin-top:7px}
+
+  /* ---- Corregir el registro: lista de ítems, editor y "Deshacer" ---- */
+  .item-fila{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--linea2)}
+  .item-fila.pendiente{opacity:.6}
+  .item-hora{font-size:12px;color:var(--tinta2);font-variant-numeric:tabular-nums}
+  .item-datos{font-size:12.5px;color:var(--tinta2);line-height:1.5}
+  .item-datos b{color:var(--tinta);font-weight:600;font-size:13.5px;overflow-wrap:anywhere}
+  .item-acc{display:flex;gap:4px}
+  .item-acc button{width:40px;height:40px;border-radius:12px;border:none;background:#FAF9F6;color:var(--tinta2);display:grid;place-items:center;cursor:pointer}
+  .item-acc button .ico{width:18px;height:18px}
+  .chip.corr{display:inline-block;background:var(--acento-suave);color:var(--acento);font-size:10px;line-height:1.3;padding:1px 7px;vertical-align:middle}
+  .editor{background:#FAF9F6;border:1px solid var(--linea);border-radius:16px;padding:12px;margin:6px 0 10px}
+  .ed-tabs{display:flex;gap:6px;margin-bottom:10px}
+  .ed-tabs button{flex:1;border:1px solid var(--linea);background:#fff;border-radius:999px;padding:8px 4px;font-size:12.5px;cursor:pointer;color:var(--tinta2)}
+  .ed-tabs button.activo{background:var(--acento);border-color:var(--acento);color:#fff;font-weight:600}
+  .editor label{display:block;font-size:12px;color:var(--tinta2)}
+  .editor input{width:100%;background:#fff;border:1px solid var(--linea);color:var(--tinta);border-radius:10px;padding:10px 11px;font-size:16px;margin-top:4px;font-family:inherit}
+  .ed-rejilla{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+  .ed-previa{font-size:12.5px;line-height:1.5;margin-top:10px;min-height:18px}
+  .reg-fila button.secundario{background:#fff;color:var(--tinta);border:1px solid var(--linea);font-weight:500}
+  .enlace{background:none;border:none;color:var(--acento);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 0;text-decoration:underline}
+  .dia-items{padding:0 0 8px;border-bottom:1px solid var(--linea2)}
+  .deshacer-barra{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom));z-index:50;background:var(--tinta);color:#fff;
+    border-radius:14px;padding:8px 10px 8px 16px;display:flex;align-items:center;gap:12px;font-size:13.5px;box-shadow:var(--sombra);width:max-content;max-width:calc(100vw - 32px)}
+  .deshacer-barra button{background:none;border:none;color:#9ED8B5;font-weight:700;font-size:13.5px;cursor:pointer;padding:8px}
   .version{text-align:center;font-size:10.5px;color:var(--tinta2);letter-spacing:.1em;margin-top:14px;opacity:.65}
   .solo-ancho{display:none}
   @media (min-width:700px){.solo-ancho{display:block}.solo-angosto{display:none}}
@@ -563,6 +588,8 @@ function repintarHoy(){
   if(caja) caja.innerHTML = anillosRegistro(reg);
   const barras = document.getElementById("barras-hoy");
   if(barras) barras.innerHTML = barrasNutrientes(reg);
+  const lista = document.getElementById("items-" + fechaLocal());
+  if(lista) lista.innerHTML = listaItems(fechaLocal());
 }
 
 let TEMPORIZADOR_SILENCIO = null;
@@ -960,16 +987,17 @@ function seccionHistorial(hist){
       <div class="dia-fecha"><div class="d">${f.getDate()}</div><div class="m">${MESES[f.getMonth()]}</div></div>
       <div class="dia-datos">
         <b>${Math.round(a.proteina_g||0)} g prot</b> · ${Math.round(a.kcal||0)} kcal · sodio ${Math.round(a.sodio_mg||0)} mg${glTxt}<br>
-        ${r.sueno?("😴 "+String(r.sueno).split("(")[0].trim()+" · "):""}${(r.comidas||[]).length} comidas registradas
+        ${r.sueno?("😴 "+String(r.sueno).split("(")[0].trim()+" · "):""}${(r.comidas||[]).length} comidas registradas<br>
+        <button class="enlace" onclick="alternarDia('${r.fecha}')">${HIST_ABIERTOS.has(r.fecha)?"Ocultar":"Ver y corregir"}</button>
       </div>
       <div class="dia-marcas">
         ${entreno?'<span class="chip gym">GYM ✓</span>':""}
         ${r.peso_kg?`<span class="chip peso">${r.peso_kg} kg</span>`:""}
         ${glMin!=null&&glMin<70?'<span class="chip hipo">GLU baja</span>':""}
       </div>
-    </div>`;
+    </div>${HIST_ABIERTOS.has(r.fecha)?`<div class="dia-items" id="items-${r.fecha}">${listaItems(r.fecha)}</div>`:""}`;
   }).join("");
-  return `<div class="tarjeta"><h2>Cómo estuve cada día</h2>${filas}</div>`;
+  return `<div class="tarjeta" id="historial-dias"><h2>Cómo estuve cada día</h2>${filas}</div>`;
 }
 
 /* =====================================================================================
@@ -999,6 +1027,8 @@ const ICONOS = {
   puntos:'<circle cx="6" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>',
   casa:'<path d="M4 11 12 4.5l8 6.5v8.5h-5.2v-5.5H9.2v5.5H4z"/>',
   mas:'<path d="M12 5v14M5 12h14"/>',
+  lapiz:'<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
+  papelera:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   arbol:'<path d="M12 21v-8"/><path d="M12 13c-4.2 0-6.5-2.8-6.5-7 4.2 0 6.5 2.8 6.5 7z"/><path d="M12 10.5c0-3.8 2.2-6.5 6.5-6.5 0 3.8-2.2 6.5-6.5 6.5z"/>',
   engranaje:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/><circle cx="12" cy="12" r="6.6"/>',
   persona:'<circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c1.2-3.8 4-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/>',
@@ -1445,7 +1475,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.9.1</div>`;
+    <div class="version">v21.10.0</div>`;
 }
 
 function vistaArbol(){
@@ -1549,11 +1579,376 @@ function vistaEdad(){
       <ul style="font-size:12px;line-height:1.45;margin-top:10px;padding-left:16px">${refs}</ul></div>`;
 }
 
+/* =====================================================================================
+   CORREGIR EL REGISTRO (04-10-2026)
+   Cada ítem de "comidas" (alimentos, suplementos y remedios: todo va en la misma lista) se
+   puede editar o eliminar. No llama a la IA ni crea archivos en entradas/: la app escribe
+   directo registro/<fecha>.json. Como un workflow puede escribir el mismo archivo a la vez,
+   cada cambio LEE el archivo con su sha, aplica la edición y lo sube con ese sha; si GitHub
+   responde 409 (alguien escribió entremedio), relee, reaplica y reintenta.
+   El acumulado nunca se ajusta "a mano": se recalcula entero desde los ítems con
+   Lector.recalcular, la misma cuenta que hace el servidor (registro_dia.py).
+   ===================================================================================== */
+function b64aTexto(b64){ return decodeURIComponent(escape(atob(String(b64 || "").replace(/\s/g, "")))); }
+
+async function ghLeerConSha(ruta){
+  const base = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}`;
+  const cab = {Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github+json"};
+  // ?ref=main: otra dirección que la de ghJson, para que el service worker no guarde este "sobre"
+  // (contenido en base64 + sha) encima de la copia sin conexión del registro.
+  const r = await fetch(`${base}/contents/${ruta}?ref=main`, {cache:"no-store", headers: cab});
+  if(r.headers.get("X-Salud-Offline") || r.status === 504) throw Object.assign(new Error("sin conexión"), {offline:true});
+  if(r.status === 404) return {obj:null, sha:null};
+  if(!r.ok) throw new Error(`GitHub respondió ${r.status} al leer`);
+  const j = await r.json();
+  let b64 = j.content;
+  if(!b64){                                        // sobre 1 MB GitHub no incluye el contenido: se pide aparte
+    const rb = await fetch(`${base}/git/blobs/${j.sha}`, {cache:"no-store", headers: cab});
+    if(rb.headers.get("X-Salud-Offline") || rb.status === 504) throw Object.assign(new Error("sin conexión"), {offline:true});
+    if(!rb.ok) throw new Error(`GitHub respondió ${rb.status} al leer`);
+    b64 = (await rb.json()).content;
+  }
+  return {obj: JSON.parse(b64aTexto(b64)), sha: j.sha};
+}
+
+/* Como ghPut, pero para un archivo que YA existe: lleva el sha de lo que se leyó. Si el archivo
+   cambió entremedio, GitHub responde 409 y no pisa nada. */
+async function ghPutConSha(ruta, objeto, sha, mensaje){
+  const contenido = btoa(unescape(encodeURIComponent(JSON.stringify(objeto, null, 2))));
+  const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${ruta}`,{
+    method:"PUT",
+    headers:{Authorization:`Bearer ${cfg.token}`, Accept:"application/vnd.github+json"},
+    body: JSON.stringify({message: mensaje, content: contenido, sha, branch:"main"})});
+  if(r.status === 409 || r.status === 422) return {conflicto:true};
+  if(!r.ok) throw new Error(`GitHub respondió ${r.status} al escribir`);
+  return {conflicto:false};
+}
+
+/* Una edición a la vez (dos seguidas chocarían entre sí), y cada una: leer → aplicar → recalcular → subir. */
+let COLA_EDICION = Promise.resolve();
+function editarRegistro(fecha, aplicar, mensaje){
+  const tarea = COLA_EDICION.then(() => _editarRegistro(fecha, aplicar, mensaje));
+  COLA_EDICION = tarea.catch(() => {});
+  return tarea;
+}
+async function _editarRegistro(fecha, aplicar, mensaje){
+  const ruta = `registro/${fecha}.json`;
+  for(let intento = 0; intento < 5; intento++){
+    const {obj: reg, sha} = await ghLeerConSha(ruta);
+    if(!reg) throw new Error("ese día no tiene registro");
+    if(aplicar(reg) === false) throw Object.assign(new Error("ese ítem ya no está en el registro"), {noEncontrado:true});
+    reg.acumulado = Lector.recalcular(reg.comidas);
+    const res = await ghPutConSha(ruta, reg, sha, mensaje);
+    if(!res.conflicto) return reg;
+    await new Promise(ok => setTimeout(ok, 500 * (intento + 1)));   // el workflow escribió en paralelo: releer y reaplicar
+  }
+  throw new Error("el registro cambió varias veces seguidas mientras guardaba; reintenta en un momento");
+}
+
+/* Para reencontrar un ítem en el archivo recién leído: por su uid; los antiguos (sin uid), por su
+   contenido y, si hay dos iguales (dos hamburguesas), por cuál de ellos es. */
+const firmaItem = c => [c.hora, c.descripcion, ...Lector.CAMPOS.map(k => +c[k] || 0)].join("|");
+function refDeItem(reg, i){
+  const cs = reg.comidas, f = firmaItem(cs[i]);
+  let n = 0;
+  for(let k = 0; k < i; k++) if(firmaItem(cs[k]) === f) n++;
+  return {uid: cs[i].uid || null, firma: f, n};
+}
+function indiceDeRef(reg, ref){
+  const cs = reg.comidas || [];
+  if(ref.uid) return cs.findIndex(c => c.uid === ref.uid);
+  let n = 0;
+  for(let i = 0; i < cs.length; i++) if(!cs[i].uid && firmaItem(cs[i]) === ref.firma){ if(n === ref.n) return i; n++; }
+  return -1;
+}
+function nuevoUid(){
+  const b = new Uint8Array(4); crypto.getRandomValues(b);
+  return [...b].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+function anotarEdicion(reg, e){   // rastro de lo corregido a mano: queda en el registro del día
+  reg.ediciones = [...(reg.ediciones || []).slice(-49), {t: fechaHoraLocal(new Date()), ...e}];
+}
+
+let EDITOR = null;                 // {fecha, i, ref, item, modo, b: lo que vas escribiendo}
+let BORRADO = null;                // lo recién eliminado, mientras se puede deshacer
+const HIST_ABIERTOS = new Set();   // días del historial con su lista desplegada
+
+function regDeFecha(fecha){
+  if(fecha === fechaLocal()) return ULTIMO_REG_CRUDO;
+  return ((DATOS && DATOS.historial) || []).find(r => r.fecha === fecha) || null;
+}
+function repintarItems(fecha){
+  if(fecha === fechaLocal()){ repintarHoy(); return; }
+  const h = document.getElementById("historial-dias");
+  if(h && DATOS) h.outerHTML = seccionHistorial(DATOS.historial);
+}
+function ponerRegDeFecha(fecha, reg){
+  if(fecha === fechaLocal()) ULTIMO_REG_CRUDO = reg;
+  else if(DATOS){ const i = DATOS.historial.findIndex(r => r.fecha === fecha); if(i >= 0) DATOS.historial[i] = reg; }
+  repintarItems(fecha);
+}
+function avisoItems(fecha, texto){
+  const caja = document.getElementById("items-aviso-" + fecha);
+  if(caja) caja.textContent = texto;
+}
+function errorDeEdicion(e){
+  if(e.noEncontrado) return "Ese ítem ya no está en el registro (cambió mientras lo corregías). Recarga y revisa.";
+  if(esFalloDeRed(e)) return "Sin señal: para corregir necesitas conexión. No se cambió nada.";
+  return `No pude guardar la corrección (${e.message}). No se cambió nada.`;
+}
+let TEMPORIZADOR_EDICION = null;
+function despertarTrasEdicion(){   // que el tablero (flor, avisos) se recalcule con lo corregido; no usa IA
+  clearTimeout(TEMPORIZADOR_EDICION);
+  TEMPORIZADOR_EDICION = setTimeout(() => { localStorage.setItem("ultimo_dispatch", Date.now()); ghDispatch(); }, 15000);
+}
+function alternarDia(fecha){
+  if(HIST_ABIERTOS.has(fecha)) HIST_ABIERTOS.delete(fecha); else HIST_ABIERTOS.add(fecha);
+  if(EDITOR && EDITOR.fecha === fecha) EDITOR = null;
+  repintarItems(fecha);
+}
+
+function listaItems(fecha){
+  const reg = regDeFecha(fecha), hoy = fecha === fechaLocal();
+  const items = (reg && reg.comidas) || [];
+  // Lo registrado sin IA hace segundos todavía no está en GitHub: se ve, pero no se edita aún.
+  const locales = (hoy && DATOS && DATOS.regHoy) ? (DATOS.regHoy.comidas || []).slice(items.length) : [];
+  const n = v => Math.round(+v || 0);
+  const datos = c => `<div class="item-hora">${escaparHtml(c.hora || "")}</div>
+      <div class="item-datos"><b>${escaparHtml(c.descripcion || "(sin descripción)")}</b>${c.corregido ? ' <span class="chip corr">corregido</span>' : ""}<br>
+        ${n(c.kcal)} kcal · ${n(c.proteina_g)} g prot · ${n(c.carbohidratos_g)} g carbos</div>`;
+  const filas = items.map((c, i) => {
+    const abierto = EDITOR && EDITOR.fecha === fecha && EDITOR.i === i;
+    return `<div class="item-fila">${datos(c)}
+      <div class="item-acc">
+        <button aria-label="Editar ${escaparHtml(c.descripcion || "")}" onclick="abrirEditor('${fecha}',${i})">${ico("lapiz")}</button>
+        <button aria-label="Eliminar ${escaparHtml(c.descripcion || "")}" onclick="eliminarItem('${fecha}',${i})">${ico("papelera")}</button>
+      </div></div>${abierto ? editorHtml() : ""}`;
+  }).join("");
+  const pendientes = locales.map(c => `<div class="item-fila pendiente">${datos({...c, hora: "…"})}
+      <div class="item-acc" style="font-size:11px;color:var(--tinta2)">guardando</div></div>`).join("");
+  const vacio = (!items.length && !locales.length) ? `<p class="t-sub">Aún no hay nada registrado${hoy ? " hoy" : ""}.</p>` : "";
+  return `${vacio}${filas}${pendientes}<div class="pendientes" id="items-aviso-${fecha}"></div>`;
+}
+
+/* ---------- el editor de un ítem ---------- */
+const CAMPOS_EDITOR = [["kcal","Calorías","kcal"],["proteina_g","Proteína","g"],["carbohidratos_g","Carbos","g"],
+  ["grasa_g","Grasa","g"],["sodio_mg","Sodio","mg"],["fibra_g","Fibra","g"],
+  ["potasio_mg","Potasio","mg"],["magnesio_mg","Magnesio","mg"],["vitamina_d_ug","Vit. D","µg"]];
+const fmtNum = v => String(Math.round(v * 100) / 100).replace(".", ",");
+function leerNumero(t){
+  t = String(t == null ? "" : t).trim().replace(",", ".");
+  if(/^\d+\s*\/\s*\d+$/.test(t)){ const [a, b] = t.split("/").map(Number); return b ? a / b : NaN; }
+  return /^(\d+\.?\d*|\.\d+)$/.test(t) ? Number(t) : NaN;
+}
+/* La cantidad que dice la descripción: "4 huevos" → 4, "Lechuga (30 g)" → 30, "1/2 tomate" → 0,5. */
+function cantidadDe(desc){
+  const m = /(\d+\s*\/\s*\d+|\d+(?:[.,]\d+)?)/.exec(desc || "");
+  if(!m) return null;
+  const valor = leerNumero(m[1]);
+  return valor > 0 ? {valor, texto: m[1], pos: m.index} : null;
+}
+
+function abrirEditor(fecha, i){
+  if(EDITOR && EDITOR.fecha === fecha && EDITOR.i === i){ cerrarEditor(); return; }
+  const reg = regDeFecha(fecha), item = reg && reg.comidas && reg.comidas[i];
+  if(!item) return;
+  const q = cantidadDe(item.descripcion);
+  const b = {cantidad: q ? q.texto : "1", producto: "", descripcion: item.descripcion || ""};
+  for(const [k] of CAMPOS_EDITOR) b[k] = fmtNum(+item[k] || 0);
+  const anterior = EDITOR && EDITOR.fecha;
+  EDITOR = {fecha, i, ref: refDeItem(reg, i), item, modo: "cantidad", b};
+  if(anterior && anterior !== fecha) repintarItems(anterior);
+  repintarItems(fecha);
+}
+function cerrarEditor(){
+  const f = EDITOR && EDITOR.fecha;
+  EDITOR = null;
+  if(f) repintarItems(f);
+}
+function modoEditor(m){ if(EDITOR){ EDITOR.modo = m; repintarItems(EDITOR.fecha); } }
+function edCampo(k, v){
+  if(!EDITOR) return;
+  EDITOR.b[k] = v;
+  const caja = document.getElementById("ed-previa");
+  if(caja) caja.innerHTML = previaEditor();
+}
+
+/* Lo que quedaría al guardar: {items} o {error}. La vista previa y el guardado usan esto mismo.
+   fuente: reescalar no cambia de dónde vienen los valores (un ítem de la tabla USDA sigue siendo
+   "tabla", y por eso se le sigue restando la fibra en los carbos netos); un producto de tus
+   etiquetas queda "etiqueta"; los valores escritos a mano, "manual". */
+function resultadoEditor(){
+  const e = EDITOR, c = e.item;
+  const hereda = {hora: c.hora, uid: c.uid || nuevoUid(), ...(c.entrada_id ? {entrada_id: c.entrada_id} : {}), corregido: true};
+  if(e.modo === "cantidad"){
+    const q = cantidadDe(c.descripcion), v = leerNumero(e.b.cantidad);
+    if(!(v > 0)) return {error: "Escribe una cantidad mayor que cero (ej. 2, 0,5 o 1/2)."};
+    const factor = q ? v / q.valor : v;
+    if(Math.abs(factor - 1) < 1e-9) return {error: ""};
+    if(factor > 100) return {error: "Eso es más de 100 veces lo registrado: revisa la cantidad."};
+    const desc = q ? c.descripcion.slice(0, q.pos) + fmtNum(v) + c.descripcion.slice(q.pos + q.texto.length)
+                   : `${fmtNum(v)} × ${c.descripcion || ""}`;
+    return {items: [{...Lector.escalar(c, factor), descripcion: desc, ...hereda}]};
+  }
+  if(e.modo === "producto"){
+    if(!e.b.producto.trim()) return {error: ""};
+    if(!LECTOR) return {error: "El buscador de productos todavía está cargando; prueba en unos segundos."};
+    const r = Lector.leer(e.b.producto, LECTOR);
+    if(!r || r.ruta !== "local" || !r.items.length){
+      const falta = r && r.noEntendido && r.noEntendido.length ? ` (no reconocí: ${r.noEntendido.join(", ")})` : "";
+      return {error: `No lo encuentro en tus etiquetas ni en la tabla estándar${falta}. Prueba con otro nombre o usa «A mano».`};
+    }
+    return {items: r.items.map((it, k) => ({hora: c.hora, descripcion: Lector.describir(it),
+      fuente: it.fuente === "tabla" ? "tabla" : "etiqueta", ...it.nutrientes,
+      uid: k === 0 ? hereda.uid : nuevoUid(), ...(c.entrada_id ? {entrada_id: c.entrada_id} : {}), corregido: true}))};
+  }
+  const desc = e.b.descripcion.trim();
+  if(!desc) return {error: "Falta la descripción."};
+  const nuevo = {...c, descripcion: desc.slice(0, 140), ...hereda, fuente: "manual"};
+  for(const [k, nombre] of CAMPOS_EDITOR){
+    const v = String(e.b[k]).trim() === "" ? 0 : leerNumero(e.b[k]);
+    if(!(v >= 0) || v > 20000) return {error: `Revisa «${nombre}»: debe ser un número entre 0 y 20.000.`};
+    nuevo[k] = Math.round(v * 10) / 10;
+  }
+  if(firmaItem(nuevo) === firmaItem(c)) return {error: ""};
+  return {items: [nuevo]};
+}
+function previaEditor(){
+  const r = resultadoEditor();
+  if(r.error !== undefined) return r.error ? `<span class="asumido">${escaparHtml(r.error)}</span>` : "";
+  const t = Lector.recalcular(r.items), n = v => Math.round(+v || 0);
+  return `Quedará: <b>${r.items.map(i => escaparHtml(i.descripcion)).join(" · ")}</b> — ${n(t.kcal)} kcal ·
+    ${n(t.proteina_g)} g prot · ${n(t.carbohidratos_g)} g carbos · ${n(t.sodio_mg)} mg sodio
+    <span style="color:var(--tinta2)">(antes: ${n(EDITOR.item.kcal)} kcal)</span>`;
+}
+function editorHtml(){
+  const e = EDITOR, b = e.b;
+  const tab = (m, t) => `<button class="${e.modo === m ? "activo" : ""}" onclick="modoEditor('${m}')">${t}</button>`;
+  const campo = (k, etiqueta, extra) => `<label>${etiqueta}<input type="text" ${extra || 'inputmode="decimal"'} autocomplete="off"
+      value="${escaparHtml(b[k])}" oninput="edCampo('${k}', this.value)"></label>`;
+  let cuerpo;
+  if(e.modo === "cantidad"){
+    const q = cantidadDe(e.item.descripcion);
+    cuerpo = campo("cantidad", q ? `Cantidad correcta (registrado: ${escaparHtml(q.texto)})` : "Multiplicar lo registrado por")
+      + `<div class="reg-ayuda">Todos los valores del ítem se ajustan en la misma proporción.</div>`;
+  }else if(e.modo === "producto"){
+    cuerpo = campo("producto", "Producto y cantidad", 'placeholder="Ej: 2 hamburguesas buen corte"')
+      + `<div class="reg-ayuda">Busca en tus etiquetas y en la tabla estándar, igual que al registrar. No usa IA.</div>`;
+  }else{
+    cuerpo = campo("descripcion", "Descripción", "")
+      + `<div class="ed-rejilla">${CAMPOS_EDITOR.map(([k, nombre, u]) => campo(k, `${nombre} (${u})`)).join("")}</div>`;
+  }
+  return `<div class="editor"><div class="ed-tabs">${tab("cantidad", "Cantidad")}${tab("producto", "Otro producto")}${tab("manual", "A mano")}</div>
+    ${cuerpo}<div class="ed-previa" id="ed-previa">${previaEditor()}</div>
+    <div class="reg-fila"><button class="secundario" onclick="cerrarEditor()">Cancelar</button>
+      <button id="ed-guardar" onclick="guardarEditor()">Guardar corrección</button></div></div>`;
+}
+
+async function guardarEditor(){
+  const e = EDITOR;
+  if(!e) return;
+  const r = resultadoEditor();
+  if(r.error !== undefined){
+    const caja = document.getElementById("ed-previa");
+    if(caja) caja.innerHTML = `<span class="asumido">${escaparHtml(r.error || "No hay cambios que guardar.")}</span>`;
+    return;
+  }
+  const btn = document.getElementById("ed-guardar");
+  if(btn){ btn.disabled = true; btn.textContent = "Guardando…"; }
+  try{
+    const reg = await editarRegistro(e.fecha, reg => {
+      const i = indiceDeRef(reg, e.ref);
+      if(i < 0) return false;
+      const antes = reg.comidas[i];
+      reg.comidas.splice(i, 1, ...r.items);
+      anotarEdicion(reg, {tipo: e.modo, antes: antes.descripcion, despues: r.items.map(x => x.descripcion).join(" + "),
+                          kcal_antes: +antes.kcal || 0, kcal_despues: Lector.recalcular(r.items).kcal});
+    }, `correccion app ${e.fecha}: ${e.modo}`);
+    if(EDITOR === e) EDITOR = null;
+    ponerRegDeFecha(e.fecha, reg);
+    avisoItems(e.fecha, "Corregido ✓ — los totales del día ya están recalculados.");
+    despertarTrasEdicion();
+  }catch(err){
+    if(btn){ btn.disabled = false; btn.textContent = "Guardar corrección"; }
+    const caja = document.getElementById("ed-previa");
+    if(caja) caja.innerHTML = `<span class="asumido">${escaparHtml(errorDeEdicion(err))}</span>`;
+  }
+}
+
+/* ---------- eliminar, con "Deshacer" por unos segundos ---------- */
+function ocultarDeshacer(){
+  if(BORRADO) clearTimeout(BORRADO.temporizador);
+  BORRADO = null;
+  const b = document.getElementById("deshacer-barra");
+  if(b) b.remove();
+}
+/* quitar(reg) y restaurar(reg) reciben el archivo recién leído: devuelven false si ya no aplica. */
+function quitarConDeshacer(fecha, texto, optimista, quitar, restaurar, mensaje){
+  ocultarDeshacer();
+  const previo = regDeFecha(fecha);
+  if(EDITOR && EDITOR.fecha === fecha) EDITOR = null;
+  // Se ve al instante; el guardado va por detrás.
+  const copia = JSON.parse(JSON.stringify(previo));
+  optimista(copia);
+  copia.acumulado = Lector.recalcular(copia.comidas);
+  ponerRegDeFecha(fecha, copia);
+  const promesa = editarRegistro(fecha, quitar, mensaje).then(reg => {
+    ponerRegDeFecha(fecha, reg); despertarTrasEdicion(); return true;
+  }).catch(err => {
+    ocultarDeshacer();
+    ponerRegDeFecha(fecha, previo);
+    avisoItems(fecha, errorDeEdicion(err));
+    return false;
+  });
+  const barra = document.createElement("div");
+  barra.id = "deshacer-barra"; barra.className = "deshacer-barra"; barra.setAttribute("role", "status");
+  barra.innerHTML = `<span>${escaparHtml(texto)}</span><button onclick="deshacerEliminacion()">Deshacer</button>`;
+  document.body.appendChild(barra);
+  BORRADO = {fecha, restaurar, promesa, temporizador: setTimeout(ocultarDeshacer, 8000)};
+}
+async function deshacerEliminacion(){
+  const b = BORRADO;
+  if(!b) return;
+  ocultarDeshacer();
+  if(!(await b.promesa)) return;                       // el borrado no llegó a guardarse: no hay nada que deshacer
+  try{
+    const reg = await editarRegistro(b.fecha, b.restaurar, `correccion app ${b.fecha}: deshacer`);
+    ponerRegDeFecha(b.fecha, reg);
+    avisoItems(b.fecha, "Restaurado ✓");
+    despertarTrasEdicion();
+  }catch(err){
+    avisoItems(b.fecha, errorDeEdicion(err));
+  }
+}
+function eliminarItem(fecha, i){
+  const reg = regDeFecha(fecha);
+  if(!reg || !reg.comidas || !reg.comidas[i]) return;
+  const ref = refDeItem(reg, i);
+  const item = {...reg.comidas[i], uid: reg.comidas[i].uid || nuevoUid()};
+  quitarConDeshacer(fecha, `Eliminado: ${(item.descripcion || "ítem").slice(0, 38)}`,
+    copia => { copia.comidas.splice(i, 1); },
+    r => {
+      const k = indiceDeRef(r, ref);
+      if(k < 0) return false;
+      r.comidas.splice(k, 1);
+      anotarEdicion(r, {tipo: "eliminar", antes: item.descripcion, kcal_antes: +item.kcal || 0});
+    },
+    r => {
+      if(r.comidas.some(c => c.uid === item.uid)) return;        // ya está de vuelta
+      r.comidas.splice(Math.min(i, r.comidas.length), 0, item);
+      anotarEdicion(r, {tipo: "restaurar", despues: item.descripcion});
+    },
+    `correccion app ${fecha}: eliminar`);
+}
+
 function vistaRegistrar(){
   const {estado, regHoy} = DATOS;
   return `${bannerCarbs(regHoy, estado)}${tarjetaRegistrar(regHoy)}
     <div class="tarjeta"><h2>Hoy en vivo</h2><div id="hoy-en-vivo">${anillosRegistro(regHoy)}</div>
-      <div id="barras-hoy" style="margin-top:14px">${barrasNutrientes(regHoy)}</div></div>`;
+      <div id="barras-hoy" style="margin-top:14px">${barrasNutrientes(regHoy)}</div></div>
+    <div class="tarjeta"><h2>Registro de hoy</h2>
+      <p class="reg-ayuda" style="margin:0 0 4px">Toca el lápiz para corregir una cantidad, cambiar el producto o ajustar los valores. No usa IA.</p>
+      <div id="items-${fechaLocal()}">${listaItems(fechaLocal())}</div></div>`;
 }
 
 function barrasNutrientes(reg){
@@ -1686,7 +2081,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.9.1</div>
+    <div class="version">v21.10.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 

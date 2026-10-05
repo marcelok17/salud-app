@@ -245,7 +245,33 @@
     return it.asumido ? `${base} (porción estándar)` : base;
   }
 
-  const Lector = {CAMPOS, normalizar, preparar, leer, sumar, describir};
+  /* El acumulado del día. LA MISMA cuenta que registro_dia.py (sumar_items): mismos campos, mismo
+     orden de suma y mismo redondeo (medio hacia arriba, a 1 decimal). pruebas.py compara los dos
+     resultados: la app y el servidor no pueden mostrar totales distintos. */
+  const NUMERO = /^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i;
+  function num(v) {
+    if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+    if (typeof v === "string" && NUMERO.test(v.trim())) { const x = Number(v); return Number.isFinite(x) ? x : 0; }
+    return 0;
+  }
+  function recalcular(comidas) {
+    const total = {};
+    for (const c of CAMPOS) {
+      let s = 0;
+      for (const it of comidas || []) if (it && typeof it === "object" && !Array.isArray(it)) s += num(it[c]);
+      total[c] = Math.floor(s * 10 + 0.5) / 10;
+    }
+    return total;
+  }
+
+  // Cambiar la cantidad de un ítem ya registrado: todos sus campos se multiplican por el mismo factor.
+  function escalar(item, factor) {
+    const out = {...item};
+    for (const c of CAMPOS) out[c] = Math.round(num(item[c]) * factor * 10) / 10;
+    return out;
+  }
+
+  const Lector = {CAMPOS, normalizar, preparar, leer, sumar, describir, recalcular, escalar};
   if (typeof module !== "undefined" && module.exports) module.exports = Lector;
   else raiz.Lector = Lector;
 })(typeof window !== "undefined" ? window : globalThis);
