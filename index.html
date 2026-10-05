@@ -590,6 +590,8 @@ function repintarHoy(){
   if(barras) barras.innerHTML = barrasNutrientes(reg);
   const lista = document.getElementById("items-" + fechaLocal());
   if(lista) lista.innerHTML = listaItems(fechaLocal());
+  const resp = document.getElementById("resp-agente");
+  if(resp) resp.outerHTML = respuestaAgenteHtml(reg);
 }
 
 let TEMPORIZADOR_SILENCIO = null;
@@ -702,8 +704,20 @@ function avisoRegistro(texto){
   if(caja) caja.textContent = texto;
 }
 
+/* La última respuesta del agente, con "Deshacer este registro": quita del día TODOS los ítems que
+   creó esa entrada (cada ítem guarda su entrada_id). Las respuestas anteriores al 04-10-2026 no
+   traen ese dato y no muestran el botón: sus ítems se corrigen uno a uno en "Registro de hoy". */
+function respuestaAgenteHtml(reg){
+  const resp = ((reg && reg.respuestas_agente) || []).slice(-1)[0];
+  if(!resp) return `<div id="resp-agente"></div>`;
+  const id = /^[\w-]+$/.test(resp.entrada_id || "") ? resp.entrada_id : null;
+  const n = id ? ((reg.comidas) || []).filter(c => c.entrada_id === id).length : 0;
+  const pie = resp.deshecha ? `<p class="nota">Este registro se deshizo: sus ítems ya no cuentan en el día.</p>`
+    : n ? `<button class="enlace" onclick="deshacerEntrada('${id}')">Deshacer este registro (${n} ítem${n > 1 ? "s" : ""})</button>` : "";
+  return `<div class="resp-agente" id="resp-agente"><div class="hora">Última respuesta del agente · ${resp.hora}</div>${resp.html}${pie}</div>`;
+}
+
 function tarjetaRegistrar(regHoy){
-  const resp = ((regHoy&&regHoy.respuestas_agente)||[]).slice(-1)[0];
   return `<div class="tarjeta registrar">
     <h2>Registrar</h2>
     <textarea id="reg-texto" placeholder="Ej: 4 huevos revueltos y una tostada
@@ -717,7 +731,7 @@ Dormí 7 horas · Glucosa 95 en ayunas · Peso 97,2" oninput="previsualizar()"><
     <div class="reg-fotos" id="reg-fotos"></div>
     <div class="pendientes" id="reg-pendientes">${textoPendientes()}</div>
     <div class="pendientes" id="reg-aviso"></div>
-    ${resp?`<div class="resp-agente"><div class="hora">Última respuesta del agente · ${resp.hora}</div>${resp.html}</div>`:""}
+    ${respuestaAgenteHtml(regHoy)}
   </div>`;
 }
 
@@ -1475,7 +1489,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.10.0</div>`;
+    <div class="version">v21.11.0</div>`;
 }
 
 function vistaArbol(){
@@ -1941,6 +1955,33 @@ function eliminarItem(fecha, i){
     `correccion app ${fecha}: eliminar`);
 }
 
+/* Deshacer una respuesta del agente: fuera todos los ítems de esa entrada, de una vez. */
+function deshacerEntrada(id){
+  const fecha = fechaLocal(), reg = regDeFecha(fecha);
+  if(!reg) return;
+  const quitados = (reg.comidas || []).map((c, i) => ({c, i})).filter(x => x.c.entrada_id === id);
+  if(!quitados.length) return;
+  const marcar = (r, deshecha) => {
+    for(const x of r.respuestas_agente || []) if(x.entrada_id === id){ if(deshecha) x.deshecha = true; else delete x.deshecha; }
+  };
+  quitarConDeshacer(fecha, `Registro deshecho: ${quitados.length} ítem${quitados.length > 1 ? "s" : ""} menos`,
+    copia => { copia.comidas = copia.comidas.filter(c => c.entrada_id !== id); marcar(copia, true); },
+    r => {
+      const antes = (r.comidas || []).length;
+      r.comidas = (r.comidas || []).filter(c => c.entrada_id !== id);
+      if(r.comidas.length === antes) return false;
+      marcar(r, true);
+      anotarEdicion(r, {tipo: "deshacer_entrada", entrada_id: id, antes: quitados.map(x => x.c.descripcion).join(" + ")});
+    },
+    r => {
+      const ya = new Set(r.comidas.map(c => c.uid).filter(Boolean));
+      for(const {c, i} of quitados) if(!(c.uid && ya.has(c.uid))) r.comidas.splice(Math.min(i, r.comidas.length), 0, c);
+      marcar(r, false);
+      anotarEdicion(r, {tipo: "restaurar_entrada", entrada_id: id});
+    },
+    `correccion app ${fecha}: deshacer entrada`);
+}
+
 function vistaRegistrar(){
   const {estado, regHoy} = DATOS;
   return `${bannerCarbs(regHoy, estado)}${tarjetaRegistrar(regHoy)}
@@ -2081,7 +2122,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.10.0</div>
+    <div class="version">v21.11.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
