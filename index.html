@@ -220,6 +220,7 @@
   .item-acc{display:flex;gap:4px}
   .item-acc button{width:40px;height:40px;border-radius:12px;border:none;background:#FAF9F6;color:var(--tinta2);display:grid;place-items:center;cursor:pointer}
   .item-acc button .ico{width:18px;height:18px}
+  .chip.corr.est{background:#FBF1EA;color:#8A4F2B}
   .chip.corr{display:inline-block;background:var(--acento-suave);color:var(--acento);font-size:10px;line-height:1.3;padding:1px 7px;vertical-align:middle}
   .editor{background:#FAF9F6;border:1px solid var(--linea);border-radius:16px;padding:12px;margin:6px 0 10px}
   .ed-tabs{display:flex;gap:6px;margin-bottom:10px}
@@ -1489,7 +1490,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.11.0</div>`;
+    <div class="version">v21.12.0</div>`;
 }
 
 function vistaArbol(){
@@ -1728,7 +1729,7 @@ function listaItems(fecha){
   const locales = (hoy && DATOS && DATOS.regHoy) ? (DATOS.regHoy.comidas || []).slice(items.length) : [];
   const n = v => Math.round(+v || 0);
   const datos = c => `<div class="item-hora">${escaparHtml(c.hora || "")}</div>
-      <div class="item-datos"><b>${escaparHtml(c.descripcion || "(sin descripción)")}</b>${c.corregido ? ' <span class="chip corr">corregido</span>' : ""}<br>
+      <div class="item-datos"><b>${escaparHtml(c.descripcion || "(sin descripción)")}</b>${c.estimado ? ' <span class="chip corr est">estimado</span>' : c.corregido ? ' <span class="chip corr">corregido</span>' : ""}<br>
         ${n(c.kcal)} kcal · ${n(c.proteina_g)} g prot · ${n(c.carbohidratos_g)} g carbos</div>`;
   const filas = items.map((c, i) => {
     const abierto = EDITOR && EDITOR.fecha === fecha && EDITOR.i === i;
@@ -2122,7 +2123,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.11.0</div>
+    <div class="version">v21.12.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
