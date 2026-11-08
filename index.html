@@ -1490,7 +1490,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.12.0</div>`;
+    <div class="version">v21.13.0</div>`;
 }
 
 function vistaArbol(){
@@ -1536,15 +1536,46 @@ function vistaPresion(){
       `<div class="barra"><div class="fila"><span>${t.fecha.slice(8)}/${t.fecha.slice(5,7)}</span><b>${t.sistolica}/${t.diastolica||"—"}</b></div></div>`).join("")}</div>`:""}`;
 }
 
+const MESES_L = {"01":"ene","02":"feb","03":"mar","04":"abr","05":"may","06":"jun","07":"jul","08":"ago","09":"sep","10":"oct","11":"nov","12":"dic"};
+const kg = v => String(Math.round(v * 10) / 10).replace(".", ",");
+const signo = v => (v > 0 ? "+" : "") + kg(v);
+
+/* P5 (08-11-2026): el peso con su historia completa y sin maquillaje: 90 días, medias mensuales,
+   el cambio desde el primer pesaje y la tendencia de 14 días. Y el balance: lo anotado contra la pesa. */
 function vistaPeso(){
-  const p = DATOS.estado.peso, w = ((DATOS.estado.withings||{}).peso)||{};
+  const p = DATOS.estado.peso, w = ((DATOS.estado.withings||{}).peso)||{}, b = DATOS.estado.balance;
   const comp = [["grasa_pct","Grasa","%"],["masa_muscular_kg","Masa muscular","kg"],["agua_kg","Agua","kg"],["masa_osea_kg","Masa ósea","kg"]]
     .filter(([k]) => w[k] != null).map(([k,l,u]) => `<div class="metrica"><div class="v">${String(w[k]).replace(".",",")} ${u}</div><div class="l">${l}</div></div>`).join("");
-  return `<div class="tarjeta"><h2>Peso, últimos 30 días</h2>
-      ${p?`${lineaMini(p.serie.map(x=>x.kg), "#C9653F", 320, 110, true)}
-      <p class="nota">Último: ${String(p.ultimo.kg).replace(".",",")} kg (${p.ultimo.fecha.slice(8)}/${p.ultimo.fecha.slice(5,7)})${p.cambio_kg!=null?` · ${p.cambio_kg>0?"+":""}${String(p.cambio_kg).replace(".",",")} kg en ${p.cambio_dias} días`:""}.
-      Los saltos de 1-2 kg en pocos días suelen ser agua (creatina, carbohidratos, sal), no grasa.</p>`
-      :`<p class="t-sub">Sin pesajes en los últimos 30 días.</p>`}</div>
+  if(!p) return `<div class="tarjeta"><p class="t-sub">Sin pesajes todavía.</p></div>`;
+  const d = p.desde_inicio, t = p.tendencia_14d;
+  const titular = d ? `<p class="analisis" style="margin-top:6px"><b>${signo(d.cambio_kg)} kg</b> desde el ${d.fecha.slice(8)} de ${MESES_L[d.fecha.slice(5,7)]}
+      (${kg(d.kg)} → ${kg(p.ultimo.kg)} kg, ${Math.round(d.dias/30)} meses).</p>` : "";
+  const tendencia = t ? `Tendencia de 14 días: <b>${Math.abs(t.kg_semana) < 0.15 ? "estable" : signo(t.kg_semana) + " kg por semana"}</b> (${t.pesajes} pesajes).`
+                      : "Tendencia de 14 días: faltan pesajes (mínimo 4).";
+  const meses = (p.meses||[]).length >= 2 ? `<div class="metricas" style="margin-top:12px">${p.meses.map(m =>
+      `<div class="metrica"><div class="v">${kg(m.kg)}</div><div class="l">${MESES_L[m.mes.slice(5)]} · ${m.n} pesaje${m.n>1?"s":""}</div></div>`).join("")}</div>` : "";
+  let balance = "";
+  if(b && b.veredicto){
+    const malo = b.veredicto === "sin_confirmar";
+    balance = `<div class="tarjeta"><h2>Lo anotado contra la pesa</h2>
+      <div class="metricas">${[["Anotado por día", b.ingesta_kcal != null ? Math.round(b.ingesta_kcal) + " kcal" : "—"],
+        ["Mantenimiento usado", Math.round(b.mantenimiento_usado) + " kcal"],
+        ["Peso en 14 días", b.pendiente_kg_semana != null ? signo(b.pendiente_kg_semana) + " kg/sem" : "—"],
+        ["Mantenimiento según la pesa", b.mantenimiento_implicito != null && b.confiable ? Math.round(b.mantenimiento_implicito) + " kcal" : "—"]]
+        .map(([l, v]) => `<div class="metrica"><div class="v" style="font-size:17px">${v}</div><div class="l">${l}</div></div>`).join("")}</div>
+      <p class="analisis" style="margin-top:10px${malo ? ";color:var(--c-corazon)" : ""}">${escaparHtml(b.texto.charAt(0).toUpperCase() + b.texto.slice(1))}.</p>
+      <p class="nota">${malo ? `La edad metabólica da crédito solo por lo que la pesa confirma (${Math.max(0, Math.round(b.deficit_por_peso_kcal))} kcal/día), no por lo anotado.` :
+        b.veredicto === "consistente" ? "La edad metabólica da crédito solo por lo que la pesa confirma." :
+        "Con pocos pesajes o días completos, o tras un evento de agua, no se puede comprobar."}
+        Ventana: ${b.dias} días, ${b.pesajes} pesajes, ${b.dias_completos} días con registro completo.</p></div>`;
+  }
+  return `<div class="tarjeta"><h2>Peso, últimos 90 días</h2>
+      ${lineaMini((p.serie_90 || p.serie).map(x=>x.kg), "#C9653F", 320, 110, true)}
+      ${titular}
+      <p class="nota">${tendencia} Último pesaje: ${kg(p.ultimo.kg)} kg (${p.ultimo.fecha.slice(8)}/${p.ultimo.fecha.slice(5,7)}).
+      Los saltos de 1-2 kg en pocos días suelen ser agua (creatina, carbohidratos, sal), no grasa; por eso mandan las medias mensuales:</p>
+      ${meses}</div>
+    ${balance}
     ${comp?`<div class="tarjeta"><h2>Composición (Withings)</h2><div class="metricas">${comp}</div></div>`:""}`;
 }
 
@@ -2123,7 +2154,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.12.0</div>
+    <div class="version">v21.13.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
