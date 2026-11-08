@@ -136,6 +136,9 @@
   .metrica .v{font-family:var(--serif);font-size:21px}
   .metrica .l{font-size:11.5px;color:var(--tinta2);margin-top:2px}
   .nota{font-size:12px;color:var(--tinta2);line-height:1.5;margin-top:10px}
+  .hechos{list-style:none;font-size:13.5px;line-height:1.5}
+  .hechos li{padding:8px 0;border-bottom:1px solid var(--linea2)}
+  .hechos li:last-child{border-bottom:none}
 
   /* ---- Navegación inferior ---- */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;max-width:980px;margin:0 auto;background:#fff;
@@ -1278,13 +1281,16 @@ function tarjetaEdad(edad){
     cuerpo = `<p class="t-sub" style="margin-top:10px">${ico("hoja",'style="width:18px;height:18px;vertical-align:-4px;color:var(--c-metabolismo)"')}
       Falta tu cintura: escribe «cintura 98» en Registrar. ${edad && edad.cobertura ? `Datos: ${edad.cobertura}.` : ""}</p>`;
   }else{
-    const sobre = (edad.brecha_dias||0) > 0;
+    const sobre = ((P.banda ? P.banda.mediana_brecha_dias : edad.brecha_dias)||0) > 0;
     const c = P.cambios || {};
     const linea = ["7","14","30"].filter(n => c[n]).map(n => `${n} d: ${c[n].dias>0?"+":""}${c[n].dias}`).join(" · ");
     const serie = (edad.serie||[]).filter(x => x.brecha_dias != null).map(x => x.brecha_dias);
+    const b = P.banda;
     cuerpo = `<div style="font-size:15px;margin-top:10px;color:${sobre?"#B4532F":"var(--acento)"}">${escaparHtml(P.brecha)}</div>
+      ${b?`<div class="t-sub">Mediana de ${b.n} días · rango ${b.min_brecha_dias>0?"+":""}${b.min_brecha_dias} a ${b.max_brecha_dias>0?"+":""}${b.max_brecha_dias} días · hoy ${b.punto_hoy_brecha_dias>0?"+":""}${b.punto_hoy_brecha_dias}</div>`:""}
       ${linea?`<div class="t-sub">Cambio en días · ${linea}</div>`:""}
       <div class="t-sub">${escaparHtml(P.explicacion_hoy||"")}</div>
+      ${P.nota_cobertura?`<div class="t-sub">${escaparHtml(P.nota_cobertura)}</div>`:""}
       ${P.nota_marcas?`<div class="t-sub">${escaparHtml(P.nota_marcas)}</div>`:""}
       ${serie.length >= 7 ? lineaMini(serie, sobre ? "#C9653F" : "#3E8A4F", 200, 60, true) : ""}`;
   }
@@ -1457,10 +1463,20 @@ function vistaTendencias(){
     ${tarjetaCardio(estado.cardio)}${seccionHistorial(historial)}`;
 }
 
+/* Hechos antes que relato (A2): lo que el código midió esta semana, con su n y si el cambio es real
+   o ruido. Es lo mismo que recibe la IA; su texto va después y solo puede hablar de esto. */
+function tarjetaHechos(h){
+  if(!h || !(h.frases||[]).length) return "";
+  return `<div class="tarjeta"><h2>Hechos de la semana</h2>
+    <ul class="hechos">${h.frases.map(f => `<li>${escaparHtml(f)}</li>`).join("")}</ul>
+    <p class="nota">Calculados por el código, sin IA. "Dentro del ruido" = el cambio es menor que lo que oscila la medición.</p></div>`;
+}
+
 function vistaPlan(){
   const ia = DATOS.estado.analisis_ia || {};
   return `<div class="tarjeta"><h2>Rutina de hoy</h2>
       <p class="rutina">${(DATOS.estado.rutina_de_hoy||"—").replace(/^(Semana \d+:)/,"<b>$1</b>")}</p></div>
+    ${tarjetaHechos(DATOS.estado.hechos)}
     <div class="tarjeta"><h2>Objetivos de hoy</h2>${checklist(ia.objetivos_hoy||[], "obj")}
       <p class="analisis" style="margin-top:10px">${ia.analisis||""}</p>
       ${ia.comentario_cientifico?`<p style="margin-top:10px;font-size:13.5px;line-height:1.5;color:var(--tinta2);border-top:1px solid var(--linea2);padding-top:10px">${ia.comentario_cientifico}</p>`:""}
@@ -1490,7 +1506,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.13.0</div>`;
+    <div class="version">v21.14.0</div>`;
 }
 
 function vistaArbol(){
@@ -1593,6 +1609,8 @@ function vistaEdad(){
     principal = `<div class="tarjeta">
       <div style="font-family:var(--serif);font-size:24px;line-height:1.25">${escaparHtml(P.linea)}</div>
       <div class="t-sub">${escaparHtml(P.brecha)} · margen ${escaparHtml(P.margen)} · datos ${escaparHtml(P.cobertura)}</div>
+      ${P.rango_semana?`<p class="nota" style="margin-top:6px">${escaparHtml(P.rango_semana.charAt(0).toUpperCase() + P.rango_semana.slice(1))}. El número grande es la mediana de la semana: el punto de un solo día salta con cada medición y con los cambios de cobertura.</p>`:""}
+      ${P.nota_cobertura?`<p class="nota">${escaparHtml(P.nota_cobertura)}</p>`:""}
       <p class="analisis" style="margin-top:10px">${escaparHtml(P.explicacion_hoy||"")}</p>
       ${P.nota_marcas?`<p class="nota">${escaparHtml(P.nota_marcas)}</p>`:""}
       ${Object.values(P.cambios||{}).map(c=>`<div class="t-sub">${escaparHtml(c.texto)}</div>`).join("")}
@@ -2154,7 +2172,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.13.0</div>
+    <div class="version">v21.14.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
