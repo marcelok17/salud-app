@@ -1310,10 +1310,12 @@ function lineaMini(vals, color, W=100, H=34, relleno=false){
     <circle cx="${u[0].toFixed(1)}" cy="${u[1].toFixed(1)}" r="2.8" fill="${color}"/></svg>`;
 }
 
-/* Carbos netos del día (fase keto): la tabla USDA resta la fibra; las etiquetas ya son netas. */
+/* Carbos netos del día (fase keto): carbohidratos menos fibra en CADA ítem, como la lista USDA
+   (Marcelo, 08-11-2026; antes solo se restaba a los ítems "tabla"). Las etiquetas chilenas traen
+   fibra 0, así que quedan igual. Misma cuenta que plan_vigente.carbos_netos. */
 function carbosNetos(reg){
   return Math.round(((reg && reg.comidas) || []).reduce((s, c) =>
-    s + Math.max(0, (+c.carbohidratos_g||0) - (c.fuente === "tabla" ? (+c.fibra_g||0) : 0)), 0) * 10) / 10;
+    s + Math.max(0, (+c.carbohidratos_g||0) - (+c.fibra_g||0)), 0) * 10) / 10;
 }
 
 function anillosRegistro(reg){
@@ -1506,7 +1508,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.14.0</div>`;
+    <div class="version">v21.15.0</div>`;
 }
 
 function vistaArbol(){
@@ -1839,8 +1841,7 @@ function edCampo(k, v){
 
 /* Lo que quedaría al guardar: {items} o {error}. La vista previa y el guardado usan esto mismo.
    fuente: reescalar no cambia de dónde vienen los valores (un ítem de la tabla USDA sigue siendo
-   "tabla", y por eso se le sigue restando la fibra en los carbos netos); un producto de tus
-   etiquetas queda "etiqueta"; los valores escritos a mano, "manual". */
+   "tabla"); un producto de tus etiquetas queda "etiqueta"; los valores escritos a mano, "manual". */
 function resultadoEditor(){
   const e = EDITOR, c = e.item;
   const hereda = {hora: c.hora, uid: c.uid || nuevoUid(), ...(c.entrada_id ? {entrada_id: c.entrada_id} : {}), corregido: true};
@@ -2172,7 +2173,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.14.0</div>
+    <div class="version">v21.15.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
