@@ -1635,7 +1635,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.17.3</div>`;
+    <div class="version">v21.17.4</div>`;
 }
 
 function vistaArbol(){
@@ -2070,6 +2070,7 @@ function vistaEdad(){
     <div class="tarjeta"><h2>Por componente</h2>
       ${(P.desglose||[]).map(d=>fila(escaparHtml(d.nombre),
           `${d.aporta_dias>0?"+":""}${d.aporta_dias} días${d.por_ganar_dias?` · quedan ${d.por_ganar_dias} por ganar`:""}`)).join("")}
+      ${(P.desglose||[]).filter(d=>d.nota).map(d=>`<p class="nota">${escaparHtml(d.nombre)}: ${escaparHtml(d.nota)}</p>`).join("")}
       ${P.mayor_palanca?`<p class="analisis" style="margin-top:6px"><b>Mayor palanca:</b> ${escaparHtml(P.mayor_palanca)}</p>`:""}
       ${(P.faltantes||[]).length?`<p class="nota">Sin dato (no se rellena): ${escaparHtml(P.faltantes.join(", "))}.</p>`:""}
       ${(E.congeladas||[]).length?`<p class="nota">Congeladas por evento de agua: ${E.congeladas.length} medición(es); no cuentan hasta que pase.</p>`:""}
@@ -2084,7 +2085,8 @@ function vistaEdad(){
       <p class="analisis">Tu edad real exacta en días, más la suma ponderada de cuánto se aleja cada componente de la mediana
         de un hombre de tu edad, en años: ${par.anos_por_de||5} años por desviación estándar (convención), con tope de
         ±${par.tope_anos_componente||8} años por componente. El calendario suma un día por día. La conducta mueve el número
-        solo de forma provisoria, hasta que llega el dato duro.</p>
+        solo de forma provisoria, hasta que llega el dato duro. Desde la versión 1.1, la masa magra no resta años mientras
+        la grasa esté sobre su zona: un cuerpo más pesado carga más masa magra solo por pesar más.</p>
       ${fila("Conducta", cal.estado==="calibrado" ? `calibrada: rinde ${Math.round(cal.rendimiento*100)}% de lo esperado` : "calibrando (valores por defecto)")}
       ${fila("Mantenimiento estimado", `${mant.kcal||"—"} kcal · ${escaparHtml(mant.fuente||"")}`)}
       ${fila("Fórmula", `versión ${escaparHtml(par.version||"")}`)}
@@ -2623,7 +2625,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.17.3</div>
+    <div class="version">v21.17.4</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
