@@ -1635,7 +1635,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.17.4</div>`;
+    <div class="version">v21.17.5</div>`;
 }
 
 function vistaArbol(){
@@ -2085,8 +2085,9 @@ function vistaEdad(){
       <p class="analisis">Tu edad real exacta en días, más la suma ponderada de cuánto se aleja cada componente de la mediana
         de un hombre de tu edad, en años: ${par.anos_por_de||5} años por desviación estándar (convención), con tope de
         ±${par.tope_anos_componente||8} años por componente. El calendario suma un día por día. La conducta mueve el número
-        solo de forma provisoria, hasta que llega el dato duro. Desde la versión 1.1, la masa magra no resta años mientras
-        la grasa esté sobre su zona: un cuerpo más pesado carga más masa magra solo por pesar más.</p>
+        solo de forma provisoria, hasta que llega el dato duro. El premio de la masa magra depende de tu grasa: completo con
+        la grasa en su zona, cero en la mediana de tu edad o sobre ella, y proporcional entre medio. Un cuerpo más pesado
+        carga más masa magra solo por pesar más.</p>
       ${fila("Conducta", cal.estado==="calibrado" ? `calibrada: rinde ${Math.round(cal.rendimiento*100)}% de lo esperado` : "calibrando (valores por defecto)")}
       ${fila("Mantenimiento estimado", `${mant.kcal||"—"} kcal · ${escaparHtml(mant.fuente||"")}`)}
       ${fila("Fórmula", `versión ${escaparHtml(par.version||"")}`)}
@@ -2625,7 +2626,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.17.4</div>
+    <div class="version">v21.17.5</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
