@@ -1635,7 +1635,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.17.2</div>`;
+    <div class="version">v21.17.3</div>`;
 }
 
 function vistaArbol(){
@@ -1872,9 +1872,9 @@ function infGlucosa(p){
     <p class="nota">Solo lecturas confiables del sensor${g.n_excluidas ? `; ${nEs(g.n_excluidas,0)} excluidas (primeras horas de cada sensor y bajas nocturnas con patrón de compresión)` : ""}.</p></div>`;
 }
 
-function infCuerpo(p){
-  const x = p.peso, c = p.composicion || {};
-  if(!x && !c.grasa_pct) return "";
+function infCuerpo(p, I){
+  const x = p.peso, c = p.composicion || {}, w = c.withings || {}, edad = ((I || {}).paciente || {}).edad;
+  if(!x && !c.grasa_pct && !c.withings) return "";
   const comp = (k, nombre, u) => c[k] ? filaInf(nombre, nEs(c[k].fin) + " " + u, `inicio ${nEs(c[k].inicio)} · ${veredicto(c[k])}`, `${c[k].n} mediciones`) : "";
   return `<div class="tarjeta"><h2>Peso y composición</h2>
     ${x ? grafPeso(x.serie, p.desde, p.hasta) : ""}
@@ -1882,15 +1882,19 @@ function infCuerpo(p){
     ${x && x.pendiente_kg_semana != null ? filaInf("Tendencia", sEs(x.pendiente_kg_semana, 2) + " kg por semana", `rango ${nEs(x.min)}–${nEs(x.max)} kg`, "") : ""}
     ${x && x.imc ? filaInf("IMC", nEs(x.imc), "", "") : ""}
     ${comp("grasa_pct", "Grasa corporal", "%")}${comp("masa_magra_kg", "Masa magra", "kg")}
+    ${w.tmb_kcal ? filaInf("Metabolismo basal", nEs(w.tmb_kcal.valor,0) + " kcal", "calculado por la balanza Withings", fDia(w.tmb_kcal.fecha)) : ""}
+    ${w.edad_metabolica ? filaInf("Edad metabólica (Withings)", nEs(w.edad_metabolica.valor,0) + " años", `${edad ? "edad real " + edad + " · " : ""}estimación de Withings desde el metabolismo basal`, fDia(w.edad_metabolica.fecha)) : ""}
+    ${w.grasa_visceral ? filaInf("Grasa visceral", nEs(w.grasa_visceral.valor), "índice de la balanza Withings", fDia(w.grasa_visceral.fecha)) : ""}
     ${c.cintura_cm ? filaInf("Cintura", nEs(c.cintura_cm.ultima) + " cm", `${fDia(c.cintura_cm.fecha)}${c.cintura_cm.n > 1 ? ` · antes ${nEs(c.cintura_cm.primera)} (${fDia(c.cintura_cm.primera_fecha)})` : ""}`, "huincha") : ""}
     <p class="nota">Inicio y final son el promedio de las primeras y las últimas mediciones del período. Grasa y masa magra por bioimpedancia: cambian con la hidratación.</p></div>`;
 }
 
 function infHabitos(p){
-  const co = p.corazon && p.corazon.fc_reposo, s = p.sueno, a = p.actividad;
-  if(!co && !s && !a) return "";
+  const co = p.corazon && p.corazon.fc_reposo, s = p.sueno, a = p.actividad, o = p.oxigeno;
+  if(!co && !s && !a && !o) return "";
   return `<div class="tarjeta"><h2>Corazón, sueño y actividad</h2>
     ${co ? filaInf("FC de reposo", nEs(co.media,0) + " lpm", `rango ${co.min}–${co.max}${co.primera_mitad != null ? ` · primera mitad ${nEs(co.primera_mitad,0)}, segunda ${nEs(co.segunda_mitad,0)}` : ""}`, `${co.n} días`) : ""}
+    ${o ? filaInf("Oxígeno en sangre (SpO2)", nEs(o.media,0) + " %", `rango ${nEs(o.min,0)}–${nEs(o.max,0)} % · bajo 90 %: ${o.bajo_90}`, `${o.n} mediciones`) : ""}
     ${s ? filaInf("Sueño por noche", s.media, [s.semana && `lunes a viernes ${s.semana.media}`, s.finde && `fin de semana ${s.finde.media}`].filter(Boolean).join(" · "), `${s.noches} noches`) : ""}
     ${s ? filaInf("Noches bajo 6 h", nEs(s.bajo_6h.pct,0) + " %", `bajo 5 h: ${nEs(s.bajo_5h.pct,0)} % · 7 h o más: ${nEs(s.sobre_7h.pct,0)} %`, "") : ""}
     ${s && s.profundo && s.rem ? filaInf("Profundo y REM", `${s.profundo.media} · ${s.rem.media}`, "", "") : ""}
@@ -1984,7 +1988,7 @@ function vistaMedico(){
     ${infMedicacion(I, p)}
     ${infPresion(p)}
     ${infGlucosa(p)}
-    ${infCuerpo(p)}
+    ${infCuerpo(p, I)}
     ${infHabitos(p)}
     ${infAlimentacion(p)}
     ${(p.eventos || []).length ? `<div class="tarjeta"><h2>Cambios en el período</h2>${p.eventos.map(e => filaInf(fDiaAno(e.fecha), escaparHtml(e.texto), "", "")).join("")}</div>` : ""}
@@ -2619,7 +2623,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.17.2</div>
+    <div class="version">v21.17.3</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
