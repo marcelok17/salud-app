@@ -162,6 +162,19 @@
   .inf-mirada .v small{font-family:var(--sans);font-size:11.5px;color:var(--tinta2);margin-left:3px}
   .inf-mirada .l{font-size:12px;color:var(--tinta2);margin-top:3px;line-height:1.3}
   .inf-mirada .d{font-size:11.5px;margin-top:3px;line-height:1.3;color:var(--tinta2)}
+  .inf-clave h2{margin-bottom:4px}
+  .inf-clave .it{display:grid;grid-template-columns:4px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--linea2)}
+  .inf-clave .it:last-child{border-bottom:none;padding-bottom:2px}
+  .inf-clave .it>i{border-radius:2px;background:var(--c-metabolismo)}
+  .inf-clave .et{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#3E8A4F}
+  .inf-clave .ti{font-family:var(--serif);font-size:16.5px;line-height:1.25;margin-top:3px}
+  .inf-clave .de{font-size:13px;line-height:1.5;color:#3E4A43;margin-top:5px}
+  .inf-clave .it.revisar>i{background:#D69631} .inf-clave .it.revisar .et{color:#9A6410}
+  .inf-clave .it.decidir,.inf-clave .it.alerta{background:#FBEDE6;border-radius:14px;padding:13px 14px 13px 12px;border-bottom:none;margin:8px 0}
+  .inf-clave .it.decidir>i,.inf-clave .it.alerta>i{background:#B4532F}
+  .inf-clave .it.decidir .et,.inf-clave .it.alerta .et{color:#B4532F}
+  .inf-clave .it.decidir .ti,.inf-clave .it.alerta .ti{font-size:19px}
+  .inf-clave .it.decidir .de,.inf-clave .it.alerta .de{color:var(--tinta)}
   .inf-lista{list-style:none;font-size:14px;line-height:1.5}
   .inf-lista li{display:grid;grid-template-columns:10px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--linea2)}
   .inf-lista li:last-child{border-bottom:none}
@@ -198,6 +211,8 @@
     .inf-lista{font-size:12.5px} .inf-lista li{padding:5px 0}
     .inf-fila{padding:5px 0;font-size:12.5px} .inf-fila .v b{font-size:13px}
     h2{font-size:16px;margin-bottom:6px}
+    .inf-clave .it{padding:7px 0} .inf-clave .it.decidir,.inf-clave .it.alerta{padding:9px 12px;margin:5px 0}
+    .inf-clave .ti{font-size:14.5px} .inf-clave .it.decidir .ti,.inf-clave .it.alerta .ti{font-size:16px} .inf-clave .de{font-size:12px}
   }
 
   /* ---- Navegación inferior ---- */
@@ -1618,7 +1633,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.17.0</div>`;
+    <div class="version">v21.17.1</div>`;
 }
 
 function vistaArbol(){
@@ -1767,13 +1782,24 @@ const GRADOS_PA = [["baja","Baja (&lt;90/60)","#6F8FB0"],["optima","Óptima (&lt
 const RANGOS_GLU = [["muy_alto","Muy alto (&gt;250)","#D58A2E"],["alto","Alto (181–250)","#E7C36A"],["en_rango","En rango (70–180)","#5FA27C"],
   ["bajo","Bajo (54–69)","#E08E5A"],["muy_bajo","Muy bajo (&lt;54)","#8E2B2B"]];
 
+/* Lo verdaderamente importante para el médico, arriba de todo (12-11-2026): primero lo que espera
+   su decisión y lo fuera de rango (destacado), después lo que conviene revisar y al final el estado
+   de lo que él controla. Lo decide informe_medico.clave() con reglas fijas; aquí solo se pinta. */
+function infClave(p){
+  const c = p.clave || [];
+  if(!c.length) return "";
+  return `<div class="tarjeta inf-clave"><h2>Lo más importante</h2>
+    ${c.map(x => `<div class="it ${x.tono}"><i></i><div><div class="et">${escaparHtml(x.etiqueta)}</div>
+      <div class="ti">${escaparHtml(x.titulo)}</div><div class="de">${escaparHtml(x.detalle)}</div></div></div>`).join("")}</div>`;
+}
+
 function infMirada(p){
   const c = (v, u, l, d) => `<div class="c"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div>${d?`<div class="d">${d}</div>`:""}</div>`;
   const an = p.anterior || {}, g = p.glucosa && !p.glucosa.insuficiente ? p.glucosa : null, out = [];
   if(p.presion) out.push(c(pa(p.presion.sis, p.presion.dia), "mmHg", `Presión en casa · ${p.presion.n} tomas`, an.presion ? `antes ${pa(an.presion.sis, an.presion.dia)}` : ""));
   if(g){
     out.push(c(nEs(g.media,0), "mg/dl", `Glucosa media · ${g.dias_con_sensor} días de sensor`, `GMI ${nEs(g.gmi_pct)} %${g.suficiente_para_gmi?"":" (referencial)"}`));
-    out.push(c(nEs(g.rangos.en_rango.pct), "%", "Tiempo entre 70 y 180", `bajo 70: ${nEs(g.rangos.bajo.pct + g.rangos.muy_bajo.pct)} % · sobre 180: ${nEs(g.rangos.alto.pct + g.rangos.muy_alto.pct)} %`));
+    out.push(c(nEs(g.rangos.en_rango.pct), "%", "Tiempo entre 70 y 180", `bajo 70: ${nEs(100 * (g.rangos.bajo.n + g.rangos.muy_bajo.n) / g.n)} % · sobre 180: ${nEs(100 * (g.rangos.alto.n + g.rangos.muy_alto.n) / g.n)} %`));
   }
   if(p.peso) out.push(c(nEs(p.peso.fin), "kg", `Peso · IMC ${nEs(p.peso.imc)}`, p.peso.cambio != null ? `${sEs(p.peso.cambio)} kg en el período` : ""));
   if(p.corazon) out.push(c(nEs(p.corazon.fc_reposo.media,0), "lpm", `FC de reposo · ${p.corazon.fc_reposo.n} días`, an.fc_reposo ? `antes ${nEs(an.fc_reposo.media,0)}` : ""));
@@ -1890,8 +1916,10 @@ function infAlimentacion(p){
 
 function textoInforme(I, p){
   const lineas = [`Informe de salud · ${I.paciente.nombre || ""}${I.paciente.edad ? ", " + I.paciente.edad + " años" : ""}`,
-    `${fDiaAno(p.desde)} a ${fDiaAno(p.hasta)} (${p.dias} días)`, "",
-    ...p.hallazgos.map(h => "• " + h.texto)];
+    `${fDiaAno(p.desde)} a ${fDiaAno(p.hasta)} (${p.dias} días)`];
+  if((p.clave || []).length) lineas.push("", "LO MÁS IMPORTANTE", ...p.clave.map((c, i) => `${i + 1}. ${c.etiqueta.toUpperCase()}: ${c.titulo}. ${c.detalle}`));
+  const otros = p.hallazgos.filter(h => !(p.clave && h.en_clave));
+  if(otros.length) lineas.push("", p.clave ? "Además:" : "", ...otros.map(h => "• " + h.texto));
   const meds = (I.medicacion.activos || []).map(m => m.nombre);
   if(meds.length) lineas.push("", "Medicación activa: " + meds.join("; ") + ".");
   if((I.por_confirmar || []).length) lineas.push("", "Por confirmar:", ...I.por_confirmar.map(t => "• " + t));
@@ -1923,6 +1951,7 @@ function vistaMedico(){
   const pac = I.paciente || {}, li = (t, cls="") => `<li class="${cls}"><i></i><span>${escaparHtml(t)}</span></li>`;
   const pendientes = (I.por_confirmar || []).concat(I.preguntas || []);
   const ex = I.examenes || [];
+  const otros = (p.hallazgos || []).filter(h => !(p.clave && h.en_clave));   // lo que ya va en "Lo más importante" no se repite
   return `<div class="inf">
     <div class="inf-titulo">Informe de salud</div>
     <div class="tarjeta inf-cab">
@@ -1936,10 +1965,11 @@ function vistaMedico(){
         <button class="boton suave" onclick="compartirInforme()">Compartir resumen</button></div>
       <div class="pendientes no-imprimir" id="inf-aviso"></div>
     </div>
+    ${infClave(p)}
     ${infMirada(p)}
-    <div class="tarjeta"><h2>Para conversar en la consulta</h2>
-      <ul class="inf-lista">${(p.hallazgos || []).map(h => li(h.texto, h.nivel)).join("")}</ul>
-      <div class="inf-leyenda" style="margin-top:8px"><span><i style="background:#C9653F;border-radius:50%"></i>Para revisar</span><span><i style="background:var(--tinta2);opacity:.45;border-radius:50%"></i>Contexto</span><span><i style="background:var(--c-metabolismo);border-radius:50%"></i>En rango</span></div></div>
+    ${otros.length ? `<div class="tarjeta"><h2>${p.clave ? "Además, en el período" : "Para conversar en la consulta"}</h2>
+      <ul class="inf-lista">${otros.map(h => li(h.texto, h.nivel)).join("")}</ul>
+      <div class="inf-leyenda" style="margin-top:8px"><span><i style="background:#C9653F;border-radius:50%"></i>Para revisar</span><span><i style="background:var(--tinta2);opacity:.45;border-radius:50%"></i>Contexto</span><span><i style="background:var(--c-metabolismo);border-radius:50%"></i>En rango</span></div></div>` : ""}
     ${pendientes.length ? `<div class="tarjeta"><h2>Por confirmar con el médico</h2><ul class="inf-lista">${pendientes.map(t => li(t)).join("")}</ul></div>` : ""}
     ${infMedicacion(I, p)}
     ${infPresion(p)}
@@ -2579,7 +2609,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.17.0</div>
+    <div class="version">v21.17.1</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
