@@ -146,6 +146,59 @@
   .semana .l{font-size:11.5px;color:var(--tinta2);margin-top:2px;line-height:1.3}
   .semana .d{font-size:11.5px;margin-top:3px;line-height:1.3}
   .semana .d.real{color:var(--acento)} .semana .d.ruido{color:var(--tinta2)} .semana .d.mal{color:var(--c-corazon)}
+  /* ---- Informe para tu médico (12-11-2026): filas tipo informe clínico, se imprime o guarda como PDF ---- */
+  .inf-titulo{display:none}
+  .inf-cab .quien{font-family:var(--serif);font-size:22px;line-height:1.15}
+  .inf-cab .datos{font-size:13px;color:var(--tinta2);margin-top:4px;line-height:1.45}
+  .inf-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--panel2);border-radius:999px;padding:4px;margin-top:12px}
+  .inf-seg button{border:none;background:transparent;border-radius:999px;padding:8px 4px;font-size:13.5px;color:var(--tinta2);cursor:pointer}
+  .inf-seg button.activa{background:#fff;color:var(--tinta);font-weight:500;box-shadow:0 1px 3px rgba(31,42,36,.12)}
+  .inf-acciones{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .inf-acciones .boton.suave{background:var(--acento-suave);color:var(--acento)}
+  .inf-mirada{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  @media (min-width:700px){.inf-mirada{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .inf-mirada .c{background:var(--panel2);border-radius:14px;padding:10px 12px;min-width:0}
+  .inf-mirada .v{font-family:var(--serif);font-size:22px;line-height:1.15}
+  .inf-mirada .v small{font-family:var(--sans);font-size:11.5px;color:var(--tinta2);margin-left:3px}
+  .inf-mirada .l{font-size:12px;color:var(--tinta2);margin-top:3px;line-height:1.3}
+  .inf-mirada .d{font-size:11.5px;margin-top:3px;line-height:1.3;color:var(--tinta2)}
+  .inf-lista{list-style:none;font-size:14px;line-height:1.5}
+  .inf-lista li{display:grid;grid-template-columns:10px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--linea2)}
+  .inf-lista li:last-child{border-bottom:none}
+  .inf-lista li i{width:9px;height:9px;border-radius:50%;margin-top:6px;background:var(--tinta2);opacity:.45}
+  .inf-lista li.atencion i{background:#C9653F;opacity:1}
+  .inf-lista li.bien i{background:var(--c-metabolismo);opacity:1}
+  .inf-fila{display:grid;grid-template-columns:38% minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--linea2);font-size:13.5px}
+  .inf-fila:last-of-type{border-bottom:none}
+  .inf-fila .k{color:var(--tinta);line-height:1.35}
+  .inf-fila .v b{font-weight:600;font-size:14.5px}
+  .inf-fila .v small{display:block;font-size:11.5px;color:var(--tinta2);line-height:1.35;margin-top:1px}
+  .inf-fila .n{font-size:11.5px;color:var(--tinta2);text-align:right;white-space:nowrap;max-width:9.5em;overflow:hidden;text-overflow:ellipsis}
+  .inf-sub{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta2);margin:14px 0 2px}
+  .inf-barra{display:flex;height:16px;border-radius:8px;overflow:hidden;margin:12px 0 8px;background:var(--linea2)}
+  .inf-barra i{display:block;height:100%}
+  .inf-leyenda{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:var(--tinta2);line-height:1.4}
+  .inf-leyenda span{display:inline-flex;align-items:center;gap:5px}
+  .inf-leyenda span i{width:9px;height:9px;border-radius:2px;flex:none}
+  .inf-graf{width:100%;height:auto;display:block;margin:12px 0 4px}
+  .inf-graf text{font-family:var(--sans);font-size:9px;fill:#6F7A73}
+  .inf-pie{font-size:11.5px;color:var(--tinta2);line-height:1.5}
+  .inf-pie li{margin:0 0 6px 16px}
+  @media print{
+    @page{margin:12mm}
+    html,body{background:#fff !important}
+    body{max-width:none;padding:0}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .nav,.cabecera-detalle,.no-imprimir,.detalle-cuerpo>*:not(.inf){display:none !important}
+    .detalle-cuerpo{padding:0}
+    .inf-titulo{display:block;font-family:var(--serif);font-size:22px;margin-bottom:8px}
+    .tarjeta{box-shadow:none;border:1px solid #DDD8CE;border-radius:10px;padding:12px 14px;margin-bottom:8px;break-inside:avoid}
+    .inf-mirada{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .inf-graf{max-width:520px}
+    .inf-lista{font-size:12.5px} .inf-lista li{padding:5px 0}
+    .inf-fila{padding:5px 0;font-size:12.5px} .inf-fila .v b{font-size:13px}
+    h2{font-size:16px;margin-bottom:6px}
+  }
 
   /* ---- Navegación inferior ---- */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;max-width:980px;margin:0 auto;background:#fff;
@@ -1547,12 +1600,15 @@ function vistaMedicacion(){
       ${pausados?`<ul class="objetivos" style="margin-top:6px">${pausados}</ul>
       <p class="nota">Lo pausado no cuenta como pendiente del día.</p>`:""}</div>
     <div class="tarjeta"><h2>Suplementos</h2>${checklist(e.suplementos||[], "sup")}</div>
+    <a class="tarjeta aviso-medico" href="#medico" style="display:flex">${ico("estetoscopio")}<span>Informe para tu médico</span>
+      <span style="margin-left:auto;color:var(--tinta2)">${ico("derecha",'style="width:16px;height:16px"')}</span></a>
     <div class="pendientes" id="reg-aviso"></div>`;
 }
 
 function vistaMas(){
   const fila = (ruta, icono, color, txt) => `<a href="#${ruta}"><span style="color:${color}">${ico(icono)}</span>${txt}<span class="mas">${ico("derecha",'style="width:16px;height:16px"')}</span></a>`;
   return `<div class="tarjeta lista-mas">
+      ${fila("medico","estetoscopio","var(--c-corazon)","Informe para tu médico")}
       ${fila("glucosa","gota","var(--c-metabolismo)","Glucosa (sensor)")}
       ${fila("presion","corazon","var(--c-corazon)","Presión arterial")}
       ${fila("peso","balanza","var(--c-composicion)","Peso y composición")}
@@ -1562,7 +1618,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.16.0</div>`;
+    <div class="version">v21.17.0</div>`;
 }
 
 function vistaArbol(){
@@ -1606,6 +1662,300 @@ function vistaPresion(){
   return `${tarjetaCardio(c)}
     ${serie.length?`<div class="tarjeta"><h2>Últimas tomas</h2>${serie.slice().reverse().map(t =>
       `<div class="barra"><div class="fila"><span>${t.fecha.slice(8)}/${t.fecha.slice(5,7)}</span><b>${t.sistolica}/${t.diastolica||"—"}</b></div></div>`).join("")}</div>`:""}`;
+}
+
+/* ---------- Informe para tu médico (12-11-2026) ----------
+   Lo arma informe_medico.py en cada corrida (sin IA) y queda en dashboard/informe_medico.json:
+   aquí solo se pinta. Se pide recién al abrir esta pantalla, para no cargar Inicio.
+   Pensado para mostrarlo en la consulta o imprimirlo: cada número va con su n. */
+let INFORME = null, INFORME_ERROR = null, INFORME_PIDIENDO = false, PERIODO_INF = "90";
+
+async function cargarInforme(){
+  if(INFORME_PIDIENDO) return;
+  INFORME_PIDIENDO = true;
+  try{
+    INFORME = await ghJson("dashboard/informe_medico.json");
+    INFORME_ERROR = INFORME ? null : "falta";
+  }catch(e){ INFORME_ERROR = esFalloDeRed(e) ? "red" : (e.message || "error"); }
+  INFORME_PIDIENDO = false;
+  if(rutaActual() === "medico") pintar();
+}
+function reintentarInforme(){ INFORME = null; INFORME_ERROR = null; pintar(); }
+function elegirPeriodoInf(k){ PERIODO_INF = k; pintar(); }
+
+function nEs(v, dec=1){   // número como se escribe en Chile: 4.497 · 97,6
+  if(v == null || isNaN(v)) return "—";
+  let [a, b] = Math.abs(+v).toFixed(dec).split(".");
+  if(b) b = b.replace(/0+$/, "");
+  a = a.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return (+v < 0 && (+a.replace(/\./g,"") || b) ? "−" : "") + a + (b ? "," + b : "");
+}
+const sEs = (v, dec=1) => (v > 0 ? "+" : "") + nEs(v, dec);
+const fDia = iso => iso ? `${+iso.slice(8,10)} ${MESES_L[iso.slice(5,7)]}` : "—";
+const fDiaAno = iso => iso ? `${fDia(iso)} ${iso.slice(0,4)}` : "—";
+const pa = (s, d) => `${nEs(s,0)}/${nEs(d,0)}`;
+const filaInf = (k, v, sub, n) => `<div class="inf-fila"><div class="k">${k}</div><div class="v"><b>${v}</b>${sub?`<small>${sub}</small>`:""}</div><div class="n">${n||""}</div></div>`;
+const veredicto = x => x.cambio == null ? "" : `${sEs(x.cambio)} · ${x.real ? "cambio real" : "dentro de lo que oscila la medición"}`;
+
+function barraInf(partes){   // [[nombre, pct, color, n]]
+  const con = partes.filter(p => p[1] > 0);
+  return `<div class="inf-barra">${con.map(p => `<i style="width:${Math.max(p[1], 1.2)}%;background:${p[2]}"></i>`).join("")}</div>
+    <div class="inf-leyenda">${partes.map(p => `<span><i style="background:${p[2]}"></i>${p[0]}: <b style="color:var(--tinta);font-weight:500">${nEs(p[1])} %</b></span>`).join("")}</div>`;
+}
+
+/* Marco común de los gráficos: eje Y con rejilla y fechas (o horas) abajo. */
+function marcoGraf(W, H, y0, y1, pasos, etiquetasX, cuerpo, refs=[]){
+  const L = 26, R = 6, T = 8, B = 18, y = v => T + (H - T - B) * (1 - (v - y0) / (y1 - y0));
+  let rejilla = "";
+  for(let v = y0; v <= y1 + 1e-9; v += pasos)
+    rejilla += `<line x1="${L}" x2="${W-R}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="#ECE8E0" stroke-width="1"/>
+      <text x="${L-4}" y="${(y(v)+3).toFixed(1)}" text-anchor="end">${nEs(v, pasos < 1 ? 1 : 0)}</text>`;
+  const lineas = refs.filter(r => r[0] >= y0 && r[0] <= y1).map(r =>
+    `<line x1="${L}" x2="${W-R}" y1="${y(r[0]).toFixed(1)}" y2="${y(r[0]).toFixed(1)}" stroke="${r[1]}" stroke-width="1" stroke-dasharray="4 3"/>
+     <text x="${W-R}" y="${(y(r[0])-3).toFixed(1)}" text-anchor="end" style="fill:${r[1]}">${r[2]}</text>`).join("");
+  const xs = etiquetasX.map(([fr, t], i) => `<text x="${(L + (W-L-R)*fr).toFixed(1)}" y="${H-5}" text-anchor="${i===0?"start":i===etiquetasX.length-1?"end":"middle"}">${t}</text>`).join("");
+  return `<svg class="inf-graf" viewBox="0 0 ${W} ${H}" role="img">${rejilla}${lineas}${cuerpo({L, R, T, B, y, x: fr => L + (W-L-R)*fr})}${xs}</svg>`;
+}
+function ejeFechas(desde, hasta){
+  const a = new Date(desde + "T12:00"), b = new Date(hasta + "T12:00"), dias = Math.max(1, Math.round((b - a) / 864e5));
+  const medio = new Date(a.getTime() + (b - a) / 2);
+  return {fr: iso => (new Date(iso + "T12:00") - a) / 864e5 / dias,
+          etiquetas: [[0, fDia(desde)], [0.5, fDia(fechaLocal(medio))], [1, fDia(hasta)]]};
+}
+
+function grafPresion(serie, desde, hasta){
+  if(!serie || serie.length < 2) return "";
+  const eje = ejeFechas(desde, hasta);
+  const y0 = Math.min(60, Math.floor(Math.min(...serie.map(t => t.dia || t.sis)) / 10) * 10);
+  const y1 = Math.max(140, Math.ceil(Math.max(...serie.map(t => t.sis)) / 10) * 10);
+  return marcoGraf(340, 160, y0, y1, 20, eje.etiquetas, g => serie.map(t => {
+    const X = g.x(eje.fr(t.fecha)).toFixed(1);
+    return `<line x1="${X}" x2="${X}" y1="${g.y(t.sis).toFixed(1)}" y2="${g.y(t.dia||t.sis).toFixed(1)}" stroke="#D4574A" stroke-width="1.6" opacity=".35"/>
+      <circle cx="${X}" cy="${g.y(t.sis).toFixed(1)}" r="2.3" fill="#D4574A"/>${t.dia?`<circle cx="${X}" cy="${g.y(t.dia).toFixed(1)}" r="2.3" fill="#2F6A96"/>`:""}`;
+  }).join(""), [[135, "#B4532F", "135"], [85, "#B4532F", "85"]]);
+}
+
+function grafAGP(perfil){
+  if(!perfil || perfil.length < 12) return "";
+  const pts = perfil.concat([{...perfil[0], h: 24}]).filter((p, i, a) => i === 0 || p.h > a[i-1].h);
+  const y0 = Math.min(50, Math.floor(Math.min(...pts.map(p => p.p5)) / 10) * 10);
+  const y1 = Math.max(190, Math.ceil(Math.max(...pts.map(p => p.p95)) / 10) * 10 + 10);
+  return marcoGraf(340, 180, y0, y1, 20, [[0,"00 h"],[0.25,"06"],[0.5,"12"],[0.75,"18"],[1,"24 h"]], g => {
+    const P = (p, k) => `${g.x(p.h/24).toFixed(1)},${g.y(p[k]).toFixed(1)}`;
+    const banda = (a, b) => pts.map(p => P(p, a)).join(" ") + " " + pts.slice().reverse().map(p => P(p, b)).join(" ");
+    return `<rect x="${g.L}" width="${340-g.L-g.R}" y="${g.y(180).toFixed(1)}" height="${(g.y(70)-g.y(180)).toFixed(1)}" fill="#5FA27C" opacity=".07"/>
+      <polygon points="${banda("p95","p5")}" fill="#2F6A96" opacity=".14"/>
+      <polygon points="${banda("p75","p25")}" fill="#2F6A96" opacity=".28"/>
+      <polyline points="${pts.map(p => P(p,"p50")).join(" ")}" fill="none" stroke="#1F4E72" stroke-width="1.8" stroke-linejoin="round"/>`;
+  }, [[180, "#3E8A4F", "180"], [70, "#3E8A4F", "70"]]);
+}
+
+function grafPeso(serie, desde, hasta){
+  if(!serie || serie.length < 3) return "";
+  const eje = ejeFechas(desde, hasta), ks = serie.map(p => p.kg);
+  const y0 = Math.floor(Math.min(...ks) - 0.5), y1 = Math.ceil(Math.max(...ks) + 0.5), paso = (y1 - y0) > 6 ? 2 : 1;
+  return marcoGraf(340, 150, y0, y1, paso, eje.etiquetas, g => {
+    const pts = serie.map(p => [g.x(eje.fr(p.fecha)), g.y(p.kg)]);
+    return `<polyline points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="#C9653F" stroke-width="1.4" stroke-linejoin="round" opacity=".55"/>
+      ${pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2" fill="#C9653F"/>`).join("")}`;
+  });
+}
+
+const GRADOS_PA = [["baja","Baja (&lt;90/60)","#6F8FB0"],["optima","Óptima (&lt;120/80)","#5FA27C"],["normal","Normal (120–129/80–84)","#A8CDB3"],
+  ["normal_alta","Normal-alta (130–139/85–89)","#E0B04A"],["grado_1","Grado 1 (140–159/90–99)","#E08E5A"],
+  ["grado_2","Grado 2 (160–179/100–109)","#D4574A"],["grado_3","Grado 3 (≥180/110)","#8E2B2B"]];
+const RANGOS_GLU = [["muy_alto","Muy alto (&gt;250)","#D58A2E"],["alto","Alto (181–250)","#E7C36A"],["en_rango","En rango (70–180)","#5FA27C"],
+  ["bajo","Bajo (54–69)","#E08E5A"],["muy_bajo","Muy bajo (&lt;54)","#8E2B2B"]];
+
+function infMirada(p){
+  const c = (v, u, l, d) => `<div class="c"><div class="v">${v}<small>${u}</small></div><div class="l">${l}</div>${d?`<div class="d">${d}</div>`:""}</div>`;
+  const an = p.anterior || {}, g = p.glucosa && !p.glucosa.insuficiente ? p.glucosa : null, out = [];
+  if(p.presion) out.push(c(pa(p.presion.sis, p.presion.dia), "mmHg", `Presión en casa · ${p.presion.n} tomas`, an.presion ? `antes ${pa(an.presion.sis, an.presion.dia)}` : ""));
+  if(g){
+    out.push(c(nEs(g.media,0), "mg/dl", `Glucosa media · ${g.dias_con_sensor} días de sensor`, `GMI ${nEs(g.gmi_pct)} %${g.suficiente_para_gmi?"":" (referencial)"}`));
+    out.push(c(nEs(g.rangos.en_rango.pct), "%", "Tiempo entre 70 y 180", `bajo 70: ${nEs(g.rangos.bajo.pct + g.rangos.muy_bajo.pct)} % · sobre 180: ${nEs(g.rangos.alto.pct + g.rangos.muy_alto.pct)} %`));
+  }
+  if(p.peso) out.push(c(nEs(p.peso.fin), "kg", `Peso · IMC ${nEs(p.peso.imc)}`, p.peso.cambio != null ? `${sEs(p.peso.cambio)} kg en el período` : ""));
+  if(p.corazon) out.push(c(nEs(p.corazon.fc_reposo.media,0), "lpm", `FC de reposo · ${p.corazon.fc_reposo.n} días`, an.fc_reposo ? `antes ${nEs(an.fc_reposo.media,0)}` : ""));
+  if(p.sueno) out.push(c(p.sueno.media.replace(" min",""), "", `Sueño · ${p.sueno.noches} noches`, `${nEs(p.sueno.bajo_6h.pct,0)} % bajo 6 h`));
+  if(p.actividad && p.actividad.pasos) out.push(c(nEs(p.actividad.pasos.media,0), "pasos", `Al día · ${p.actividad.pasos.n} días`, an.pasos ? `antes ${nEs(an.pasos.media,0)}` : ""));
+  const al = p.alimentacion && p.alimentacion.medias;
+  if(al) out.push(c(nEs(al.sodio_mg,0), "mg", `Sodio al día · ${p.alimentacion.dias_completos} días`, `potasio ${nEs(al.potasio_mg,0)} mg`));
+  return out.length ? `<div class="tarjeta"><h2>En una mirada</h2><div class="inf-mirada">${out.join("")}</div></div>` : "";
+}
+
+function infMedicacion(I, p){
+  const m = I.medicacion || {}, adh = {};
+  (p.adherencia || []).forEach(a => adh[a.nombre] = a);
+  const fila = x => {
+    const a = adh[x.nombre], activo = x.estado === "activo";
+    const estado = activo ? `Activo${x.momento ? " · " + x.momento : ""}` : `${x.estado[0].toUpperCase() + x.estado.slice(1)}${x.desde ? " desde " + fDiaAno(x.desde) : ""}`;
+    const anot = !a ? "" : activo ? `anotado ${a.dias_anotados} de ${a.dias_con_registro} días` : (a.ultima ? `última toma anotada ${fDia(a.ultima)}` : "sin tomas anotadas");
+    const nota = activo && x.nota && !/figuraba/i.test(x.nota) ? escaparHtml(x.nota.replace(/\.$/, "")) : "";
+    return filaInf(escaparHtml(x.nombre[0].toUpperCase() + x.nombre.slice(1)), estado, [nota, anot].filter(Boolean).join(" · "), "");
+  };
+  const filas = (m.activos || []).concat(m.no_activos || []).map(fila).join("");
+  if(!filas && !(m.suplementos || []).length) return "";
+  return `<div class="tarjeta"><h2>Medicación</h2>${filas}
+    ${(m.suplementos||[]).length ? `<div class="inf-sub">Suplementos</div><p class="nota" style="margin-top:4px">${m.suplementos.map(escaparHtml).join(" · ")}</p>` : ""}
+    <p class="nota">"Anotado" cuenta los días en que la toma se marcó en la app, sobre los días con algún registro. Un día sin marcar no significa que no se tomó.</p></div>`;
+}
+
+function infPresion(p){
+  const x = p.presion;
+  if(!x) return `<div class="tarjeta"><h2>Presión arterial</h2><p class="t-sub">Sin tomas en este período.</p></div>`;
+  const an = (p.anterior || {}).presion;
+  return `<div class="tarjeta"><h2>Presión arterial en casa</h2>
+    ${filaInf("Promedio", pa(x.sis, x.dia) + " mmHg", x.de_sis != null ? `desviación estándar ±${nEs(x.de_sis)} / ±${nEs(x.de_dia)}` : "", `${x.n} tomas · ${x.dias_con_toma} días`)}
+    ${an ? filaInf("Período anterior", pa(an.sis, an.dia) + " mmHg", `${fDia(p.anterior.desde)} a ${fDia(p.anterior.hasta)}`, `${an.n} tomas`) : ""}
+    ${filaInf("Tomas en 135/85 o más", `${x.sobre_135_85.n} (${nEs(x.sobre_135_85.pct,0)} %)`, "umbral para presión medida en casa", "")}
+    ${filaInf("Más alta y más baja", `${pa(x.maxima.sis, x.maxima.dia)} · ${pa(x.minima.sis, x.minima.dia)}`, `${fDia(x.maxima.fecha)} · ${fDia(x.minima.fecha)}`, "")}
+    ${x.manana ? filaInf("Mañana (antes de las 12)", pa(x.manana.sis, x.manana.dia), "", `${x.manana.n} tomas`) : ""}
+    ${x.tarde ? filaInf("Tarde y noche (desde las 18)", pa(x.tarde.sis, x.tarde.dia), "", `${x.tarde.n} tomas`) : ""}
+    ${x.pulso ? filaInf("Pulso durante la toma", nEs(x.pulso.media,0) + " lpm", `rango ${nEs(x.pulso.min,0)}–${nEs(x.pulso.max,0)}`, "") : ""}
+    <div class="inf-sub">Tomas por categoría</div>
+    ${barraInf(GRADOS_PA.filter(g => x.grados[g[0]].n > 0 || ["optima","normal","normal_alta","grado_1"].includes(g[0])).map(g => [g[1], x.grados[g[0]].pct, g[2]]))}
+    ${grafPresion(x.serie, p.desde, p.hasta)}
+    <div class="inf-leyenda"><span><i style="background:#D4574A;border-radius:50%"></i>Sistólica</span><span><i style="background:#2F6A96;border-radius:50%"></i>Diastólica</span><span>Promedio de cada día</span></div>
+    ${x.por_mes.length > 1 ? `<div class="inf-sub">Por mes</div>${x.por_mes.map(m => filaInf(MESES_L[m.mes.slice(5,7)] + " " + m.mes.slice(0,4), pa(m.sis, m.dia), "", `${m.n} tomas`)).join("")}` : ""}
+  </div>`;
+}
+
+function infGlucosa(p){
+  const g = p.glucosa;
+  if(!g) return `<div class="tarjeta"><h2>Glucosa (sensor continuo)</h2><p class="t-sub">Sin lecturas del sensor en este período.</p></div>`;
+  if(g.insuficiente) return `<div class="tarjeta"><h2>Glucosa (sensor continuo)</h2><p class="t-sub">Solo ${g.n} lecturas confiables en este período: no alcanza para resumir.</p></div>`;
+  const eb = g.episodios_bajos, ea = g.episodios_altos, an = (p.anterior || {}).glucosa;
+  return `<div class="tarjeta"><h2>Glucosa (sensor continuo)</h2>
+    ${filaInf("Glucosa media", nEs(g.media,0) + " mg/dl", `desviación estándar ${nEs(g.de)} · mínima ${g.min}, máxima ${g.max}`, `${nEs(g.n,0)} lecturas`)}
+    ${filaInf("GMI", nEs(g.gmi_pct) + " %", g.suficiente_para_gmi ? "estimación de la HbA1c desde el sensor" : "referencial: menos de 14 días o señal bajo 70 %", "")}
+    ${filaInf("Variabilidad (CV)", nEs(g.cv_pct) + " %", "referencia del consenso: hasta 36 %", "")}
+    ${filaInf("Uso del sensor", `${g.dias_con_sensor} de ${p.dias} días`, `${fDia(g.desde)} a ${fDia(g.hasta)} · señal ${g.senal_pct ?? "—"} % de esos días`, "")}
+    ${an ? filaInf("Período anterior", nEs(an.media,0) + " mg/dl", `${nEs(an.en_rango_pct)} % entre 70 y 180`, `${an.dias} días`) : ""}
+    <div class="inf-sub">Tiempo en cada rango (mg/dl)</div>
+    ${barraInf(RANGOS_GLU.map(r => [r[1], g.rangos[r[0]].pct, r[2]]))}
+    ${filaInf("Entre 70 y 140", nEs(g.en_70_140.pct) + " %", "rango estrecho", "")}
+    ${g.ayunas ? filaInf("Ayunas", nEs(g.ayunas.media,0) + " mg/dl", `rango ${nEs(g.ayunas.min,0)}–${nEs(g.ayunas.max,0)} · ${g.ayunas.ventana.replace("-","–")} h, antes de comer`, `${g.ayunas.n} mañanas`) : ""}
+    ${filaInf("Bajas de 15 min o más (&lt;70)", String(eb.n), eb.n ? `${eb.de_madrugada} de madrugada · mínima ${eb.minimo} mg/dl` : "", "")}
+    ${filaInf("Altas de 15 min o más (&gt;180)", String(ea.n), ea.n ? `máxima ${ea.maximo} mg/dl` : "", "")}
+    <div class="inf-sub">Perfil de un día (todas las lecturas por hora)</div>
+    ${grafAGP(g.perfil)}
+    <div class="inf-leyenda"><span><i style="background:#1F4E72"></i>Mediana</span><span><i style="background:#2F6A96;opacity:.45"></i>50 % central</span><span><i style="background:#2F6A96;opacity:.2"></i>90 % de las lecturas</span></div>
+    <p class="nota">Solo lecturas confiables del sensor${g.n_excluidas ? `; ${nEs(g.n_excluidas,0)} excluidas (primeras horas de cada sensor y bajas nocturnas con patrón de compresión)` : ""}.</p></div>`;
+}
+
+function infCuerpo(p){
+  const x = p.peso, c = p.composicion || {};
+  if(!x && !c.grasa_pct) return "";
+  const comp = (k, nombre, u) => c[k] ? filaInf(nombre, nEs(c[k].fin) + " " + u, `inicio ${nEs(c[k].inicio)} · ${veredicto(c[k])}`, `${c[k].n} mediciones`) : "";
+  return `<div class="tarjeta"><h2>Peso y composición</h2>
+    ${x ? grafPeso(x.serie, p.desde, p.hasta) : ""}
+    ${x ? filaInf("Peso", nEs(x.fin) + " kg", `inicio ${nEs(x.inicio)} · ${veredicto(x)}`, `${x.n} pesajes`) : ""}
+    ${x && x.pendiente_kg_semana != null ? filaInf("Tendencia", sEs(x.pendiente_kg_semana, 2) + " kg por semana", `rango ${nEs(x.min)}–${nEs(x.max)} kg`, "") : ""}
+    ${x && x.imc ? filaInf("IMC", nEs(x.imc), "", "") : ""}
+    ${comp("grasa_pct", "Grasa corporal", "%")}${comp("masa_magra_kg", "Masa magra", "kg")}
+    ${c.cintura_cm ? filaInf("Cintura", nEs(c.cintura_cm.ultima) + " cm", `${fDia(c.cintura_cm.fecha)}${c.cintura_cm.n > 1 ? ` · antes ${nEs(c.cintura_cm.primera)} (${fDia(c.cintura_cm.primera_fecha)})` : ""}`, "huincha") : ""}
+    <p class="nota">Inicio y final son el promedio de las primeras y las últimas mediciones del período. Grasa y masa magra por bioimpedancia: cambian con la hidratación.</p></div>`;
+}
+
+function infHabitos(p){
+  const co = p.corazon && p.corazon.fc_reposo, s = p.sueno, a = p.actividad;
+  if(!co && !s && !a) return "";
+  return `<div class="tarjeta"><h2>Corazón, sueño y actividad</h2>
+    ${co ? filaInf("FC de reposo", nEs(co.media,0) + " lpm", `rango ${co.min}–${co.max}${co.primera_mitad != null ? ` · primera mitad ${nEs(co.primera_mitad,0)}, segunda ${nEs(co.segunda_mitad,0)}` : ""}`, `${co.n} días`) : ""}
+    ${s ? filaInf("Sueño por noche", s.media, [s.semana && `lunes a viernes ${s.semana.media}`, s.finde && `fin de semana ${s.finde.media}`].filter(Boolean).join(" · "), `${s.noches} noches`) : ""}
+    ${s ? filaInf("Noches bajo 6 h", nEs(s.bajo_6h.pct,0) + " %", `bajo 5 h: ${nEs(s.bajo_5h.pct,0)} % · 7 h o más: ${nEs(s.sobre_7h.pct,0)} %`, "") : ""}
+    ${s && s.profundo && s.rem ? filaInf("Profundo y REM", `${s.profundo.media} · ${s.rem.media}`, "", "") : ""}
+    ${a && a.pasos ? filaInf("Pasos al día", nEs(a.pasos.media,0), `${nEs(a.pasos.meta,0)} o más: ${nEs(a.pasos.sobre_meta.pct,0)} % de los días · bajo 2.000: ${nEs(a.pasos.bajo_2000.pct,0)} %`, `${a.pasos.n} días`) : ""}
+    ${a && a.minutos_activos ? filaInf("Minutos activos al día", nEs(a.minutos_activos.media,0), "", `${a.minutos_activos.n} días`) : ""}
+    ${a ? filaInf("Entrenamientos", `${a.sesiones} ${a.sesiones === 1 ? "sesión" : "sesiones"}`, a.por_tipo.map(t => `${escaparHtml(t.tipo)} ${t.n}`).join(" · "), "") : ""}
+    ${s && s.parciales_excluidos ? `<p class="nota">Sueño medido por el reloj. No se cuentan ${s.parciales_excluidos} registro(s) de menos de ${s.minimo_h} h (siestas o noches con el reloj puesto a ratos: supuesto).</p>` : ""}</div>`;
+}
+
+function infAlimentacion(p){
+  const a = p.alimentacion;
+  if(!a) return "";
+  const m = a.medias, mt = a.metas || {}, r = a.rangos || {};
+  return `<div class="tarjeta"><h2>Alimentación registrada</h2>
+    ${filaInf("Días con registro completo", `${a.dias_completos} de ${p.dias}`, `${a.dias_con_registro} con algún registro${a.dias_estimados_por_picos ? ` · ${a.dias_estimados_por_picos} sin registro y con alzas de glucosa` : ""}`, "")}
+    ${m ? `${filaInf("Energía", nEs(m.kcal,0) + " kcal", `rango ${nEs(r.kcal[0],0)}–${nEs(r.kcal[1],0)}`, "al día")}
+    ${filaInf("Proteína", nEs(m.proteina_g,0) + " g", `${m.proteina_g_kg ? nEs(m.proteina_g_kg,2) + " g/kg · " : ""}${nEs(mt.proteina_g,0)} g o más: ${mt.dias_proteina_en_meta} de ${a.dias_completos} días`, "al día")}
+    ${filaInf("Carbohidratos netos", nEs(m.carbos_netos_g,0) + " g", `totales ${nEs(m.carbohidratos_g,0)} g · fibra ${nEs(m.fibra_g,0)} g`, "al día")}
+    ${filaInf("Grasa", nEs(m.grasa_g,0) + " g", "", "al día")}
+    ${filaInf("Sodio", nEs(m.sodio_mg,0) + " mg", `rango ${nEs(r.sodio_mg[0],0)}–${nEs(r.sodio_mg[1],0)}${mt.sodio_mg_max ? ` · sobre ${nEs(mt.sodio_mg_max,0)}: ${mt.dias_sodio_sobre_techo} de ${a.dias_completos} días` : ""}`, "al día")}
+    ${filaInf("Potasio", nEs(m.potasio_mg,0) + " mg", "", "al día")}
+    ${filaInf("Magnesio", nEs(m.magnesio_mg,0) + " mg", "incluye los suplementos anotados", "al día")}` : ""}
+    <p class="nota">Promedios de los días con registro completo (${a.criterio_completo} o más ítems). Registro propio: lo que no viene de una etiqueta es estimación.</p></div>`;
+}
+
+function textoInforme(I, p){
+  const lineas = [`Informe de salud · ${I.paciente.nombre || ""}${I.paciente.edad ? ", " + I.paciente.edad + " años" : ""}`,
+    `${fDiaAno(p.desde)} a ${fDiaAno(p.hasta)} (${p.dias} días)`, "",
+    ...p.hallazgos.map(h => "• " + h.texto)];
+  const meds = (I.medicacion.activos || []).map(m => m.nombre);
+  if(meds.length) lineas.push("", "Medicación activa: " + meds.join("; ") + ".");
+  if((I.por_confirmar || []).length) lineas.push("", "Por confirmar:", ...I.por_confirmar.map(t => "• " + t));
+  if((I.preguntas || []).length) lineas.push("", "Preguntas:", ...I.preguntas.map(t => "• " + t));
+  lineas.push("", I.aviso || "");
+  return lineas.join("\n");
+}
+async function compartirInforme(){
+  const I = INFORME, p = I && I.periodos[PERIODO_INF];
+  if(!p) return;
+  const texto = textoInforme(I, p), aviso = t => { const e = $("#inf-aviso"); if(e) e.textContent = t; };
+  try{
+    if(navigator.share){ await navigator.share({title: "Informe de salud", text: texto}); return; }
+    await navigator.clipboard.writeText(texto); aviso("Resumen copiado: pégalo donde quieras enviarlo.");
+  }catch(e){ if(e && e.name !== "AbortError") aviso("No se pudo compartir desde este teléfono."); }
+}
+
+function vistaMedico(){
+  if(!INFORME && !INFORME_ERROR){ cargarInforme(); return `<div class="estado-msg">Preparando el informe…</div>`; }
+  if(!INFORME){
+    const txt = INFORME_ERROR === "falta" ? "El informe todavía no existe en tu repo: aparece solo con la próxima corrida del agente (al registrar algo o en la corrida diaria)."
+      : INFORME_ERROR === "red" ? "Sin conexión, y el informe aún no está guardado en este teléfono. Ábrelo una vez con señal."
+      : `No pude leer el informe: ${escaparHtml(INFORME_ERROR)}.`;
+    return `<div class="tarjeta"><p class="analisis">${txt}</p><div class="pie"><button onclick="reintentarInforme()">Reintentar</button></div></div>`;
+  }
+  const I = INFORME, per = I.periodos || {};
+  const p = per[PERIODO_INF] || per["90"] || Object.values(per)[0];
+  if(!p) return `<div class="tarjeta"><p class="analisis">El informe llegó vacío. Se rehace con la próxima corrida del agente.</p></div>`;
+  const pac = I.paciente || {}, li = (t, cls="") => `<li class="${cls}"><i></i><span>${escaparHtml(t)}</span></li>`;
+  const pendientes = (I.por_confirmar || []).concat(I.preguntas || []);
+  const ex = I.examenes || [];
+  return `<div class="inf">
+    <div class="inf-titulo">Informe de salud</div>
+    <div class="tarjeta inf-cab">
+      <div class="quien">${escaparHtml(pac.nombre || "")}</div>
+      <div class="datos">${[pac.edad && pac.edad + " años", pac.sexo === "M" ? "hombre" : pac.sexo === "F" ? "mujer" : "", pac.altura_m && nEs(pac.altura_m, 2) + " m"].filter(Boolean).join(" · ")}<br>
+        ${fDiaAno(p.desde)} a ${fDiaAno(p.hasta)} · ${p.dias} días</div>
+      <div class="inf-seg no-imprimir" role="tablist">${Object.keys(per).map(k =>
+        `<button class="${per[k] === p ? "activa" : ""}" role="tab" aria-selected="${per[k] === p}" onclick="elegirPeriodoInf('${k}')">${k} días</button>`).join("")}</div>
+      <div class="inf-acciones no-imprimir">
+        <button class="boton" onclick="window.print()">Imprimir o guardar PDF</button>
+        <button class="boton suave" onclick="compartirInforme()">Compartir resumen</button></div>
+      <div class="pendientes no-imprimir" id="inf-aviso"></div>
+    </div>
+    ${infMirada(p)}
+    <div class="tarjeta"><h2>Para conversar en la consulta</h2>
+      <ul class="inf-lista">${(p.hallazgos || []).map(h => li(h.texto, h.nivel)).join("")}</ul>
+      <div class="inf-leyenda" style="margin-top:8px"><span><i style="background:#C9653F;border-radius:50%"></i>Para revisar</span><span><i style="background:var(--tinta2);opacity:.45;border-radius:50%"></i>Contexto</span><span><i style="background:var(--c-metabolismo);border-radius:50%"></i>En rango</span></div></div>
+    ${pendientes.length ? `<div class="tarjeta"><h2>Por confirmar con el médico</h2><ul class="inf-lista">${pendientes.map(t => li(t)).join("")}</ul></div>` : ""}
+    ${infMedicacion(I, p)}
+    ${infPresion(p)}
+    ${infGlucosa(p)}
+    ${infCuerpo(p)}
+    ${infHabitos(p)}
+    ${infAlimentacion(p)}
+    ${(p.eventos || []).length ? `<div class="tarjeta"><h2>Cambios en el período</h2>${p.eventos.map(e => filaInf(fDiaAno(e.fecha), escaparHtml(e.texto), "", "")).join("")}</div>` : ""}
+    ${(I.antecedentes || []).length ? `<div class="tarjeta"><h2>Antecedentes relatados por el paciente</h2><ul class="inf-lista">${I.antecedentes.map(t => li(t)).join("")}</ul></div>` : ""}
+    <div class="tarjeta"><h2>Exámenes de laboratorio</h2>
+      ${ex.length ? ex.map(e => filaInf(escaparHtml(e.nombre || ""), escaparHtml(`${e.valor ?? ""} ${e.unidad || ""}`.trim()), e.referencia ? "referencia " + escaparHtml(e.referencia) : "", e.fecha ? fDiaAno(e.fecha) : "")).join("")
+        : `<p class="t-sub">No hay exámenes cargados en la app (perfil lipídico, HbA1c, creatinina, electrolitos).</p>`}</div>
+    <div class="tarjeta inf-pie"><h2>Cómo leer este informe</h2>
+      <ul>${(I.fuentes || []).concat(I.referencias || []).map(t => `<li>${escaparHtml(t)}</li>`).join("")}</ul>
+      <p>${escaparHtml(I.aviso || "")} Generado el ${fDiaAno((I.generado || "").slice(0,10))}${(I.generado || "").length > 15 ? " a las " + I.generado.slice(11,16) : ""}, sin IA.</p></div>
+  </div>`;
 }
 
 const MESES_L = {"01":"ene","02":"feb","03":"mar","04":"abr","05":"may","06":"jun","07":"jul","08":"ago","09":"sep","10":"oct","11":"nov","12":"dic"};
@@ -2122,6 +2472,7 @@ const VISTAS = {
   medicacion:["Medicación", vistaMedicacion], mas:["Más", vistaMas],
   arbol:["Árbol de la vida", vistaArbol], glucosa:["Glucosa", vistaGlucosa], presion:["Presión arterial", vistaPresion],
   peso:["Peso", vistaPeso], edad:["Edad metabólica", vistaEdad], registrar:["Registrar", vistaRegistrar],
+  medico:["Para tu médico", vistaMedico],
 };
 
 /* Pinta la ruta actual con los datos ya leídos (cambiar de pantalla no vuelve a pedir nada). */
@@ -2160,6 +2511,7 @@ async function render(){
       return;
     }
     LIBRE = est.libre || null;
+    INFORME = null; INFORME_ERROR = null;   // se vuelve a pedir al abrir "Para tu médico"
     ULTIMO_REG_CRUDO = regs[0];
     DATOS = {estado: est, regHoy: mezclarLocales(regs[0]), historial: regs.slice(1).filter(Boolean)};
   }catch(e){
@@ -2227,7 +2579,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.16.0</div>
+    <div class="version">v21.17.0</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
