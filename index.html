@@ -150,6 +150,8 @@
   .inf-titulo{display:none}
   .inf-cab .quien{font-family:var(--serif);font-size:22px;line-height:1.15}
   .inf-cab .datos{font-size:13px;color:var(--tinta2);margin-top:4px;line-height:1.45}
+  .inf-cab .para{font-size:13.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--linea2);color:var(--tinta2)}
+  .inf-cab .para b{color:var(--tinta);font-weight:500}
   .inf-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--panel2);border-radius:999px;padding:4px;margin-top:12px}
   .inf-seg button{border:none;background:transparent;border-radius:999px;padding:8px 4px;font-size:13.5px;color:var(--tinta2);cursor:pointer}
   .inf-seg button.activa{background:#fff;color:var(--tinta);font-weight:500;box-shadow:0 1px 3px rgba(31,42,36,.12)}
@@ -1633,7 +1635,7 @@ function vistaMas(){
       ${fila("config","engranaje","var(--tinta2)","Configuración")}
     </div>
     <div class="pie"><button onclick="render()">${ico("refrescar",'style="width:16px;height:16px;vertical-align:-3px"')} Actualizar datos</button></div>
-    <div class="version">v21.17.1</div>`;
+    <div class="version">v21.17.2</div>`;
 }
 
 function vistaArbol(){
@@ -1917,6 +1919,7 @@ function infAlimentacion(p){
 function textoInforme(I, p){
   const lineas = [`Informe de salud · ${I.paciente.nombre || ""}${I.paciente.edad ? ", " + I.paciente.edad + " años" : ""}`,
     `${fDiaAno(p.desde)} a ${fDiaAno(p.hasta)} (${p.dias} días)`];
+  if(paraMedico(I)) lineas.push("Para: " + paraMedico(I));
   if((p.clave || []).length) lineas.push("", "LO MÁS IMPORTANTE", ...p.clave.map((c, i) => `${i + 1}. ${c.etiqueta.toUpperCase()}: ${c.titulo}. ${c.detalle}`));
   const otros = p.hallazgos.filter(h => !(p.clave && h.en_clave));
   if(otros.length) lineas.push("", p.clave ? "Además:" : "", ...otros.map(h => "• " + h.texto));
@@ -1935,6 +1938,12 @@ async function compartirInforme(){
     if(navigator.share){ await navigator.share({title: "Informe de salud", text: texto}); return; }
     await navigator.clipboard.writeText(texto); aviso("Resumen copiado: pégalo donde quieras enviarlo.");
   }catch(e){ if(e && e.name !== "AbortError") aviso("No se pudo compartir desde este teléfono."); }
+}
+
+function paraMedico(I){   // "Dr. Mauricio Cancino · Medicina interna", o nada si no está en plan.json
+  const m = I.medico;
+  if(!m || !m.nombre) return "";
+  return [[m.tratamiento, m.nombre].filter(Boolean).join(" "), m.especialidad].filter(Boolean).join(" · ");
 }
 
 function vistaMedico(){
@@ -1958,6 +1967,7 @@ function vistaMedico(){
       <div class="quien">${escaparHtml(pac.nombre || "")}</div>
       <div class="datos">${[pac.edad && pac.edad + " años", pac.sexo === "M" ? "hombre" : pac.sexo === "F" ? "mujer" : "", pac.altura_m && nEs(pac.altura_m, 2) + " m"].filter(Boolean).join(" · ")}<br>
         ${fDiaAno(p.desde)} a ${fDiaAno(p.hasta)} · ${p.dias} días</div>
+      ${paraMedico(I) ? `<div class="para">Para: <b>${escaparHtml(paraMedico(I))}</b></div>` : ""}
       <div class="inf-seg no-imprimir" role="tablist">${Object.keys(per).map(k =>
         `<button class="${per[k] === p ? "activa" : ""}" role="tab" aria-selected="${per[k] === p}" onclick="elegirPeriodoInf('${k}')">${k} días</button>`).join("")}</div>
       <div class="inf-acciones no-imprimir">
@@ -2609,7 +2619,7 @@ function renderConfig(){
       <button onclick="ir('inicio')">Volver</button>
       <button onclick="if(confirm('¿Borrar el token de este teléfono? Tendrás que ingresarlo de nuevo.')){cfg.borrar();render()}">Desconectar</button>
     </div>` : ""}
-    <div class="version">v21.17.1</div>
+    <div class="version">v21.17.2</div>
   </div>${yaConectado ? tarjetaSincronizacion() : ""}</main>${yaConectado ? navInferior("config") : ""}`;
 }
 
